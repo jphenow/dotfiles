@@ -1,15 +1,8 @@
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 argglobal
-noremap <buffer> <silent> [[ m':call search('^\s*fu\%[nction]\>', "bW")
-noremap <buffer> <silent> [] m':call search('^\s*endf*\%[unction]\>', "bW")
-noremap <buffer> <silent> [" :call search('\%(^\s*".*\n\)\%(^\s*"\)\@!', "bW")
-noremap <buffer> <silent> ]] m':call search('^\s*fu\%[nction]\>', "W")
-noremap <buffer> <silent> ][ m':call search('^\s*endf*\%[unction]\>', "W")
-noremap <buffer> <silent> ]" :call search('^\(\s*".*\n\)\@<!\(\s*"\)', "W")
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
-setlocal autoread
 setlocal nobinary
 setlocal bufhidden=
 setlocal buflisted
@@ -18,8 +11,8 @@ setlocal nocindent
 setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
 setlocal cinoptions=
 setlocal cinwords=if,else,while,do,for,switch
-setlocal comments=sO:\"\ -,mO:\"\ \ ,eO:\"\",:\"
-setlocal commentstring=\"%s
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*%s*/
 setlocal complete=.,w,b,u,t,i
 setlocal completefunc=
 setlocal nocopyindent
@@ -31,8 +24,8 @@ setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
 setlocal noexpandtab
-if &filetype != 'vim'
-setlocal filetype=vim
+if &filetype != 'gitcommit'
+setlocal filetype=gitcommit
 endif
 setlocal foldcolumn=0
 setlocal foldenable
@@ -45,7 +38,7 @@ setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=foldtext()
 setlocal formatexpr=
-setlocal formatoptions=croql
+setlocal formatoptions=tcq
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=0
@@ -88,23 +81,23 @@ setlocal statusline=
 setlocal suffixesadd=
 setlocal swapfile
 setlocal synmaxcol=3000
-if &syntax != 'vim'
-setlocal syntax=vim
+if &syntax != 'gitcommit'
+setlocal syntax=gitcommit
 endif
 setlocal tabstop=4
 setlocal tags=
-setlocal textwidth=78
+setlocal textwidth=0
 setlocal thesaurus=
 setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 184 - ((48 * winheight(0) + 24) / 49)
+let s:l = 22 - ((21 * winheight(0) + 23) / 47)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-184
+22
 normal! 0
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

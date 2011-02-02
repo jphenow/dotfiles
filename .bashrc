@@ -92,7 +92,7 @@ PROMPT_COMMAND='history -a'
 #bind '"\t":menu-complete'
 bind '"\C-f":history-search-backward'
 
-export PATH=$HOME/.install/bin:$PATH
+export PATH=$HOME/.install/bin:/home/phenow/Android_Screwin/android-sdk-linux_86/tools:/home/phenow/Android_Screwin/android-sdk-linux_86/platform-tools:$PATH
 
 #export mcgsvn=svn+ssh://mnphenow@mnphenow.com/home/mnphenow/mcg/svn
 
