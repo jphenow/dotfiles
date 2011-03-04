@@ -1,10 +1,4 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =8
-let g:netrw_dirhist_1='/etc/apache2/sites-available'
-let g:netrw_dirhist_2='/var/www/wp-content/themes/time/images'
-let g:netrw_dirhist_3='/var/www/wp-content/themes/time/header'
-let g:netrw_dirhist_4='/etc/apache2/mods-enabled'
-let g:netrw_dirhist_5='/etc/apache2/sites-available'
-let g:netrw_dirhist_6='/etc/security'
-let g:netrw_dirhist_7='/etc/security/namespace.d'
-let g:netrw_dirhist_8='/home/phenow/git-projects/HelloAndroid/.git'
+let g:netrw_dirhist_cnt =2
+let g:netrw_dirhist_1='/etc'
+let g:netrw_dirhist_2='/'
