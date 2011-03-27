@@ -8,17 +8,24 @@
 # hlsearch on (H) or off (h):
 ~h
 # Last Search Pattern:
-~MSle0~/phenow
+~MSle0~/auto
+
+# Last Substitute String:
+$
 
 # Command Line History (newest to oldest):
-:q
 :wq
-:Wq
+:q
 :w
+:vsplit backup.bashrc
+:q!
+:wq!
+:'<,'>q
+:qw
+:Wq
 :Q
 :!ls Android_Screwin/android-sdk-linux_86
 :!ls
-:q!
 :qa
 :sp lib/auth.php
 :sp lib/constants.php
@@ -27,12 +34,9 @@
 :wa
 :mnphenow@gmail.com
 :sp li
-:Vf
-:bd
-:Sd
-:Hf
 
 # Search String History (newest to oldest):
+?/auto
 ?/phenow
 ?/underline
 ?/jph
@@ -52,7 +56,6 @@
 ?/get_last
 ? \<get_this_year\>
 ?/get_this
-?/fetch
 
 # Expression History (newest to oldest):
 
@@ -62,168 +65,448 @@
 
 # Registers:
 "0	CHAR	0
-	/home/phenow/Android_Screwin/android-sdk-linux_86/tools
-"1	LINE	0
-	linux /boot/vmlinuz
-"2	LINE	0
-		$show_cgm_version = true;
+	# if the command-not-found package is installed, use it
+	if [ -x /usr/lib/command-not-found ]; then
+		function command_not_found_handle {
+		        # check because c-n-f could've been removed in the meantime
+	                if [ -x /usr/lib/command-not-found ]; then
+			   /usr/bin/python /usr/lib/command-not-found -- $1
+	                   return $?
+			else
+			   return 127
+			fi
+		}
+	fi
 	
+""1	LINE	0
+	444
+<|1|meqH/fqL0Mn2NPMr/k8DNIWMwe4=|ooq1U4CaPp2XZYFAstmFPPlhZ8o= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCfjyKWcNfz7qGvj2AbgbKlsD1QGSvPQ1unauUxBOr/t6s8+iybLljNHVfTor6Na/MtS8Ru0DK8g+21ogdngm+BUd0CoxDG7Tb4hcF9+kraxpxxmoDPCZhKzVFLAGe7o6lTJVKEHWGrgVuk8ssg9Rpas4Fd1DpEAomdvG2B/44o+ZUe/5s3ir5lssJwB5sxU6BHiROedY9W++P1Zus+JcZ0P025rWvVk6fYVu+36LfCM9xJ2UoRBMX0aM5JSUVR5uSryNy4pcPMH4ic+LIzy8ih88LZdTs6Tugow4vkesn7+apxtrsyD3rrYg0POPoStHiVLU2GZ4ptlIa9Vs2qCo3V
+"2	LINE	0
+	444
+<|1|6xrhD/jKkUvKZfrGDk1m6vlEgO8=|3qI7tA9a0WUbMttGGgZT3Vupxmc= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCfjyKWcNfz7qGvj2AbgbKlsD1QGSvPQ1unauUxBOr/t6s8+iybLljNHVfTor6Na/MtS8Ru0DK8g+21ogdngm+BUd0CoxDG7Tb4hcF9+kraxpxxmoDPCZhKzVFLAGe7o6lTJVKEHWGrgVuk8ssg9Rpas4Fd1DpEAomdvG2B/44o+ZUe/5s3ir5lssJwB5sxU6BHiROedY9W++P1Zus+JcZ0P025rWvVk6fYVu+36LfCM9xJ2UoRBMX0aM5JSUVR5uSryNy4pcPMH4ic+LIzy8ih88LZdTs6Tugow4vkesn7+apxtrsyD3rrYg0POPoStHiVLU2GZ4ptlIa9Vs2qCo3V
 "3	LINE	0
-		$show_cgm_version = false;
 	
 "4	LINE	0
-		$show_cgm_version = true;
 	
-"5	LINE	0
-		$show_cgm_version = true;
+"5	CHAR	0
+	# set a fancy prompt (non-color, unless we know we "want" color)
+	#case "$TERM" in
+	#xterm-color)
+	#    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+	#    ;;
+	#*)
+	#    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+	#    ;;
+	#esac
+	
+	# Comment in the above and uncomment this below for a color prompt
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+	
+	# If this is an xterm set the title to user@host:dir
+	case "$TERM" in
+	xterm*|rxvt*)
+	    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
+	    ;;
+	*)
+	    ;;
+	esac
 	
 "6	LINE	0
-		$show_cgm_version = true;
-	
+	esac
 "7	LINE	0
-		$show_cgm_version = true;
-	
+	    ;;
 "8	LINE	0
-		$found_version = preg_match( '/URL: file:\/\/\/home\/mnphenow\/mcg\/svn\/mcg\/cgm\/branches\/(.*?)\//', $svn_info, $matches );
+	# set a fancy prompt (non-color, unless we know we "want" color)
+	case "$TERM" in
+	xterm-color)
+	    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+	    ;;
+	*)
+	    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 "9	LINE	0
-	lib/constants_dreamhost_rc.php:15:	$abs_path_to_root = "/home/mnphenow/mcg/cgm/rc.cgm.mncharitablegambling.com";
-	lib/constants_dreamhost_rc.php:21:	$found_version = preg_match( '/URL: file:\/\/\/home\/mnphenow\/mcg\/svn\/mcg\/cgm\/tags\/(.*?)\//', $svn_info, $matches );
-	lib/constants_dreamhost_debug.php:15:	$abs_path_to_root = "/home/mnphenow/mcg/cgm/debug.cgm.mncharitablegambling.com";
-	lib/constants_dreamhost_debug.php:21:	$found_version = preg_match( '/URL: file:\/\/\/home\/mnphenow\/mcg\/svn\/mcg\/cgm\/branches\/(.*?)\//', $svn_info, $matches );
-	lib/constants_dreamhost_live.php:15:	$abs_path_to_root = "/home/mnphenow/mcg/cgm/cgm.mncharitablegambling.com";
-	lib/constants_dreamhost_live.php:21:	$found_version = preg_match( '/URL: file:\/\/\/home\/mnphenow\/mcg\/svn\/mcg\/cgm\/tags\/(.*?)\//', $svn_info, $matches );
-	lib/constants_dreamhost_dev.php:15:	$abs_path_to_root = "/home/mnphenow/mcg/cgm/dev.cgm.mncharitablegambling.com";
-	lib/constants_dreamhost_dev.php:21:	$found_version = preg_match( '/URL: file:\/\/\/home\/mnphenow\/mcg\/svn\/mcg\/cgm\/(.*?)\//', $svn_info, $matches );
-	lib/constants_dreamhost_demo.php:15:	$abs_path_to_root = "/home/mnphenow/mcg/cgm/demo.cgm.mncharitablegambling.com";
-	lib/constants_dreamhost_demo.php:21:	$found_version = preg_match( '/URL: file:\/\/\/home\/mnphenow\/mcg\/svn\/mcg\/cgm\/tags\/(.*?)\//', $svn_info, $matches );
-	lib/constants_local_dev.php:21:	$found_version = preg_match( '/URL: svn\+ssh:\/\/mnphenow@mnphenow.com\/home\/mnphenow\/mcg\/svn\/mcg\/cgm\/(.*?)\//', $svn_info, $matches );
-	lib/constants_dreamhost_exp.php:15:	$abs_path_to_root = "/home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com";
-	lib/constants_dreamhost_exp.php:21:	$found_version = preg_match( '/URL: file:\/\/\/home\/mnphenow\/mcg\/svn\/mcg\/cgm\/branches\/(.*?)\//', $svn_info, $matches );
-""-	CHAR	0
-	g
+	
+"-	CHAR	0
+	#
 
 # File marks:
-'0  1  0  ~/.bash_history
-'1  22  0  ~/git-projects/Graph/.git/COMMIT_EDITMSG
-'2  1  0  ~/.gitk
-'3  1  0  /etc/grub.d/21_windows
-'4  2  31  /etc/grub.d/11_windows
-'5  1  0  /etc/grub.d/README
-'6  1  0  /etc/grub.d/41_custom
-'7  1  0  /etc/grub.d/40_custom
-'8  106  0  /etc/grub.d/30_os-prober
-'9  118  0  /boot/grub/grub.cfg
+'0  2  0  ~/.ssh/known_hosts
+'1  79  1  ~/bash.bashrc
+'2  1  0  /tmp/bash-fc-3600533186
+'3  1  0  /tmp/bash-fc-1300846446
+'4  8  0  ~/.ssh/known_hosts
+'5  5  0  ~/.ssh/known_hosts
+'6  1  43  ~/.git/COMMIT_EDITMSG
+'7  1  0  ~/.tcsh
+'8  59  1  ~/bash.bashrc
+'9  1  0  /etc/bash.bashrc
 
 # Jumplist (newest first):
--'  1  0  ~/.bash_history
--'  22  0  ~/git-projects/Graph/.git/COMMIT_EDITMSG
--'  2  0  ~/git-projects/Graph/.git/COMMIT_EDITMSG
--'  1  0  ~/git-projects/Graph/.git/COMMIT_EDITMSG
--'  1  0  ~/.gitk
--'  1  0  /etc/grub.d/21_windows
--'  2  31  /etc/grub.d/11_windows
--'  1  4  /etc/grub.d/11_windows
--'  1  0  /etc/grub.d/README
--'  1  0  /etc/grub.d/41_custom
--'  1  0  /etc/grub.d/40_custom
--'  106  0  /etc/grub.d/30_os-prober
--'  1  0  /etc/grub.d/30_os-prober
--'  118  0  /boot/grub/grub.cfg
--'  8  0  /boot/grub/grub.cfg
--'  1  0  /boot/grub/grub.cfg
--'  1  0  /boot/grub/vim
--'  59  0  /etc/X11/xorg.conf
--'  1  0  /etc/X11/xorg.conf
--'  13  8  ~/git-projects/working_jphenow.com/.git/config
--'  16  13  ~/git-projects/working_jphenow.com/.git/config
--'  1  0  ~/git-projects/working_jphenow.com/.git/config
 -'  2  0  ~/.ssh/known_hosts
+-'  10  0  ~/.ssh/known_hosts
+-'  8  0  ~/.ssh/known_hosts
 -'  1  0  ~/.ssh/known_hosts
--'  21  22  ~/git-projects/working_jphenow.com/index.html
--'  1  0  ~/git-projects/working_jphenow.com/index.html
--'  1  42  ~/git-projects/working_jphenow.com/.git/COMMIT_EDITMSG
--'  9  48  ~/git-projects/working_jphenow.com/index.html
--'  59  0  ~/git-projects/working_jphenow.com/style.css
--'  40  8  ~/git-projects/working_jphenow.com/style.css
--'  1  0  ~/git-projects/working_jphenow.com/style.css
--'  1  0  ~/.config/google-chrome/Local State
--'  1  0  ~/.config/google-chrome/SingletonLock
--'  3  0  ~/git-projects/working_jphenow.com/.git/COMMIT_EDITMSG
--'  2  0  ~/git-projects/working_jphenow.com/.git/COMMIT_EDITMSG
--'  4  0  ~/git-projects/working_jphenow.com/index.html
--'  57  0  ~/git-projects/working_jphenow.com/index.html
--'  1  0  ~/git-projects/KaosGingerbread/.git/COMMIT_EDITMSG
--'  31  9  ~/git-projects/working_jphenow.com/style.css
--'  1  0  ~/git-projects/working_jphenow.com/javascript.js
--'  575  36  ~/MigratingjPhenow/blog/97.74.30.14.sql
--'  21  0  ~/MigratingjPhenow/blog/97.74.30.14.sql
--'  167  36  ~/MigratingjPhenow/blog/97.74.30.14.sql
--'  121  0  ~/MigratingjPhenow/blog/97.74.30.14.sql
--'  1  0  ~/MigratingjPhenow/blog/97.74.30.14.sql
--'  1  0  /tmp/bash-fc-1293572066
--'  95  150  ~/.bashrc
--'  1  0  ~/.bashrc
--'  5  33  ~/.bashrc
--'  184  0  ~/.vimrc
+-'  79  1  ~/bash.bashrc
+-'  80  30  ~/bash.bashrc
+-'  1  0  ~/bash.bashrc
+-'  1  0  /tmp/bash-fc-3600533186
+-'  1  0  /tmp/bash-fc-1300846446
+-'  5  0  ~/.ssh/known_hosts
+-'  1  43  ~/.git/COMMIT_EDITMSG
+-'  1  0  ~/.tcsh
+-'  49  32  ~/bash.bashrc
+-'  48  8  ~/bash.bashrc
+-'  2  61  ~/bash.bashrc
+-'  59  1  ~/bash.bashrc
+-'  1  0  /etc/bash.bashrc
+-'  6  0  ~/bash
+-'  1  0  ~/bash
+-'  17  16  ~/Firefox Sync Key.html
+-'  1  0  ~/Firefox Sync Key.html
+-'  22  54  /etc/fstab
+-'  21  8  /etc/fstab
+-'  1  0  /etc/fstab
+-'  89  1  ~/.vimrc
+-'  81  0  ~/.vimrc
+-'  82  0  ~/.vimrc
+-'  83  0  ~/.vimrc
+-'  84  0  ~/.vimrc
+-'  85  0  ~/.vimrc
+-'  86  0  ~/.vimrc
+-'  87  0  ~/.vimrc
+-'  88  0  ~/.vimrc
+-'  44  1  ~/.vimrc
 -'  1  0  ~/.vimrc
--'  14  11  /etc/ushare.conf
--'  1  0  /etc/ushare.conf
--'  41  18  /etc/ushare.conf
--'  1  0  /tmp/bash-fc-3811584647
--'  1  0  /tmp/bash-fc-3609043370
--'  1  0  wWW/MY_siTES/Pull_TABS/clOSED_deaLS/INdex.PHp
--'  1  0  /tmp/bash-fc-1292583351
--'  70  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/www/my_sites/pull_tabs/closed_deals/transfer_to_mn_gambler_report.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/www/my_sites/pull_tabs/closed_deals/transfer_to_mn_gambler_report.php
--'  81  7  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/www/common/ajax/confirm_deal_at_location.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/www/common/ajax/confirm_deal_at_location.php
--'  35  1  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/init_app.php
--'  7  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/www/my_sites/pull_tabs/opened_deals/index.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/www/my_sites/pull_tabs/opened_deals/index.php
--'  2  28  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/svn-commit.tmp
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/svn-commit.tmp
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/email.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/constants_dreamhost_debug.php
--'  4  30  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/www/my_sites/pull_tabs/closed_deals/index.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/www/my_sites/pull_tabs/closed_deals/index.php
--'  39  82  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/email.php
--'  22  75  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/email.php
--'  9  24  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/email.php
--'  20  38  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/constants_dreamhost_exp.php
--'  19  31  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/constants_dreamhost_exp.php
--'  18  32  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/constants_dreamhost_exp.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/constants_dreamhost_exp.php
--'  11  14  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/email.php
--'  45  14  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/email.php
--'  28  14  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/email.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/lib/error_handler.php
--'  808  2  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/models/PullTabDealFactory.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/models/PullTabDeal
--'  44  3  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/templates/my_sites/pull_tabs/closed_deals/index.html
--'  67  2  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/templates/my_sites/pull_tabs/closed_deals/index.html
--'  61  1  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/templates/my_sites/pull_tabs/closed_deals/index.html
--'  36  11  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/templates/my_sites/pull_tabs/closed_deals/index.html
--'  64  10  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/templates/my_sites/pull_tabs/closed_deals/index.html
--'  49  40  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/templates/my_sites/pull_tabs/closed_deals/index.html
--'  52  105  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/templates/my_sites/pull_tabs/closed_deals/index.html
--'  10  14  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/db/util/make_md5_password.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/db/util/make_md5_password.php
--'  14  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/db/backup/restore.php
--'  11  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/db/backup/restore.php
--'  5  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/db/backup/restore.php
--'  1  0  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/models/User.php
--'  145  11  /home/mnphenow/mcg/cgm/exp.cgm.mncharitablegambling.com/models/User.php
+-'  23  8  /etc/fstab
+-'  334  0  ~/.viminfo
+-'  2  0  ~/.viminfo
+-'  1  0  ~/.viminfo
+-'  8  0  ~/.vim
+-'  1  0  ~/.vim
+-'  226  11  ~/.vimrc
+-'  55  1  ~/.vimrc
+-'  54  1  ~/.vimrc
+-'  53  1  ~/.vimrc
+-'  52  1  ~/.vimrc
+-'  20  4  ~/.vimrc
+-'  233  2  ~/.vimrc
+-'  227  40  ~/.vimrc
+-'  1  0  ~./vimrc
+-'  25  58  /etc/fstab
+-'  19  42  /etc/fstab
+-'  7  20  ~/.mozilla/firefox/profiles.ini
+-'  1  0  ~/.mozilla/firefox/profiles.ini
+-'  1  0  ~/.mozilla/firefox
+-'  7  20  ~/.mozilla/firefox-4.0/profiles.ini
+-'  1  0  ~/.mozilla/firefox-4.0/profiles.ini
+-'  1  0  ~/.mozilla/firefox/1b7d80i3.default
+-'  267  0  ~/git-projects/Graph/VertexGraph.java
+-'  1  0  ~/git-projects/Graph/VertexGraph.java
+-'  1  0  ~/git-projects/Graph2/.git/config
+-'  1  0  ~/.config/google-chrome/First Run
+-'  100  0  ~/Downloads/LoL_wine.sh
+-'  1  0  ~/Downloads/LoL_wine.sh
+-'  2  0  ~/Downloads/LoL_wine
+-'  10  0  ~/Downloads/LoL_wine
+-'  1  0  ~/Downloads/LoL_wine
+-'  7  10  ~/.git/info/exclude
+-'  1  0  ~/.git/info/exclude
+-'  1  0  ~/.git/index
+-'  1  0  ~/.gitignore
+-'  1  0  ~/fugitive_doc/fugitive.txt
+-'  3  39  /etc/resolv.conf
+-'  1  0  /etc/resolv.conf
+-'  1  17  /etc/hostname
+-'  1  0  ~/resolv.conf
+-'  1  0  ~/test/test
+-'  267  0  ~/git-projects/Graph2/VertexGraph.java
+-'  236  26  ~/git-projects/Graph2/VertexGraph.java
+-'  1  0  ~/git-projects/Graph2/VertexGraph.java
+-'  2  0  ~/mypasswds
+-'  1  0  ~/mypasswds
+-'  1  58  ~/git-projects/Graph2/.git/COMMIT_EDITMSG
+-'  140  0  ~/git-projects/Graph2/VertexGraph.java
+-'  221  8  ~/git-projects/Graph2/VertexGraph.java
+-'  216  2  ~/git-projects/Graph2/VertexGraph.java
+-'  204  1  ~/git-projects/Graph2/VertexGraph.java
+-'  205  2  ~/git-projects/Graph2/VertexGraph.java
+-'  207  2  ~/git-projects/Graph2/VertexGraph.java
+-'  208  3  ~/git-projects/Graph2/VertexGraph.java
+-'  209  4  ~/git-projects/Graph2/VertexGraph.java
+-'  210  2  ~/git-projects/Graph2/VertexGraph.java
+-'  211  2  ~/git-projects/Graph2/VertexGraph.java
+-'  212  2  ~/git-projects/Graph2/VertexGraph.java
+-'  237  1  ~/git-projects/Graph2/VertexGraph.java
+-'  203  8  ~/git-projects/Graph2/VertexGraph.java
+-'  35  0  ~/git-projects/Graph2/VertexGraph.java
+-'  1  0  ~/git-projects/Graph2/Graph.java
 
 # History of marks within files (newest to oldest):
 
-> ~/.bash_history
+> ~/.ssh/known_hosts
+	"	2	0
+	.	2	0
+	+	8	0
+	+	2	0
+
+> ~/bash.bashrc
+	"	79	1
+	.	80	0
+	+	2	0
+	+	49	0
+	+	49	0
+	+	80	0
+	+	80	0
+
+> ~/.bashrc
+	"	122	0
+	^	136	21
+	.	136	20
+	+	119	150
+	+	69	0
+	+	23	0
+	+	22	0
+	+	69	0
+	+	74	0
+	+	75	0
+	+	76	0
+	+	87	0
+	+	88	0
+	+	89	0
+	+	136	0
+	+	123	0
+	+	122	0
+	+	136	20
+
+> /tmp/bash-fc-3600533186
+	"	1	0
+
+> /tmp/bash-fc-1300846446
+	"	1	0
+
+> ~/.git/COMMIT_EDITMSG
+	"	1	43
+	^	1	44
+	.	1	43
+	+	1	43
+
+> ~/.tcsh
+	"	1	0
+
+> ~/backup.bashrc
+	"	34	0
+	^	34	0
+	.	34	0
+	+	23	0
+	+	22	14
+	+	32	0
+	+	23	0
+	+	22	0
+	+	24	0
+	+	25	0
+	+	26	0
+	+	27	0
+	+	28	0
+	+	29	0
+	+	30	0
+	+	31	0
+	+	34	0
+
+> /etc/bash.bashrc
+	"	1	0
+
+> ~/bash
+	"	6	0
+
+> ~/Firefox Sync Key.html
+	"	17	16
+
+> /etc/fstab
+	"	22	54
+	^	22	55
+	.	22	54
+	+	25	58
+	+	23	8
+	+	21	8
+	+	22	54
+
+> ~/.vimrc
+	"	89	1
+	^	89	2
+	.	89	1
+	+	1	4
+	+	44	1
+	+	92	1
+	+	81	1
+	+	82	1
+	+	83	1
+	+	84	1
+	+	85	1
+	+	86	1
+	+	87	1
+	+	88	1
+	+	92	1
+	+	89	1
+
+> ~/.viminfo
+	"	334	0
+	^	2	0
+	.	2	0
+	+	2	0
+
+> ~./vimrc
+	"	1	0
+
+> ~/.mozilla/firefox/profiles.ini
+	"	7	20
+	^	7	21
+	.	7	13
+	+	7	13
+
+> ~/.mozilla/firefox-4.0/profiles.ini
+	"	7	20
+	^	7	21
+	.	7	13
+	+	7	13
+
+> ~/git-projects/Graph/VertexGraph.java
+	"	267	0
+
+> ~/git-projects/Graph2/.git/config
+	"	1	0
+
+> ~/.config/google-chrome/First Run
+	"	1	0
+
+> ~/Downloads/LoL_wine.sh
+	"	100	0
+
+> ~/Downloads/LoL_wine
+	"	2	0
+	^	2	0
+	.	1	9
+	+	1	9
+
+> ~/.git/info/exclude
+	"	7	10
+	^	7	11
+	.	7	10
+	+	7	8
+	+	7	10
+
+> ~/.git/index
+	"	1	0
+
+> ~/.gitignore
+	"	1	0
+
+> ~/fugitive_doc/fugitive.txt
+	"	1	0
+
+> /etc/resolv.conf
+	"	3	39
+	^	3	71
+	.	3	39
+	+	3	39
+
+> /etc/hostname
+	"	1	17
+	^	1	18
+	.	1	17
+	+	1	17
+
+> ~/resolv.conf
+	"	1	0
+
+> ~/test/test
+	"	1	0
+
+> ~/git-projects/Graph2/VertexGraph.java
+	"	267	0
+	^	236	27
+	.	236	26
+	+	237	0
+	+	237	0
+	+	237	2
+	+	237	3
+	+	237	51
+	+	213	25
+	+	215	3
+	+	213	24
+	+	215	23
+	+	217	7
+	+	212	5
+	+	213	25
+	+	217	35
+	+	234	2
+	+	207	54
+	+	215	28
+	+	213	11
+	+	214	11
+	+	215	35
+	+	207	0
+	+	206	35
+	+	207	0
+	+	208	25
+	+	214	35
+	+	229	0
+	+	208	0
+	+	206	58
+	+	214	44
+	+	215	31
+	+	219	20
+	+	223	20
+	+	221	39
+	+	224	4
+	+	221	32
+	+	222	0
+	+	227	30
+	+	226	36
+	+	229	8
+	+	228	41
+	+	230	42
+	+	140	18
+	+	135	1
+	+	136	1
+	+	134	1
+	+	137	1
+	+	138	1
+	+	139	1
+	+	140	1
+	+	231	4
+	+	230	100
+	+	231	70
+	+	230	86
+	+	233	3
+	+	236	21
+	+	235	26
+	+	236	26
+
+> ~/mypasswds
+	"	2	0
+	.	2	0
+	+	1	0
+	+	2	0
+
+> ~/git-projects/Graph2/.git/COMMIT_EDITMSG
+	"	1	58
+	^	1	59
+	.	1	58
+	+	1	58
+
+> ~/git-projects/Graph2/Graph.java
+	"	1	0
+
+> /etc/resolv
 	"	1	0
 
 > ~/git-projects/Graph/.git/COMMIT_EDITMSG
-	"	22	0
+	"	2	0
 	^	2	0
-	.	1	63
-	+	1	63
+	.	1	49
+	+	1	49
+
+> ~/.bash_history
+	"	1	0
 
 > ~/.gitk
 	"	1	0
@@ -275,9 +558,6 @@
 	+	16	13
 	+	13	8
 
-> ~/.ssh/known_hosts
-	"	2	0
-
 > ~/git-projects/working_jphenow.com/index.html
 	"	21	22
 	^	21	23
@@ -325,15 +605,6 @@
 
 > /tmp/bash-fc-1293572066
 	"	1	0
-
-> ~/.bashrc
-	"	95	150
-	^	95	151
-	.	95	150
-	+	95	150
-
-> ~/.vimrc
-	"	184	0
 
 > /etc/ushare.conf
 	"	14	11
