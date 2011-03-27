@@ -1,4 +1,4 @@
-" Mike Phenow's .vimrc
+" Jon Phenow's .vimrc
 
 " Enable vim powers
 set nocompatible
@@ -41,7 +41,7 @@ noremap <F6> :let @/=""<CR>:echo "Highlights Cleared"<CR>
 set showmatch
 
 " Awesome tab-completion
-set wildmode=list:longest
+" set wildmode=list:longest
 
 " Fix my HID
 set backspace=indent,eol,start
@@ -86,10 +86,10 @@ function InsertTabWrapper()
           return "\<c-n>"
       endif
 endfunction 
-inoremap <tab> <c-r>=InsertTabWrapper()<cr>
+" inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 
 " Configure tab-completion
-set completeopt=menu,preview,longest
+" set completeopt=menu,preview,longest
 
 " Allow for split window expand / collapse using CTRL-j / CTRL-k.  Useful for
 " editing many files in one window, switching back and forth.
