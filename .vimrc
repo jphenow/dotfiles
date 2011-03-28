@@ -172,19 +172,19 @@ set cpo+=d
 set tags=./tags/all
 
 " Allow for easy insertion of standard log statements.
-inoremap <c-l> $GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
-noremap <c-l> o$GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
+" inoremap <c-l> $GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
+" noremap <c-l> o$GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
 
 " Grab the previous variable and yank it, drop log_export line below it.
-inoremap <c-x> <esc>l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'JRP: <esc>pa' );<esc>
-noremap <c-x> l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'JRP: <esc>pa' );<esc>
+" inoremap <c-x> <esc>l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'JRP: <esc>pa' );<esc>
+" noremap <c-x> l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'JRP: <esc>pa' );<esc>
 
 " Clockwork sourcery.  Not sure what this is supposed to do...
 " inoremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
 " noremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
 
 " Magically create new functions
-inoremap <c-f> /**<cr> * Jon Phenow (JRP) forgot to change this<cr>*<cr>* @author Jon Phenow <jphenow@jphenow.com><cr>*<cr>* @param   mixed  $changeme<cr>* @return  void<cr><bs>**/<cr><cr>public function  ( ) {<cr><cr>}<esc>kkwwhi
+"inoremap <c-f> /**<cr> * Jon Phenow (JRP) forgot to change this<cr>*<cr>* @author Jon Phenow <jphenow@jphenow.com><cr>*<cr>* @param   mixed  $changeme<cr>* @return  void<cr><bs>**/<cr><cr>public function  ( ) {<cr><cr>}<esc>kkwwhi
 
 " MCG iabbrs
 

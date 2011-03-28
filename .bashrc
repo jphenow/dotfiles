@@ -132,5 +132,6 @@ if [ -x /usr/lib/command-not-found ]; then
 		fi
 	}
 fi
-
-/usr/bin/mint-fortune
+if [ -e "/usr/bin/mint-fortune" ]; then
+	/usr/bin/mint-fortune
+fi
