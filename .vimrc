@@ -172,31 +172,31 @@ set cpo+=d
 set tags=./tags/all
 
 " Allow for easy insertion of standard log statements.
-inoremap <c-l> $GLOBALS['logger']->log( "MNP: ", CW_LOG_DEV );<esc>5bw a
-noremap <c-l> o$GLOBALS['logger']->log( "MNP: ", CW_LOG_DEV );<esc>5bw a
+" inoremap <c-l> $GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
+" noremap <c-l> o$GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
 
 " Grab the previous variable and yank it, drop log_export line below it.
-inoremap <c-x> <esc>l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'MNP: <esc>pa' );<esc>
-noremap <c-x> l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'MNP: <esc>pa' );<esc>
+" inoremap <c-x> <esc>l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'MNP: <esc>pa' );<esc>
+" noremap <c-x> l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'MNP: <esc>pa' );<esc>
 
 " Clockwork sourcery.  Not sure what this is supposed to do...
 " inoremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
 " noremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
 
 " Magically create new functions
-inoremap <c-f> /**<cr> * Mike Phenow (MNP) forgot to change this<cr>*<cr>* @author Mike Phenow <phenow@clockwork.net><cr>*<cr>* @param   mixed  $changeme<cr>* @return  void<cr><bs>**/<cr><cr>public function  ( ) {<cr><cr>}<esc>kkwwhi
+" inoremap <c-f> /**<cr> * Mike Phenow (MNP) forgot to change this<cr>*<cr>* @author Mike Phenow <phenow@clockwork.net><cr>*<cr>* @param   mixed  $changeme<cr>* @return  void<cr><bs>**/<cr><cr>public function  ( ) {<cr><cr>}<esc>kkwwhi
 
 " MCG iabbrs
 
-iabbr log log_debug( );<esc>Bhi
+" iabbr log log_debug( );<esc>Bhi
 
-iabbr echo <?php echo( ); ?><esc>BBhi
+" iabbr echo <?php echo( ); ?><esc>BBhi
 
-iabbr bread <esc>O<esc>O<?php ob_start( ); ?><cr><?php $breadcrumbs = ob_get_clean( ); ?><esc>kA
+" iabbr bread <esc>O<esc>O<?php ob_start( ); ?><cr><?php $breadcrumbs = ob_get_clean( ); ?><esc>kA
 
-iabbr rsbt <esc>O<cr><?php ob_start( ); ?><cr><?php $right_side_bar_top = ob_get_clean( ); ?><esc>kA
+" iabbr rsbt <esc>O<cr><?php ob_start( ); ?><cr><?php $right_side_bar_top = ob_get_clean( ); ?><esc>kA
 
-iabbr rsbb <esc>O<cr><?php ob_start( ); ?><cr><?php $right_side_bar_bottom = ob_get_clean( ); ?><esc>kA
+" iabbr rsbb <esc>O<cr><?php ob_start( ); ?><cr><?php $right_side_bar_bottom = ob_get_clean( ); ?><esc>kA
 
 " Some good ideas from Matt for iabbrs
 " iabbr newlog $GLOBALS['logger']->log( "MG:", CW_LOG_DEV );<esc>T:i
