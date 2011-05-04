@@ -9,7 +9,7 @@ if [ ! -d "$HOME/dot_backup" ]; then
 	done
 fi
 for file in ${dotFiles:4}; do
-	if [ $file != '.git' ]; then
+	if [ $file != '.git' && $file != 'populate_home.sh' ]; then
 		if [ -e "$HOME/$file" ]; then
 			`rm -rf $HOME/$file` > /dev/null
 		fi
