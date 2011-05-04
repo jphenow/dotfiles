@@ -132,8 +132,6 @@ if [ -x /usr/lib/command-not-found ]; then
 		fi
 	}
 fi
-if [ -e "/usr/bin/mint-fortune" ]; then
-fi
 if [ "$HOSTNAME" = "celaeno" ]; then
 	export PATH=$HOME/dev.jphenow.com/directions/cake/console:$PATH
 fi
