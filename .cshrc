@@ -20,4 +20,3 @@ if ( $?prompt ) then
   if ( -e ~/.alias )	source ~/.alias
 
 endif
-exec bash
