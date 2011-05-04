@@ -19,5 +19,4 @@ if ( $?prompt ) then
 
 # Load aliases from ~/.alias
   if ( -e ~/.alias )	source ~/.alias
-
 endif
