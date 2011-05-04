@@ -135,3 +135,6 @@ fi
 if [ -e "/usr/bin/mint-fortune" ]; then
 	/usr/bin/mint-fortune
 fi
+if [ "$HOSTNAME" = "celaeno" ]; then
+	export PATH=$HOME/dev.jphenow.com/directions/cake/console:$PATH
+fi

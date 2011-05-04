@@ -50,6 +50,7 @@ set textwidth=0
 
 " Tweak filetypes
 :autocmd Bufread,BufNewFile *.html* set ft=php
+:autocmd Bufread,BufNewFile *.ctp* set ft=php
 :autocmd Bufread,BufNewFile *.php* set ft=php
 :autocmd Bufread,BufNewFile *.xml* set ft=xml
 :autocmd Bufread,BufNewFile *.sql* set ft=mysql
