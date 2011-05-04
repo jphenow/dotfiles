@@ -2,6 +2,7 @@
 # Luis Francisco González <luisgh@debian.org> based on that of Vadik Vygonets
 # Please check /usr/doc/tcsh/examples/cshrc to see other possible values.
 # DO NOT REMOVE THE FOLLOWING TWO LINES!
+#exec bash
 set defaultsdir=~defaults
 source ${defaultsdir}/linuxpaths
 # source ${HOME}/linuxpaths
