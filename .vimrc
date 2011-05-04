@@ -50,6 +50,7 @@ set textwidth=0
 
 " Tweak filetypes
 :autocmd Bufread,BufNewFile *.html* set ft=php
+:autocmd Bufread,BufNewFile *.ctp* set ft=php
 :autocmd Bufread,BufNewFile *.php* set ft=php
 :autocmd Bufread,BufNewFile *.xml* set ft=xml
 :autocmd Bufread,BufNewFile *.sql* set ft=mysql
@@ -67,8 +68,8 @@ set textwidth=0
 :highlight SpellLocal term=underline cterm=underline
 
 " Save fold status.  TODO: Figure out how to prevent warning messages on * and :help
-au BufWinLeave * mkview
-au BufWinEnter * silent loadview
+"au BufWinLeave * mkview
+"au BufWinEnter * silent loadview
 
 " Shortcuts to vertical- or horizontal-split on filename
 :command Hf :sp <cfile>    " can also be done with CTRL-w f 
