@@ -1,5 +1,19 @@
 " Jon Phenow's .vimrc
 
+" Tell vim to remember certain things when we exit
+"  '10  :  marks will be remembered for up to 10 previously edited files
+"  "100 :  will save up to 100 lines for each register
+"  :20  :  up to 20 lines of command-line history will be remembered
+"  %    :  saves and restores the buffer list
+"  n... :  where to save the viminfo files
+set viminfo='10,\"100,:20,%,n~/.viminfo
+
+" Epix to return the cursor to position of last open session
+if has("autocmd")
+ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+ \| exe "normal g'\"" | endif
+endif
+
 " Enable vim powers
 set nocompatible
 
@@ -19,11 +33,6 @@ set shiftwidth=4
 set noexpandtab
 set autoindent
 
-" Status line:
-set laststatus=2
-" Matt's enhanced status line:
-" set statusline=%F%m%r%h%w\ %30.([ff=%{&ff}/ft=%Y]\ [a=\%03.3b/h=\%02.2B]%)\ %40.((%4l,%4v)\ \ \ \ %3p%%\ \ %LL%)
-
 " Line numbers.  TODO: figure out how to do this conditionally for different filetypes
 " set number -- 
 
@@ -32,7 +41,7 @@ set ignorecase
 set smartcase
 set noincsearch
 set hlsearch
-highlight Search ctermbg=LightGray
+" highlight Search ctermbg=LightGray
 
 " Clear hlsearch highlights
 noremap <F6> :let @/=""<CR>:echo "Highlights Cleared"<CR>
@@ -49,11 +58,14 @@ set mouse=a
 set textwidth=0
 
 " Tweak filetypes
+filetype plugin on
+:autocmd Bufread,BufNewFile *.py* set ft=python
 :autocmd Bufread,BufNewFile *.html* set ft=php
 :autocmd Bufread,BufNewFile *.ctp* set ft=php
 :autocmd Bufread,BufNewFile *.php* set ft=php
 :autocmd Bufread,BufNewFile *.xml* set ft=xml
 :autocmd Bufread,BufNewFile *.sql* set ft=mysql
+:autocmd Bufread,BufNewFile *.java* set ft=java
 
 " Spell checking
 :map <F10> :setlocal spell! spell?<CR>
@@ -68,8 +80,8 @@ set textwidth=0
 :highlight SpellLocal term=underline cterm=underline
 
 " Save fold status.  TODO: Figure out how to prevent warning messages on * and :help
-"au BufWinLeave * mkview
-"au BufWinEnter * silent loadview
+" au BufWinLeave * mkview
+" au BufWinEnter * silent loadview
 
 " Shortcuts to vertical- or horizontal-split on filename
 :command Hf :sp <cfile>    " can also be done with CTRL-w f 
@@ -160,6 +172,7 @@ source ~/.vim/plugin/NERD_tree.vim
 source ~/.vim/plugin/NERD_commenter.vim
 source ~/.vim/plugin/lodgeit.vim
 source ~/.vim/plugin/scmdiff.vim
+source ~/.vim/plugin/fugitive.vim
 
 " Toggle shortcut for NERDTree
 :map <F5> :NERDTreeToggle<CR>
@@ -185,7 +198,7 @@ set tags=./tags/all
 " noremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
 
 " Magically create new functions
-"inoremap <c-f> /**<cr> * Jon Phenow (JRP) forgot to change this<cr>*<cr>* @author Jon Phenow <jphenow@jphenow.com><cr>*<cr>* @param   mixed  $changeme<cr>* @return  void<cr><bs>**/<cr><cr>public function  ( ) {<cr><cr>}<esc>kkwwhi
+inoremap <c-f> /**<cr> * Jon Phenow (JRP) forgot to change this<cr>*<cr>* @author Jon Phenow <jphenow@jphenow.com><cr>*<cr>* @param   mixed  $changeme<cr>* @return  void<cr><bs>**/<cr><cr>public function  ( ) {<cr><cr>}<esc>kkwwhi
 
 " MCG iabbrs
 
@@ -204,49 +217,6 @@ set tags=./tags/all
 " iabbr ife if ( ) {hhhi
 " iabbr switche switch ( ) {hhhi
 " iabbr whilee while ( ) {hhhi
-" iabbr authore author Matt Gray <matt@clockwork.net>
+" iabbr authore author Jon Phenow <j.phenow@gmail.com>
 " iabbr lpushor $GLOBALS['logger']->pushor_level( CW_LOG_DB );
 " iabbr lpoplevel $GLOBALS['logger']->pop_level( );
-" iabbr /* /* */<esc>3ha
-
-" =============================================================================
-" from Matt's .vimrc, but not yet understood:
-
-" set cin
-" set cinkeys=0{,0},0),:,!^F,o,O,e
-" set cino==s
-" set tags=~/vimtags/tags
-" " $ must be a keyword
-" :set iskeyword=@,48-57,_,192-255
-
-" syntax enable
-" " Word wrap off
-" noremap <F11> :set textwidth=0<CR>:echo "Wrapping Off"<CR>
-" " Word wrap on
-" noremap <F10> :set textwidth=72<CR>:echo "Wrapping On"<CR>
-" " Toggle Autoindent
-" noremap <F9> :set autoindent!<CR>:set autoindent?<CR>
-" " Toggle C-style indentation
-" noremap <F8> :set paste!<CR>:set paste?<CR>
-" " Toggle line numbering
-" noremap <F7> :set nu!<CR>:set nu?<CR>
-
-" autocmd BufReadPost *
-" \ if line("'\"") > 0 && line ("'\"") <= line("$") |
-" \   exe "normal g'\"" |
-" \ endif
-
-" iabbr ife if ( ) {hhhi
-" iabbr switche switch ( ) {hhhi
-" iabbr whilee while ( ) {hhhi
-" iabbr authore author Matt Gray <matt@clockwork.net>
-" iabbr lpushorDB $GLOBALS['logger']->pushor_level( CW_LOG_DB );
-" iabbr lpoplevel $GLOBALS['logger']->pop_level( );
-
-" func Eatchar(pat)
-	" let c = nr2char(getchar(0))
-	" return ( c =~ a:pat ) ? '' : c
-" endfunc
-
-" inoremap g $GLOBALS['']<esc>hi
-" noremap  g i$GLOBALS['']<esc>hi
