@@ -19,6 +19,7 @@ set nocompatible
 
 " Highlight the syntax!
 syntax on
+:colorscheme ir_black
 let html_my_rendering = 1
 highlight htmlBold cterm=bold
 highlight htmlBoldUnderline cterm=bold,underline
