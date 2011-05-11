@@ -133,5 +133,9 @@ if [ -x /usr/lib/command-not-found ]; then
 	}
 fi
 if [ "$HOSTNAME" = "celaeno" ]; then
+	# CakePHP Executable
 	export PATH=$HOME/dev.jphenow.com/directions/cake/console:$PATH
+
+	# Node.js install
+	export PATH=$HOME/test/node_install/local/node/bin:$PATH
 fi
