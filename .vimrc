@@ -34,8 +34,9 @@ set shiftwidth=4
 set noexpandtab
 set autoindent
 
-" Line numbers.  TODO: figure out how to do this conditionally for different filetypes
-" set number -- 
+" Line numbers. Turn on at startup, F7 toggle
+:set number
+:map <F7> :set invnumber<CR> 
 
 " Search
 set ignorecase

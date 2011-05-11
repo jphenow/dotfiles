@@ -1,6 +1,9 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_cnt =7
 let g:netrw_dirhist_1='/home/phenow/.mozilla/firefox'
 let g:netrw_dirhist_2='/home/phenow/.vim'
 let g:netrw_dirhist_3='/usr/lib/firefox-addons/searchplugins'
 let g:netrw_dirhist_4='/home/phenow/git/linux-defaults/.vim/ftplugin'
+let g:netrw_dirhist_5='/home/phenow/git/boilerplate/publish/.git'
+let g:netrw_dirhist_6='/etc/apache2/conf.d'
+let g:netrw_dirhist_7='/etc/apache2/sites-enabled'
