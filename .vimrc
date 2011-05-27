@@ -16,6 +16,8 @@ endif
 
 " Enable vim powers
 set nocompatible
+setlocal formatoptions=ctnqro
+setlocal comments+=n:*,n:#
 
 " Highlight the syntax!
 syntax on
