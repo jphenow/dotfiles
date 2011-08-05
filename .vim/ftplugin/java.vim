@@ -80,7 +80,7 @@ inoremap <buffer> <F2> <C-O>A = new <Esc>^yE<End>pA();<CR>
 inoremap <buffer> <F3> <C-O>A = new <Esc>^yE<End>pA();<Left><Left>
 
 " To create a javadoc comment above the current line
-iabbr /* /**<CR>*/<Up><Space>
+iabbr /* /***/<Left><Left><CR><Up><Space>
 
 " Useful when editing javadoc comments
 nnoremap ZR :se formatoptions+=ro<CR>
