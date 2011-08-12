@@ -18,6 +18,7 @@ endif
 set nocompatible
 setlocal formatoptions=ctnqro
 setlocal comments+=n:*,n:#
+set clipboard=unnamed
 
 " Highlight the syntax!
 syntax on
