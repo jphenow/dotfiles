@@ -8,6 +8,8 @@
 "  n... :  where to save the viminfo files
 set viminfo='10,\"100,:20,%,n~/.viminfo
 
+call pathogen#infect()
+
 " Epix to return the cursor to position of last open session
 if has("autocmd")
  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
@@ -22,7 +24,20 @@ set clipboard=unnamed
 
 " Highlight the syntax!
 syntax on
-:colorscheme ir_black
+":colorscheme ir_black
+"see http://ethanschoonover.com/solarized/vim-colors-solarized for
+"further info on options
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1 
+let g:solarized_bold=1 
+let g:solarized_underline=1 
+let g:solarized_italic=1
+if has('gui_running')
+	set background=light
+else
+	set background=dark
+endif
+colorscheme solarized
 let html_my_rendering = 1
 highlight htmlBold cterm=bold
 highlight htmlBoldUnderline cterm=bold,underline
@@ -35,7 +50,6 @@ highlight htmlItalic ctermfg=DarkGray ctermbg=NONE
 set tabstop=4
 set shiftwidth=4
 set noexpandtab
-set autoindent
 
 " Line numbers. Turn on at startup, F7 toggle
 :set number
@@ -63,7 +77,7 @@ set mouse=a
 set textwidth=0
 
 " Tweak filetypes
-filetype plugin on
+filetype plugin indent on
 :autocmd Bufread,BufNewFile *.py* set ft=python
 :autocmd Bufread,BufNewFile *.html* set ft=php
 :autocmd Bufread,BufNewFile *.ctp* set ft=php
