@@ -8,7 +8,38 @@
 "  n... :  where to save the viminfo files
 set viminfo='10,\"100,:20,%,n~/.viminfo
 
-call pathogen#infect()
+" Fix large paste
+set pastetoggle=<F2>
+
+" use ';' rather than ':' for w or wq
+nnoremap ; :
+
+" Fix paragraph
+vmap Q gq
+nmap Q gqap
+
+" Forget arrow keys, bitch
+map <up> <nop>
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+
+" Finally can sudo after a file is openned
+cmap w!! w !sudo tee % >/dev/null
+
+" Be able to scroll wrapped lines of text
+nnoremap j gj
+nnoremap k gk
+
+call pathogen#helptags()
+call pathogen#runtime_append_all_bundles()
+
+" change the mapleader from \ to ,
+let mapleader=","
+
+" Quickly edit/reload the vimrc file
+nmap <silent> <leader>ev :e $MYVIMRC<CR>
+nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
 " Epix to return the cursor to position of last open session
 if has("autocmd")
@@ -46,6 +77,12 @@ highlight htmlUnderline cterm=underline
 highlight htmlUnderlineItalic cterm=underline ctermfg=DarkGray ctermbg=NONE
 highlight htmlItalic ctermfg=DarkGray ctermbg=NONE
 
+"Indents
+set autoindent
+set copyindent
+set shiftround
+set smarttab
+
 " All things tab
 set tabstop=4
 set shiftwidth=4
@@ -78,13 +115,19 @@ set textwidth=0
 
 " Tweak filetypes
 filetype plugin indent on
-:autocmd Bufread,BufNewFile *.py* set ft=python
-:autocmd Bufread,BufNewFile *.html* set ft=php
-:autocmd Bufread,BufNewFile *.ctp* set ft=php
-:autocmd Bufread,BufNewFile *.php* set ft=php
-:autocmd Bufread,BufNewFile *.xml* set ft=xml
-:autocmd Bufread,BufNewFile *.sql* set ft=mysql
-:autocmd Bufread,BufNewFile *.java* set ft=java
+set list
+set listchars=tab:>.,trail:.,extends:#,nbsp:.
+if has('autocomd')
+	:autocmd Bufread,BufNewFile *.py* set ft=python
+	:autocmd Bufread,BufNewFile *.html* set ft=php
+	:autocmd Bufread,BufNewFile *.ctp* set ft=php
+	:autocmd Bufread,BufNewFile *.php* set ft=php
+	:autocmd Bufread,BufNewFile *.xml* set ft=xml
+	:autocmd Bufread,BufNewFile *.sql* set ft=mysql
+	:autocmd Bufread,BufNewFile *.java* set ft=java
+	autocmd filetype python set expandtab
+	autocmd filetype html,xml set listchars-=tab:>.
+endif
 
 " Spell checking
 :map <F10> :setlocal spell! spell?<CR>
@@ -204,6 +247,18 @@ map <c-a> vip:Align<cr>
 set cpo+=d
 set tags=./tags/all
 
+" History
+set history=1000
+set undolevels=1000
+set wildignore=*.swp,*.bak,*.pyc,*.class
+set title
+set visualbell
+set noerrorbells
+
+set nobackup
+set noswapfile
+
+
 " Allow for easy insertion of standard log statements.
 " inoremap <c-l> $GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
 " noremap <c-l> o$GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
@@ -215,9 +270,6 @@ set tags=./tags/all
 " Clockwork sourcery.  Not sure what this is supposed to do...
 " inoremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
 " noremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
-
-" Magically create new functions
-inoremap <c-f> /**<cr> * Jon Phenow (JRP) forgot to change this<cr>*<cr>* @author Jon Phenow <jphenow@jphenow.com><cr>*<cr>* @param   mixed  $changeme<cr>* @return  void<cr><bs>**/<cr><cr>public function  ( ) {<cr><cr>}<esc>kkwwhi
 
 " MCG iabbrs
 
