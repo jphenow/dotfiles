@@ -48,9 +48,9 @@ if ${use_color} ; then
         fi
 
         if [[ ${EUID} == 0 ]] ; then
-                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\h\[\033[01;34m\]$(__git_ps1 "(%s)") \W \$\[\033[00m\] '
+                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\h\[\033[01;34m\]$(git_ps1 "(%s)") \W \$\[\033[00m\] '
         else
-                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[01;34m\]$(__git_ps1 "(%s)") \w \$\[\033[00m\] '
+                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[01;34m\]$(git_ps1 "(%s)") \w \$\[\033[00m\] '
         fi
 
         alias ls='ls --color=auto'
@@ -141,3 +141,15 @@ if [ "$HOSTNAME" = "celaeno" ]; then
 	export PATH=$HOME/test/node_install/local/node/bin:$PATH
 fi
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+git_ps1 ()
+{
+	__git_ps1 1>/dev/null 2>/dev/null
+	err=$?
+	if [ "$err" == "0" ]; then
+		ps=$( __git_ps1 "(%s)" )
+		echo -ne "$ps"
+	else
+		echo -ne ""
+	fi
+}
