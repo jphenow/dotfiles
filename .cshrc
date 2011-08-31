@@ -20,3 +20,6 @@ if ( $?prompt ) then
 # Load aliases from ~/.alias
   if ( -e ~/.alias )	source ~/.alias
 endif
+
+# Added by Jon Phenow jrphenow@csbsju.edu
+set path=( $path ~/.install/bin ) 
