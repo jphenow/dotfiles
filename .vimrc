@@ -125,6 +125,7 @@ if has('autocomd')
 	:autocmd Bufread,BufNewFile *.xml* set ft=xml
 	:autocmd Bufread,BufNewFile *.sql* set ft=mysql
 	:autocmd Bufread,BufNewFile *.java* set ft=java
+	autocmd filetype php set omnifunc=phpcomplete#CompletePHP
 	autocmd filetype python set expandtab
 	autocmd filetype html,xml set listchars-=tab:>.
 endif
