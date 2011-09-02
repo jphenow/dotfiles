@@ -21,7 +21,8 @@ for file in ${dotFiles:4}; do
 		else echo "Trouble with $file"
 		fi
 	elif [ "$file" == '.ssh' ]; then
-		mv $HOME/.ssh/config $HOME/.ssh/config_old
+		mv $HOME/.ssh/config $HOME/.ssh/config_old \
+			> /dev/null # Likely some won't have
 		ln -s $PWD/.ssh/config $HOME/.ssh/config
 		err=$?
 		if [ $err == 0 ]; then
