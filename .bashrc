@@ -2,7 +2,7 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 if [[ "$HOSTNAME" =~ "csbsju" ]]; then
-	source $HOME/ScriptingWork/josh_work/bashrc/linuxpaths
+	source $HOME/linuxpaths
 fi
 
 export TERM="xterm-256color"
