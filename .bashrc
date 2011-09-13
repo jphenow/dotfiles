@@ -3,7 +3,10 @@
 # for examples
 export TERM="xterm-256color"
 
-# If not running interactively, don't do anything
+#Setting time for server reasons
+export TZ="/usr/share/zoneinfo/America/Chicago"
+
+ #If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
 # don't put duplicate lines in the history. See bash(1) for more options
