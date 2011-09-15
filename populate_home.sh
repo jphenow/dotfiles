@@ -35,5 +35,5 @@ echo ""
 echo "Making sure git options set..."
 git config --global user.name "Jon Phenow"
 git config --global user.email "j.phenow@gmail.com"
-git config color.ui true
+git config --global color.ui true
 echo "Git colors and user defaults set"
