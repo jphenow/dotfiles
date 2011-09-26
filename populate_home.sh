@@ -37,3 +37,9 @@ git config --global user.name "Jon Phenow"
 git config --global user.email "j.phenow@gmail.com"
 git config color.ui true
 echo "Git colors and user defaults set"
+
+echo ""
+echo ""
+echo "Ensuring .viminfo writeable"
+chown $USER $HOME/.viminfo # add > /dev/null when tested
+echo ".viminfo accessible for user now"
