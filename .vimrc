@@ -231,11 +231,9 @@ source ~/.vim/plugin/Align.vim
 source ~/.vim/plugin/AlignMaps.vim
 source ~/.vim/plugin/VisualSearch.vim
 source ~/.vim/plugin/CamelCaseMotion.vim
-source ~/.vim/plugin/NERD_tree.vim
 source ~/.vim/plugin/NERD_commenter.vim
 source ~/.vim/plugin/lodgeit.vim
 source ~/.vim/plugin/scmdiff.vim
-source ~/.vim/plugin/fugitive.vim
 
 " Toggle shortcut for NERDTree
 :map <F5> :NERDTreeToggle<CR>

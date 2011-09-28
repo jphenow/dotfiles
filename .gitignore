@@ -1,3 +1,4 @@
 .install/bin/vmd
 .install/lib/
 .vim/view
+*.netrwhist
