@@ -247,9 +247,6 @@ noremap <c-c> :bd<cr>
 inoremap <c-c> <esc>:bd<cr>
 noremap <s-k> :ls<cr>
 
-" Clockwork-specific PHP magic
-" source ~/.vim/clockwork.vim
-
 " Plugins?  Plugins!
 source ~/.vim/plugin/Align.vim
 source ~/.vim/plugin/AlignMaps.vim
