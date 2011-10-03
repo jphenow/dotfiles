@@ -8,6 +8,30 @@
 "  n... :  where to save the viminfo files
 set viminfo='10,\"100,:20,%,n~/.viminfo
 
+set showcmd
+
+set cursorline " highlight current line
+hi cursorline guibg=#333333 " highlight bg color of current line
+hi CursorColumn guibg=#333333 " highlight cursor
+
+if has('cmdline_info')
+	set ruler " show the ruler
+	set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
+	set showcmd " show partial commands in status line and
+	" selected characters/lines in visual mode
+endif
+if has('statusline')
+set laststatus=2
+	" Broken down into easily includeable segments
+	set statusline=%<%f\ " Filename
+	set statusline+=%w%h%m%r " Options
+	set statusline+=%{fugitive#statusline()} " Git Hotness
+	set statusline+=\ [%{&ff}/%Y] " filetype
+	set statusline+=\ [%{getcwd()}] " current dir
+	"set statusline+=\ [A=\%03.3b/H=\%02.2B] " ASCII / Hexadecimal value of char
+	set statusline+=%=%-14.(%l,%c%V%)\ %p%% " Right aligned file nav info
+endif
+
 " Fix large paste
 set pastetoggle=<F2>
 
@@ -223,9 +247,6 @@ noremap <c-c> :bd<cr>
 inoremap <c-c> <esc>:bd<cr>
 noremap <s-k> :ls<cr>
 
-" Clockwork-specific PHP magic
-" source ~/.vim/clockwork.vim
-
 " Plugins?  Plugins!
 source ~/.vim/plugin/Align.vim
 source ~/.vim/plugin/AlignMaps.vim
@@ -256,37 +277,3 @@ set noerrorbells
 
 set nobackup
 set noswapfile
-
-
-" Allow for easy insertion of standard log statements.
-" inoremap <c-l> $GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
-" noremap <c-l> o$GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
-
-" Grab the previous variable and yank it, drop log_export line below it.
-" inoremap <c-x> <esc>l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'JRP: <esc>pa' );<esc>
-" noremap <c-x> l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'JRP: <esc>pa' );<esc>
-
-" Clockwork sourcery.  Not sure what this is supposed to do...
-" inoremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
-" noremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
-
-" MCG iabbrs
-
-" iabbr log log_debug( );<esc>Bhi
-
-" iabbr echo <?php echo( ); ?><esc>BBhi
-
-" iabbr bread <esc>O<esc>O<?php ob_start( ); ?><cr><?php $breadcrumbs = ob_get_clean( ); ?><esc>kA
-
-" iabbr rsbt <esc>O<cr><?php ob_start( ); ?><cr><?php $right_side_bar_top = ob_get_clean( ); ?><esc>kA
-
-" iabbr rsbb <esc>O<cr><?php ob_start( ); ?><cr><?php $right_side_bar_bottom = ob_get_clean( ); ?><esc>kA
-
-" Some good ideas from Matt for iabbrs
-" iabbr newlog $GLOBALS['logger']->log( "MG:", CW_LOG_DEV );<esc>T:i
-" iabbr ife if ( ) {hhhi
-" iabbr switche switch ( ) {hhhi
-" iabbr whilee while ( ) {hhhi
-" iabbr authore author Jon Phenow <j.phenow@gmail.com>
-" iabbr lpushor $GLOBALS['logger']->pushor_level( CW_LOG_DB );
-" iabbr lpoplevel $GLOBALS['logger']->pop_level( );
