@@ -278,37 +278,3 @@ set noerrorbells
 
 set nobackup
 set noswapfile
-
-
-" Allow for easy insertion of standard log statements.
-" inoremap <c-l> $GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
-" noremap <c-l> o$GLOBALS['logger']->log( "JRP: ", CW_LOG_DEV );<esc>5bw a
-
-" Grab the previous variable and yank it, drop log_export line below it.
-" inoremap <c-x> <esc>l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'JRP: <esc>pa' );<esc>
-" noremap <c-x> l?\$<cr>y2w:let @/=""<CR>o$GLOBALS['logger']->log_export( <esc>pa, CW_LOG_DEV, 'JRP: <esc>pa' );<esc>
-
-" Clockwork sourcery.  Not sure what this is supposed to do...
-" inoremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
-" noremap <c-@> l?\$<cr>wyw:let @/=""<CR>o$n_<esc>pi  =  count( $<esc>pi );<CR>for ( $i = 0; $i < $n_<esc>pi; ++$i ) {<CR><esc>
-
-" MCG iabbrs
-
-" iabbr log log_debug( );<esc>Bhi
-
-" iabbr echo <?php echo( ); ?><esc>BBhi
-
-" iabbr bread <esc>O<esc>O<?php ob_start( ); ?><cr><?php $breadcrumbs = ob_get_clean( ); ?><esc>kA
-
-" iabbr rsbt <esc>O<cr><?php ob_start( ); ?><cr><?php $right_side_bar_top = ob_get_clean( ); ?><esc>kA
-
-" iabbr rsbb <esc>O<cr><?php ob_start( ); ?><cr><?php $right_side_bar_bottom = ob_get_clean( ); ?><esc>kA
-
-" Some good ideas from Matt for iabbrs
-" iabbr newlog $GLOBALS['logger']->log( "MG:", CW_LOG_DEV );<esc>T:i
-" iabbr ife if ( ) {hhhi
-" iabbr switche switch ( ) {hhhi
-" iabbr whilee while ( ) {hhhi
-" iabbr authore author Jon Phenow <j.phenow@gmail.com>
-" iabbr lpushor $GLOBALS['logger']->pushor_level( CW_LOG_DB );
-" iabbr lpoplevel $GLOBALS['logger']->pop_level( );
