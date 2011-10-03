@@ -147,7 +147,6 @@ if [ "$HOSTNAME" = "celaeno" ]; then
 	# Node.js install
 	export PATH=$HOME/test/node_install/local/node/bin:$PATH
 fi
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 git_ps1 ()
 {
@@ -160,3 +159,12 @@ git_ps1 ()
 		echo -ne ""
 	fi
 }
+
+# Rails Fucking bullshit ass hole
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+export PATH=/usr/lib/ruby/gems/1.8/bin:$PATH
+export GEM_PATH=/usr/lib/ruby/gems/1.8
+export GEM_HOME=$HOME/.gems
+export RUBYLIB="$HOME/opt/lib:$RUBYLIB"
+
+#alias gem="nice -n19 ~/opt/bin/gem"
