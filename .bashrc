@@ -160,3 +160,4 @@ git_ps1 ()
 		echo -ne ""
 	fi
 }
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
