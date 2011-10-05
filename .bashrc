@@ -159,7 +159,6 @@ git_ps1 ()
 		echo -ne ""
 	fi
 }
-
 # Rails Fucking bullshit ass hole
 #[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 export PATH=/usr/lib/ruby/gems/1.8/bin:$PATH
