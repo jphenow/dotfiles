@@ -178,14 +178,14 @@ endif
 :command Sd :vert diffsplit %:h/.svn/text-base/%:t.svn-base
 
 " Allow tab-completion when not at the beginning of a line
-function InsertTabWrapper()
-      let col = col('.') - 1
-      if !col || getline('.')[col - 1] !~ '\k'
-          return "\<tab>"
-      else
-          return "\<c-n>"
-      endif
-endfunction 
+"function InsertTabWrapper()
+"      let col = col('.') - 1
+"      if !col || getline('.')[col - 1] !~ '\k'
+"          return "\<tab>"
+"      else
+"          return "\<c-n>"
+"      endif
+"endfunction 
 " inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 
 " Configure tab-completion
