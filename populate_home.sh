@@ -33,12 +33,12 @@ done
 gtdot=$HOME/.gconf/apps/gnome-terminal/profiles/Default/%gconf.xml
 if [ -e "$gtdot" ] && \
 	[ ! -h "$gtdot" ]; then
-	echo -e "Moving gnome-terminal configuration to backup in its directory"
+	echo -ne "Moving gnome-terminal configuration to backup in its directory"
 	mv $gtdot ${gtdot}_old
 	echo "done"
-	echo -e "Linking gnome-terminal to git configuration"
+	echo -ne "Linking gnome-terminal to git configuration"
 	ln -s $PWD/gnome-term/%gconf.xml $gtdot
-	echo "dont"
+	echo "done"
 fi
 
 echo ""

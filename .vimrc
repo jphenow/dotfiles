@@ -78,22 +78,20 @@ setlocal comments+=n:*,n:#
 set clipboard=unnamed
 
 " Highlight the syntax!
-syntax enable
-colorscheme solarized
-":colorscheme ir_black
 "see http://ethanschoonover.com/solarized/vim-colors-solarized for
-"further info on options
-let g:solarized_termcolors=256
+set t_Co=256
+syntax enable
+if has('gui_running')
+	set background=light
+else
+	set background=dark
+endif
+colorscheme solarized
 let g:solarized_termtrans=1 
 let g:solarized_bold=1 
 let g:solarized_underline=1 
 let g:solarized_italic=1
 let g:solarized_visibility=1
-if has('gui_running')
-	set background=light
-else
-	set background=light
-endif
 let html_my_rendering = 1
 highlight htmlBold cterm=bold
 highlight htmlBoldUnderline cterm=bold,underline
