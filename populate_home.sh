@@ -10,7 +10,7 @@ if [ ! -d "$HOME/dot_backup" ]; then
 fi
 for file in ${dotFiles:4}; do
 	if [ "$file" != '.git' ] && [ "$file" != 'populate_home.sh' ] \
-		&& [ "$file" != '.ssh' ]; then
+		&& [ "$file" != '.ssh' ] && [ "$file" != "gnome-term" ]; then
 		`rm -rf $HOME/$file` > /dev/null #BE careful with this
 		ln -s $PWD/$file $HOME/ > /dev/null 
 		err=$?

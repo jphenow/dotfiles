@@ -79,17 +79,17 @@ set clipboard=unnamed
 
 " Highlight the syntax!
 "see http://ethanschoonover.com/solarized/vim-colors-solarized for
-set t_Co=256
 syntax enable
+colorscheme solarized
 if has('gui_running')
 	set background=light
 else
-	set background=dark
+	set background=light
 endif
-colorscheme solarized
-let g:solarized_termtrans=1 
-let g:solarized_bold=1 
-let g:solarized_underline=1 
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+let g:solarized_bold=1
+let g:solarized_underline=1
 let g:solarized_italic=1
 let g:solarized_visibility=1
 let html_my_rendering = 1
