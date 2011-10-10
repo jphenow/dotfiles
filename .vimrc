@@ -92,7 +92,7 @@ let g:solarized_visibility=1
 if has('gui_running')
 	set background=light
 else
-	set background=dark
+	set background=light
 endif
 let html_my_rendering = 1
 highlight htmlBold cterm=bold

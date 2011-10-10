@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="font" mtime="1318277085" type="string">
+		<stringvalue>Monospace 10</stringvalue>
+	</entry>
+	<entry name="use_system_font" mtime="1318276860" type="bool" value="false"/>
+	<entry name="bold_color_same_as_fg" mtime="1318275948" type="bool" value="false"/>
+	<entry name="palette" mtime="1318276145" type="string">
+		<stringvalue>#070736364242:#DCDC32322F2F:#858599990000:#B5B589890000:#26268B8BD2D2:#D3D336368282:#2A2AA1A19898:#EEEEE8E8D5D5:#00002B2B3636:#CBCB4B4B1616:#8DB8BFA40996:#D20FAF1D424D:#593282459F25:#C4C46C6CAACA:#9750A1A19393:#FDFDF6F6E3E3</stringvalue>
+	</entry>
+	<entry name="bold_color" mtime="1318276086" type="string">
+		<stringvalue>#417354FD5B35</stringvalue>
+	</entry>
+	<entry name="background_darkness" mtime="1317929324" type="float" value="0.29411765933036804"/>
+	<entry name="background_type" mtime="1267212462" type="string">
+		<stringvalue>solid</stringvalue>
+	</entry>
+	<entry name="use_theme_colors" mtime="1318275948" type="bool" value="false"/>
+	<entry name="visible_name" mtime="1317929324" type="string">
+		<stringvalue>Default</stringvalue>
+	</entry>
+	<entry name="background_color" mtime="1318276285" type="string">
+		<stringvalue>#F8DFEE3FD16A</stringvalue>
+	</entry>
+	<entry name="foreground_color" mtime="1318276080" type="string">
+		<stringvalue>#4A4A646D6DED</stringvalue>
+	</entry>
+</gconf>

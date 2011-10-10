@@ -30,6 +30,17 @@ for file in ${dotFiles:4}; do
 	fi
 done
 
+gtdot=$HOME/.gconf/apps/gnome-terminal/profiles/Default/%gconf.xml
+if [ -e "$gtdot" ] && \
+	[ ! -h "$gtdot" ]; then
+	echo -e "Moving gnome-terminal configuration to backup in its directory"
+	mv $gtdot ${gtdot}_old
+	echo "done"
+	echo -e "Linking gnome-terminal to git configuration"
+	ln -s $PWD/gnome-term/%gconf.xml $gtdot
+	echo "dont"
+fi
+
 echo ""
 echo ""
 echo "Making sure git options set..."
