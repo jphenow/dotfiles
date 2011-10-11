@@ -82,6 +82,7 @@ set clipboard=unnamed
 syntax enable
 call togglebg#map("<F4>")
 let g:solarized_termcolors=256
+let g:solarized_termtrans=0
 colorscheme solarized
 ":colorscheme ir_black
 "see http://ethanschoonover.com/solarized/vim-colors-solarized for
