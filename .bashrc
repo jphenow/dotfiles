@@ -5,8 +5,6 @@ if [[ "$HOSTNAME" =~ "csbsju" ]]; then
 	source $HOME/linuxpaths 2> /dev/null
 fi
 
-export TERM="xterm-256color"
-
 #Setting time for server reasons
 export TZ="/usr/share/zoneinfo/America/Chicago"
 
@@ -85,7 +83,9 @@ fi
 
 # enable color support of ls and also add handy aliases
 if [ "$TERM" != "dumb" ]; then
-    eval "`dircolors -b`"
+	export TERM="xterm-256color"
+	export TERM="screen-256color"       # for a tmux -2 session (also for screen)
+    eval "`dircolors -b ~/.dir_colors`"
     alias ls='ls --color=auto'
     #alias dir='ls --color=auto --format=vertical'
     #alias vdir='ls --color=auto --format=long'

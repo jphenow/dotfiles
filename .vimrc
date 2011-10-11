@@ -78,6 +78,7 @@ setlocal comments+=n:*,n:#
 set clipboard=unnamed
 
 " Highlight the syntax!
+"see http://ethanschoonover.com/solarized/vim-colors-solarized for
 syntax enable
 call togglebg#map("<F4>")
 let g:solarized_termcolors=256
@@ -85,16 +86,18 @@ colorscheme solarized
 ":colorscheme ir_black
 "see http://ethanschoonover.com/solarized/vim-colors-solarized for
 "further info on options
-let g:solarized_termtrans=1 
-let g:solarized_bold=1 
-let g:solarized_underline=1 
+let g:solarized_termtrans=1
+let g:solarized_bold=1
+let g:solarized_underline=1
 let g:solarized_italic=1
 let g:solarized_visibility=1
+
 if has('gui_running')
 	set background=light
 else
-	set background=dark
+	set background=light
 endif
+
 let html_my_rendering = 1
 highlight htmlBold cterm=bold
 highlight htmlBoldUnderline cterm=bold,underline
@@ -180,14 +183,14 @@ endif
 :command Sd :vert diffsplit %:h/.svn/text-base/%:t.svn-base
 
 " Allow tab-completion when not at the beginning of a line
-function InsertTabWrapper()
-      let col = col('.') - 1
-      if !col || getline('.')[col - 1] !~ '\k'
-          return "\<tab>"
-      else
-          return "\<c-n>"
-      endif
-endfunction 
+"function InsertTabWrapper()
+"      let col = col('.') - 1
+"      if !col || getline('.')[col - 1] !~ '\k'
+"          return "\<tab>"
+"      else
+"          return "\<c-n>"
+"      endif
+"endfunction 
 " inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 
 " Configure tab-completion

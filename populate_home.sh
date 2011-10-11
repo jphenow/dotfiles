@@ -10,7 +10,7 @@ if [ ! -d "$HOME/dot_backup" ]; then
 fi
 for file in ${dotFiles:4}; do
 	if [ "$file" != '.git' ] && [ "$file" != 'populate_home.sh' ] \
-		&& [ "$file" != '.ssh' ]; then
+		&& [ "$file" != '.ssh' ] && [ "$file" != "gnome-term" ]; then
 		`rm -rf $HOME/$file` > /dev/null #BE careful with this
 		ln -s $PWD/$file $HOME/ > /dev/null 
 		err=$?
@@ -29,6 +29,17 @@ for file in ${dotFiles:4}; do
 		fi
 	fi
 done
+
+gtdot=$HOME/.gconf/apps/gnome-terminal/profiles/Default/%gconf.xml
+if [ -e "$gtdot" ] && \
+	[ ! -h "$gtdot" ]; then
+	echo -ne "Moving gnome-terminal configuration to backup in its directory"
+	mv $gtdot ${gtdot}_old
+	echo "done"
+	echo -ne "Linking gnome-terminal to git configuration"
+	ln -s $PWD/gnome-term/%gconf.xml $gtdot
+	echo "done"
+fi
 
 echo ""
 echo ""
