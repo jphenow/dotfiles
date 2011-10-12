@@ -84,7 +84,7 @@ fi
 # enable color support of ls and also add handy aliases
 if [ "$TERM" != "dumb" ]; then
 	export TERM="xterm-256color"
-	export TERM="screen-256color"       # for a tmux -2 session (also for screen)
+	#export TERM="screen-256color"       # for a tmux -2 session (also for screen)
     eval "`dircolors -b ~/.dir_colors`"
     alias ls='ls --color=auto'
     #alias dir='ls --color=auto --format=vertical'
