@@ -80,7 +80,7 @@ set clipboard=unnamed
 " Highlight the syntax!
 "see http://ethanschoonover.com/solarized/vim-colors-solarized for
 syntax enable
-let g:solarized_termcolors=256
+"let g:solarized_termcolors=256
 colorscheme solarized
 call togglebg#map("<F4>")
 let g:solarized_termtrans=0
