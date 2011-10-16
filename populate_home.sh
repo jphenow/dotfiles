@@ -12,7 +12,7 @@ for file in ${dotFiles:4}; do
 	if [ "$file" != '.git' ] && [ "$file" != 'populate_home.sh' ] \
 		&& [ "$file" != '.ssh' ] && [ "$file" != "gnome-term" ]; then
 		`rm -rf $HOME/$file` > /dev/null #BE careful with this
-		ln -s $PWD/$file $HOME/ > /dev/null 
+		ln -s $PWD/$file $HOME/ > /dev/null
 		err=$?
 		if [ $err == 0 ]; then
 			echo "$file put in Home"
