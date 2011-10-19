@@ -55,6 +55,7 @@ cmap w!! w !sudo tee % >/dev/null
 nnoremap j gj
 nnoremap k gk
 
+filetype off
 call pathogen#helptags()
 call pathogen#runtime_append_all_bundles()
 
@@ -79,20 +80,21 @@ set clipboard=unnamed
 
 " Highlight the syntax!
 "see http://ethanschoonover.com/solarized/vim-colors-solarized for
-syntax enable
-"let g:solarized_termcolors=256
-colorscheme solarized
-call togglebg#map("<F4>")
-let g:solarized_termtrans=0
-let g:solarized_bold=1
-let g:solarized_underline=1
-let g:solarized_italic=1
-let g:solarized_visibility=1
+set t_Co=256
+if &t_Co >= 256 || has("gui_running")
+	"let g:solarized_termcolors=256
+	colorscheme solarized
+	call togglebg#map("<F4>")
+	let g:solarized_termtrans=1
+	let g:solarized_bold=1
+	let g:solarized_underline=1
+	let g:solarized_italic=1
+	let g:solarized_visibility=1
+endif
 
-if has('gui_running')
+if &t_Co > 2 || has("gui_running")
 	set background=light
-else
-	set background=light
+	syntax on
 endif
 
 let html_my_rendering = 1
