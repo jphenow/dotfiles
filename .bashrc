@@ -167,3 +167,7 @@ export GEM_HOME=$HOME/.gems
 export RUBYLIB="$HOME/opt/lib:$RUBYLIB"
 
 #alias gem="nice -n19 ~/opt/bin/gem"
+
+if [ -f ~/.bash_profile ]; then
+	source ~/.bash_profile
+fi
