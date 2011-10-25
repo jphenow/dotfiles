@@ -5,6 +5,18 @@ if [[ "$HOSTNAME" =~ "csbsju" ]]; then
 	source $HOME/linuxpaths 2> /dev/null
 fi
 
+git_ps1 ()
+{
+	__git_ps1 1>/dev/null 2>/dev/null
+	err=$?
+	if [ "$err" == "0" ]; then
+		ps=$( __git_ps1 "(%s)" )
+		echo -ne "$ps"
+	else
+		echo -ne ""
+	fi
+}
+
 #Setting time for server reasons
 export TZ="/usr/share/zoneinfo/America/Chicago"
 
@@ -85,8 +97,8 @@ fi
 if [ "$TERM" != "dumb" ]; then
 	export TERM="xterm-256color"
 	#export TERM="screen-256color"       # for a tmux -2 session (also for screen)
+	alias ls='ls --color=auto'
     eval "`dircolors -b ~/.dir_colors`"
-    alias ls='ls --color=auto'
     #alias dir='ls --color=auto --format=vertical'
     #alias vdir='ls --color=auto --format=long'
 fi
@@ -124,7 +136,9 @@ PROMPT_COMMAND='history -a'
 #bind '"\t":menu-complete'
 bind '"\C-f":history-search-backward'
 
-export PATH=$HOME/.install/bin:/home/phenow/Android_Screwin/android-sdk-linux_86/tools:/home/phenow/Android_Screwin/android-sdk-linux_86/platform-tools:$PATH
+export PATH=$HOME/.install/bin:$PATH
+# replace if I decide to look into android dev again
+# /home/phenow/Android_Screwin/android-sdk-linux_86/tools:/home/phenow/Android_Screwin/android-sdk-linux_86/platform-tools:
 
 #export mcgsvn=svn+ssh://mnphenow@mnphenow.com/home/mnphenow/mcg/svn
 
@@ -140,31 +154,19 @@ if [ -x /usr/lib/command-not-found ]; then
 		fi
 	}
 fi
-if [ "$HOSTNAME" = "celaeno" ]; then
-	# CakePHP Executable
-	export PATH=$HOME/dev.jphenow.com/directions/cake/console:$PATH
 
+if [ "$HOSTNAME" = "celaeno" ]; then
 	# Node.js install
-	export PATH=$HOME/test/node_install/local/node/bin:$PATH
+	#export PATH=$HOME/test/node_install/local/node/bin:$PATH
+	:
 fi
 
-git_ps1 ()
-{
-	__git_ps1 1>/dev/null 2>/dev/null
-	err=$?
-	if [ "$err" == "0" ]; then
-		ps=$( __git_ps1 "(%s)" )
-		echo -ne "$ps"
-	else
-		echo -ne ""
-	fi
-}
 # Rails Fucking bullshit ass hole
-#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-export PATH=/usr/lib/ruby/gems/1.8/bin:$PATH
-export GEM_PATH=/usr/lib/ruby/gems/1.8
-export GEM_HOME=$HOME/.gems
-export RUBYLIB="$HOME/opt/lib:$RUBYLIB"
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+#export PATH=/usr/lib/ruby/gems/1.8/bin:$PATH
+#export GEM_PATH=/usr/lib/ruby/gems/1.8
+#export GEM_HOME=$HOME/.gems
+#export RUBYLIB="$HOME/opt/lib:$RUBYLIB"
 
 #alias gem="nice -n19 ~/opt/bin/gem"
 
