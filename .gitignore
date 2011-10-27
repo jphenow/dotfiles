@@ -1,6 +1,6 @@
 # Ignore stuff
 vim/vim.symlink/view
-vim/vim.symlink.netrwhist
+vim/vim.symlink/.netrwhist
 ssh/ssh.symlink/*
 
 # But not these ones
