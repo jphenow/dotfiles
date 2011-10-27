@@ -1,4 +1,7 @@
-.install/bin/vmd
-.install/lib/
-.vim/view
-*.netrwhist
+# Ignore stuff
+vim/vim.symlink/view
+vim/vim.symlink.netrwhist
+ssh/ssh.symlink/*
+
+# But not these ones
+ssh/ssh.symlink/config

@@ -1,0 +1,23 @@
+[user]
+	name = Jon Phenow
+	email = j.phenow@gmail.com
+[alias]
+        co = checkout
+        promote = !$DOT/bin/git-promote
+        wtf     = !$DOT/bin/git-wtf
+        rank-contributers = !$DOT/bin/git-rank-contributers
+        count   = !git shortlog -sn
+[color]
+        diff = auto
+        status = auto
+        branch = auto
+[github]
+	user = jphenow
+	token = 09b39a919389507f82fc8221b8ec488a
+[core]
+        excludesfile = ~/.gitignore
+        editor = vim -o 
+[apply]
+        whitespace = nowarn
+[mergetool]
+        keepBackup = false
