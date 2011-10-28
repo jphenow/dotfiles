@@ -12,9 +12,13 @@ subject](http://zachholman.com/2010/08/dotfiles-are-meant-to-be-forked/).
 
 ## install
 
-- `git clone git://github.com/holman/dotfiles ~/.dotfiles`
+- `git clone git://github.com/jphenow/dotfiles ~/git/dotfiles #2nd directory your choice`
 - `cd ~/.dotfiles`
-- FIX zshrc $ZSH var and/or bashrc {$DOT,$ZSH}
+- FIX:
+  * zshrc $ZSH var and
+  * bashrc {$DOT,$ZSH}
+    * These variables will depend on where you cloned to
+    * Will be a wiki on article soon
 - `rake install`
 
 The install rake task will symlink the appropriate files in `.dotfiles` to your
