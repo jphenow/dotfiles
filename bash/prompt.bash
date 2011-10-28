@@ -3,7 +3,55 @@
 # Mine includes Goodness like:
 #  * Colors
 #  * Git branch name
+RESET="\033[0m"
+R="\033[0;31m"
+G="\033[0;32m"
+M="\033[0;35m"
+Y="\033[0;33m"
+git_dirty() {
+  st=$(/usr/bin/git status 2>/dev/null | tail -n 1)
+  if [[ $st == "" ]]
+  then
+    echo ""
+  else
+    if [[ $st == "nothing to commit (working directory clean)" ]]
+    then
+      echo -e "${G}$(git_ps1)${RESET}"
+    else
+      echo -e "${R}$(git_ps1)${RESET}"
+    fi
+  fi
+}
 
+rvm_prompt(){
+  if $(which rvm &> /dev/null)
+  then
+	  echo -e "${Y}$(rvm tools identifier)${RESET}"
+	else
+	  echo ""
+  fi
+}
+
+# This keeps the number of todos always available the right hand side of my
+# command line. I filter it to only count those tagged as "+next", so it's more
+# of a motivation to clear out the list.
+# NOTE: I have changed todo.sh to todo - You may want to either do the same or
+# Fix accordingly below
+todo(){
+  if $(which todo &> /dev/null)
+  then
+    num=$(echo $(todo ls +next | wc -l))
+    let todos=num-2
+    if [ $todos != 0 ]
+    then
+      echo "$todos"
+    else
+      echo ""
+    fi
+  else
+    echo ""
+  fi
+}
 git_ps1 ()
 {
 	__git_ps1 1>/dev/null 2>/dev/null
@@ -44,9 +92,9 @@ if ${use_color} ; then
         fi
 
         if [[ ${EUID} == 0 ]] ; then
-                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\h\[\033[0;36m\]$(git_ps1 "(%s)")\[\033[01;34m\] \W \$\[\033[00m\] '
+                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\h\[\033[0;36m\]$(git_dirty "%s") \[\033[01;34m\] \W \$\[\033[00m\] '
         else
-                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[0;36m\]$(git_ps1 "(%s)")\[\033[01;34m\] \w \$\[\033[00m\] '
+                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h$(git_dirty "%s") \[\033[01;34m\]\w \$\[\033[00m\] '
         fi
 
         alias ls='ls --color=auto'
