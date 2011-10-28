@@ -16,9 +16,9 @@ git_dirty() {
   else
     if [[ $st == "nothing to commit (working directory clean)" ]]
     then
-      echo -e "${G}$(git_ps1)${RESET}"
+      echo -ne "${G}$(git_ps1)${RESET}"
     else
-      echo -e "${R}$(git_ps1)${RESET}"
+      echo -ne "${R}$(git_ps1)${RESET}"
     fi
   fi
 }
@@ -26,7 +26,7 @@ git_dirty() {
 rvm_prompt(){
   if $(which rvm &> /dev/null)
   then
-	  echo -e "${Y}$(rvm tools identifier)${RESET}"
+	  echo -ne "${Y}$(rvm tools identifier)${RESET}"
 	else
 	  echo ""
   fi
