@@ -38,13 +38,13 @@ rvm_prompt(){
 # NOTE: I have changed todo.sh to todo - You may want to either do the same or
 # Fix accordingly below
 todo(){
-  if $(which todo &> /dev/null)
+  if $(which todo.sh &> /dev/null)
   then
-    num=$(echo $(todo ls +next | wc -l))
+    num=$(echo $(todo.sh ls +next | wc -l))
     let todos=num-2
     if [ $todos != 0 ]
     then
-      echo "$todos"
+      echo "[$todos]"
     else
       echo ""
     fi
@@ -92,9 +92,9 @@ if ${use_color} ; then
         fi
 
         if [[ ${EUID} == 0 ]] ; then
-                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\h\[\033[0;36m\]$(git_dirty "%s") \[\033[01;34m\] \W \$\[\033[00m\] '
+          PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\h\[\033[0;36m\]$(git_dirty "%s") \[\033[01;34m\] \W$(todo)\[\033[00m\] '
         else
-                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h$(git_dirty "%s") \[\033[01;34m\]\w \$\[\033[00m\] '
+                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h$(git_dirty "%s") \[\033[01;34m\]\w$(todo)\[\033[00m\] '
         fi
 
         alias ls='ls --color=auto'
