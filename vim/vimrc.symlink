@@ -1,36 +1,36 @@
-" Jon Phenow's .vimrc
+" Jon Phenow's .vmrc
 
-" Tell vim to remember certain things when we exit
-"  '10  :  marks will be remembered for up to 10 previously edited files
-"  "100 :  will save up to 100 lines for each register
-"  :20  :  up to 20 lines of command-line history will be remembered
-"  %    :  saves and restores the buffer list
-"  n... :  where to save the viminfo files
-set viminfo='10,\"100,:20,%,n~/.viminfo
+" Static plugins
+" TODO replace with pathogen autoloads
+source ~/.vim/plugin/Align.vim
+source ~/.vim/plugin/AlignMaps.vim
+source ~/.vim/plugin/VisualSearch.vim
+source ~/.vim/plugin/CamelCaseMotion.vim
+source ~/.vim/plugin/NERD_commenter.vim
+source ~/.vim/plugin/lodgeit.vim
+source ~/.vim/plugin/scmdiff.vim
+source ~/.vim/plugin/gitignore.vim
 
-set showcmd
+filetype off
+call pathogen#helptags()
+call pathogen#runtime_append_all_bundles()
 
-set cursorline " highlight current line
-hi cursorline guibg=#333333 " highlight bg color of current line
-hi CursorColumn guibg=#333333 " highlight cursor
+" Enable vim powers
+set nocompatible
+setlocal formatoptions=ctnqro
+setlocal comments+=n:*,n:#
+set clipboard=unnamed
 
-if has('cmdline_info')
-	set ruler " show the ruler
-	set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
-	set showcmd " show partial commands in status line and
-	" selected characters/lines in visual mode
-endif
-if has('statusline')
-set laststatus=2
-	" Broken down into easily includeable segments
-	set statusline=%<%f\ " Filename
-	set statusline+=%w%h%m%r " Options
-	set statusline+=%{fugitive#statusline()} " Git Hotness
-	set statusline+=\ [%{&ff}/%Y] " filetype
-	set statusline+=\ [%{getcwd()}] " current dir
-	"set statusline+=\ [A=\%03.3b/H=\%02.2B] " ASCII / Hexadecimal value of char
-	set statusline+=%=%-14.(%l,%c%V%)\ %p%% " Right aligned file nav info
-endif
+" ----------------------------------------------------------------------------
+"  Remapping
+" ----------------------------------------------------------------------------
+
+" Toggle shortcut for NERDTree
+:map <F5> :NERDTreeToggle<CR>
+
+" Configure :Align
+call AlignCtrl( 'p1P1l+','=>', '=' )
+map <c-a> vip:Align<cr>
 
 " Fix large paste
 set pastetoggle=<F2>
@@ -55,16 +55,34 @@ cmap w!! w !sudo tee % >/dev/null
 nnoremap j gj
 nnoremap k gk
 
-filetype off
-call pathogen#helptags()
-call pathogen#runtime_append_all_bundles()
 
 " change the mapleader from \ to ,
 let mapleader=","
 
+" exit to normal mode with 'jj'
+inoremap jj <ESC>
+
+" reflow paragraph with Q in normal and visual mode
+nnoremap Q gqap
+vnoremap Q gq
+
 " Quickly edit/reload the vimrc file
 nmap <silent> <leader>ev :e $MYVIMRC<CR>
 nmap <silent> <leader>sv :so $MYVIMRC<CR>
+
+" sane movement with wrap turned on
+if (&textwidth < 50)
+	nnoremap j gj
+	nnoremap k gk
+	vnoremap j gj
+	vnoremap k gk
+	nnoremap <Down> gj
+	nnoremap <Up> gk
+	vnoremap <Down> gj
+	vnoremap <Up> gk
+	inoremap <Down> <C-o>gj
+	inoremap <Up> <C-o>gk
+endif
 
 " Epix to return the cursor to position of last open session
 if has("autocmd")
@@ -72,74 +90,28 @@ if has("autocmd")
  \| exe "normal g'\"" | endif
 endif
 
-" Enable vim powers
-set nocompatible
-setlocal formatoptions=ctnqro
-setlocal comments+=n:*,n:#
-set clipboard=unnamed
-
-" Highlight the syntax!
-"see http://ethanschoonover.com/solarized/vim-colors-solarized for
-set t_Co=256
-if &t_Co >= 256 || has("gui_running")
-	"let g:solarized_termcolors=256
-	colorscheme solarized
-	call togglebg#map("<F4>")
-	let g:solarized_termtrans=1
-	let g:solarized_bold=1
-	let g:solarized_underline=1
-	let g:solarized_italic=1
-	let g:solarized_visibility=1
-endif
-
-if &t_Co > 2 || has("gui_running")
-	set background=light
-	syntax on
-endif
-
-let html_my_rendering = 1
-highlight htmlBold cterm=bold
-highlight htmlBoldUnderline cterm=bold,underline
-highlight htmlBoldUnderlineItalic cterm=bold,underline ctermfg=DarkGray ctermbg=NONE
-highlight htmlUnderline cterm=underline
-highlight htmlUnderlineItalic cterm=underline ctermfg=DarkGray ctermbg=NONE
-highlight htmlItalic ctermfg=DarkGray ctermbg=NONE
-
+" ----------------------------------------------------------------------------
+"  Text Formatting
+" ----------------------------------------------------------------------------
 "Indents
 set autoindent
 set copyindent
+set smartindent
 set shiftround
-set smarttab
 
 " All things tab
+set softtabstop=2          " yep, two
+set shiftwidth=2           " ..
 set tabstop=4
-set shiftwidth=4
-set noexpandtab
-
-" Line numbers. Turn on at startup, F7 toggle
-:set number
-:map <F7> :set invnumber<CR> 
-
-" Search
-set ignorecase
-set smartcase
-set noincsearch
-set hlsearch
-" highlight Search ctermbg=LightGray
+set expandtab              " expand tabs to spaces
+set nosmarttab             " fuck tabs
+set formatoptions+=n       " support for numbered/bullet lists
+"set textwidth=80           " wrap at 80 chars by default
+set textwidth=0
+set virtualedit=block      " allow virtual edit in visual block ..
 
 " Clear hlsearch highlights
 noremap <F6> :let @/=""<CR>:echo "Highlights Cleared"<CR>
-
-" Match my brackets
-set showmatch
-
-" Awesome tab-completion
-" set wildmode=list:longest
-
-" Fix my HID
-set backspace=indent,eol,start
-set mouse=a
-set textwidth=0
 
 " Tweak filetypes
 filetype plugin indent on
@@ -158,6 +130,13 @@ if has('autocomd')
 	autocmd filetype html,xml set listchars-=tab:>.
 endif
 
+let html_my_rendering = 1
+highlight htmlBold cterm=bold
+highlight htmlBoldUnderline cterm=bold,underline
+highlight htmlBoldUnderlineItalic cterm=bold,underline ctermfg=DarkGray ctermbg=NONE
+highlight htmlUnderline cterm=underline
+highlight htmlUnderlineItalic cterm=underline ctermfg=DarkGray ctermbg=NONE
+highlight htmlItalic ctermfg=DarkGray ctermbg=NONE
 
 " Spell checking
 :map <F10> :setlocal spell! spell?<CR>
@@ -181,20 +160,6 @@ endif
 
 " Shortcut to open the SVN base file for the current file
 :command Sd :vert diffsplit %:h/.svn/text-base/%:t.svn-base
-
-" Allow tab-completion when not at the beginning of a line
-"function InsertTabWrapper()
-"      let col = col('.') - 1
-"      if !col || getline('.')[col - 1] !~ '\k'
-"          return "\<tab>"
-"      else
-"          return "\<c-n>"
-"      endif
-"endfunction 
-" inoremap <tab> <c-r>=InsertTabWrapper()<cr>
-
-" Configure tab-completion
-" set completeopt=menu,preview,longest
 
 " Allow for split window expand / collapse using CTRL-j / CTRL-k.  Useful for
 " editing many files in one window, switching back and forth.
@@ -252,21 +217,60 @@ noremap <c-c> :bd<cr>
 inoremap <c-c> <esc>:bd<cr>
 noremap <s-k> :ls<cr>
 
-" Plugins?  Plugins!
-source ~/.vim/plugin/Align.vim
-source ~/.vim/plugin/AlignMaps.vim
-source ~/.vim/plugin/VisualSearch.vim
-source ~/.vim/plugin/CamelCaseMotion.vim
-source ~/.vim/plugin/NERD_commenter.vim
-source ~/.vim/plugin/lodgeit.vim
-source ~/.vim/plugin/scmdiff.vim
+" ----------------------------------------------------------------------------
+"  UI
+" ----------------------------------------------------------------------------
 
-" Toggle shortcut for NERDTree
-:map <F5> :NERDTreeToggle<CR>
+" Tell vim to remember certain things when we exit
+"  '10  :  marks will be remembered for up to 10 previously edited files
+"  "100 :  will save up to 100 lines for each register
+"  :20  :  up to 20 lines of command-line history will be remembered
+"  %    :  saves and restores the buffer list
+"  n... :  where to save the viminfo files
+set viminfo='10,\"100,:20,%,n~/.viminfo
 
-" Configure :Align
-call AlignCtrl( 'p1P1l+','=>', '=' )
-map <c-a> vip:Align<cr>
+set cursorline " highlight current line
+hi cursorline guibg=#333333 " highlight bg color of current line
+hi CursorColumn guibg=#333333 " highlight cursor
+
+if has('cmdline_info')
+	set ruler " show the ruler
+	set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
+	set showcmd " show partial commands in status line and
+	" selected characters/lines in visual mode
+endif
+if has('statusline')
+set laststatus=2
+	" Broken down into easily includeable segments
+	set statusline=%<%f\ " Filename
+	set statusline+=%w%h%m%r " Options
+	set statusline+=%{fugitive#statusline()} " Git Hotness
+	set statusline+=\ [%{&ff}/%Y] " filetype
+	set statusline+=\ [%{getcwd()}] " current dir
+	"set statusline+=\ [A=\%03.3b/H=\%02.2B] " ASCII / Hexadecimal value of char
+	set statusline+=%=%-14.(%l,%c%V%)\ %p%% " Right aligned file nav info
+endif
+
+" Line numbers. Turn on at startup, F7 toggle
+:set number
+:map <F7> :set invnumber<CR> 
+set noshowcmd              " don't display incomplete commands
+set nolazyredraw           " turn off lazy redraw
+set wildmenu               " turn on wild menu
+set wildmode=list:longest,full
+set ch=2                   " command line height
+set backspace=2            " allow backspacing over everything in insert mode
+"set backspace=indent,eol,start
+set whichwrap+=<,>,h,l,[,] " backspace and cursor keys wrap to
+set shortmess=filtIoOA     " shorten messages
+set report=0               " tell us about changes
+set nostartofline          " don't jump to the start of line when scrolling
+
+" Match my brackets
+set showmatch
+
+" Fix my HID
+set mouse=a
 
 " CTags
 set cpo+=d
@@ -282,3 +286,53 @@ set noerrorbells
 
 set nobackup
 set noswapfile
+
+
+" ----------------------------------------------------------------------------
+" Colors
+" ----------------------------------------------------------------------------
+" Highlight the syntax!
+"see http://ethanschoonover.com/solarized/vim-colors-solarized for
+set t_Co=256
+if &t_Co >= 256 || has("gui_running")
+	"let g:solarized_termcolors=256
+	colorscheme solarized
+	call togglebg#map("<F4>")
+	let g:solarized_termtrans=1
+	let g:solarized_bold=1
+	let g:solarized_underline=1
+	let g:solarized_italic=1
+	let g:solarized_visibility=1
+endif
+
+if &t_Co > 2 || has("gui_running")
+	set background=light
+	syntax on
+endif
+
+" ----------------------------------------------------------------------------
+" Visual Cues
+" ----------------------------------------------------------------------------
+
+set showmatch              " brackets/braces that is
+set mat=5                  " duration to show matching brace (1/10 sec)
+
+" Search
+set noincsearch              " do incremental searching
+set laststatus=2           " always show the status line
+set ignorecase             " ignore case when searching
+set nohlsearch             " don't highlight searches
+set visualbell             " shut the fuck up
+"set noincsearch
+"set hlsearch
+" highlight Search ctermbg=LightGray
+
+
+" ---------------------------------------------------------------------------
+"  Strip all trailing whitespace in file
+" ---------------------------------------------------------------------------
+
+function! StripWhitespace ()
+    exec ':%s/ \+$//gc'
+endfunction
+map ,s :call StripWhitespace ()<CR>
