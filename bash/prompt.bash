@@ -1,4 +1,3 @@
-# TODO Cleanup that mess of a color prompt prep
 # Put your fun prompt configs in here
 # Mine includes Goodness like:
 #  * Colors
@@ -9,20 +8,24 @@ G="\033[0;32m"
 M="\033[0;35m"
 Y="\033[0;33m"
 git_dirty() {
-  st=$(/usr/bin/git status 2>/dev/null | tail -n 1)
-  if [[ $st == "" ]]
+  if [[ $GITPROMPT == true ]]
   then
-    echo ""
-  else
-    if [[ $st == "nothing to commit (working directory clean)" ]]
+    st=$(/usr/bin/git status 2>/dev/null | tail -n 1)
+    if [[ $st == "" ]]
     then
-      echo -ne "${G}$(git_ps1)${RESET}"
+      echo ""
     else
-      echo -ne "${R}$(git_ps1)${RESET}"
+      if [[ $st == "nothing to commit (working directory clean)" ]]
+      then
+        echo -ne "${G}$(git_ps1)${RESET}"
+      else
+        echo -ne "${R}$(git_ps1)${RESET}"
+      fi
     fi
   fi
 }
 
+# TODO make easier for anyone to add to prompt
 rvm_prompt(){
   if $(which rvm &> /dev/null)
   then
@@ -38,18 +41,21 @@ rvm_prompt(){
 # NOTE: I have changed todo.sh to todo - You may want to either do the same or
 # Fix accordingly below
 todo(){
-  if $(which todo.sh &> /dev/null)
+  if [[ $TODOPROMPT == true ]]
   then
-    num=$(echo $(todo.sh ls +next | wc -l))
-    let todos=num-2
-    if [ $todos != 0 ]
+    if $(which todo.sh &> /dev/null)
     then
-      echo "[$todos]"
+      num=$(echo $(todo.sh ls +next | wc -l))
+      let todos=num-2
+      if [ $todos != 0 ]
+      then
+        echo "[$todos]"
+      else
+        echo ""
+      fi
     else
       echo ""
     fi
-  else
-    echo ""
   fi
 }
 git_ps1 ()
@@ -72,6 +78,7 @@ use_color=false
 # instead of using /etc/DIR_COLORS.  Try to use the external file
 # first to take advantage of user additions.  Use internal bash
 # globbing instead of external grep binary.
+# TODO Prompt config looks like ass - cleanup
 safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
 match_lhs=""
 [[ -f $DOT/colors/dir_colors   ]] && match_lhs="${match_lhs}$(<$DOT/colors/dir_colors)"

@@ -10,6 +10,11 @@ export ZSH=$DOT
 
 export PROJECTS=~/git
 
+# Change these here if your prompt is slow
+# If its only on certain computers you may change
+# In the domain_specific.bash
+export GITPROMPT=true
+export TODOPROMPT=true
 dfiles=`ls $DOT/**/*.bash`
 
 for config_file in $dfiles
