@@ -10,5 +10,7 @@ if [[ "$HOSTNAME" =~ "csbsju" ]]; then
 	source $HOME/linuxpaths 2> /dev/null
 	export GITPROMPT=false
 	export TODOPROMPT=false
-	export HOME=/net$HOME #Symlink from /net screws with prompt pathing
+	if [[ "$USER" == "itsrsw1" ]]; then
+      export HOME=/net$HOME #Symlink from /net screws with prompt pathing
+    fi
 fi
