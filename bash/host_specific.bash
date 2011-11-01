@@ -10,4 +10,7 @@ if [[ "$HOSTNAME" =~ "csbsju" ]]; then
 	source $HOME/linuxpaths 2> /dev/null
 	export GITPROMPT=false
 	export TODOPROMPT=false
+    if [[ "$(shopt | grep login_shell)" =~ "off" ]];  then
+      export HOME=/net$HOME
+    fi
 fi
