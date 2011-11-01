@@ -84,35 +84,35 @@ match_lhs=""
 [[ -f $DOT/colors/dir_colors   ]] && match_lhs="${match_lhs}$(<$DOT/colors/dir_colors)"
 [[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
 [[ -z ${match_lhs}    ]] \
-        && type -P dircolors >/dev/null \
-        && match_lhs=$(dircolors --print-database)
+  && type -P dircolors >/dev/null \
+  && match_lhs=$(dircolors --print-database)
 [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
 
 if ${use_color} ; then
-        # Enable colors for ls, etc.  Prefer $DOT/colors/dir_colors #64489
-        if type -P dircolors >/dev/null ; then
-                if [[ -f $DOT/colors/dir_colors ]] ; then
-                        eval $(dircolors -b $DOT/colors/dir_colors)
-                elif [[ -f /etc/DIR_COLORS ]] ; then
-                        eval $(dircolors -b /etc/DIR_COLORS)
-                fi
-        fi
+  # Enable colors for ls, etc.  Prefer $DOT/colors/dir_colors #64489
+  if type -P dircolors >/dev/null ; then
+    if [[ -f $DOT/colors/dir_colors ]] ; then
+      eval $(dircolors -b $DOT/colors/dir_colors)
+    elif [[ -f /etc/DIR_COLORS ]] ; then
+      eval $(dircolors -b /etc/DIR_COLORS)
+    fi
+  fi
 
-        if [[ ${EUID} == 0 ]] ; then
-          PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\h\[\033[0;36m\]$(git_dirty "%s") \[\033[01;34m\] \W$(todo)\[\033[00m\] '
-        else
-                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h$(git_dirty "%s") \[\033[01;34m\]\w$(todo)\[\033[00m\] '
-        fi
+  if [[ ${EUID} == 0 ]] ; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\h\[\033[0;36m\]$(git_dirty "%s") \[\033[01;34m\] \W$(todo)\[\033[00m\] '
+  else
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h$(git_dirty "%s") \[\033[01;34m\]\w$(todo)\[\033[00m\] '
+  fi
 
-        alias ls='ls --color=auto'
-        alias grep='grep --colour=auto'
+  alias ls='ls --color=auto'
+  alias grep='grep --colour=auto'
 else
-        if [[ ${EUID} == 0 ]] ; then
-                # show root@ when we don't have colors
-                PS1='\u@\h \W \$ '
-        else
-                PS1='\u@\h \w \$ '
-        fi
+  if [[ ${EUID} == 0 ]] ; then
+    # show root@ when we don't have colors
+    PS1='\u@\h \W \$ '
+  else
+    PS1='\u@\h \w \$ '
+  fi
 fi
 
 # Try to keep environment pollution down, EPA loves us.
