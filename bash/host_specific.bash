@@ -10,7 +10,11 @@ if [[ "$HOSTNAME" =~ "csbsju" ]]; then
 	source $HOME/linuxpaths 2> /dev/null
 	export GITPROMPT=false
 	export TODOPROMPT=false
-    if [[ "$(shopt | grep login_shell)" =~ "off" ]];  then
-      export HOME=/net$HOME
+
+    # Added this because for some reason default location at school
+    # is our physical path, but $HOME dir is the logical path which
+    # all screws up our prompt. This unobstrussively fixes this.
+    if [[ "$(pwd -P)" == "/net"$HOME && "$(pwd -L)" != $HOME ]]; then
+      cd
     fi
 fi
