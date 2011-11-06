@@ -116,7 +116,7 @@ function prompt() {
 
   local ps1='${debian_chroot:+($debian_chroot)}\u@\h\[$(git_color)\]$(__git_ps1 "(%s)" 2>/dev/null)'
   local suffix='\w$(todonum)'
-  export PS1=$(echo '\[$(prompt_color)\]'"$ps1" "\[$DG\]" "$suffix" "\[$RESET\]" ' \n[\!]\$ ');
+  export PS1=$(echo '\n\[$(prompt_color)\]'"$ps1" "\[$DG\]" "$suffix" "\[$RESET\]" ' \n[\!]\$ ');
 
   alias ls='ls --color=auto'
   alias grep='grep --colour=auto'
