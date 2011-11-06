@@ -85,7 +85,7 @@ and I'd love to get it fixed for you!
 ## thanks
 
 I forked [Zach Holman](http://github.com/holman)'s excellent
-[dotfiles](http://github.com/ryanb/dotfiles) just a recently. Its certainly
+[dotfiles](http://github.com/holman/dotfiles) just a recently. Its certainly
 a work in progress as I clean up his OSX tools, insert some of my bash tools
 and organize my own dotfile management, but it already feels better. I
 encourage you to continually look around, update, and contribute.

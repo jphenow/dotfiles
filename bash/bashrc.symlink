@@ -1,6 +1,9 @@
 #!/bin/bash
 ## ~/.bashrc: executed by bash(1) for non-login shells.
 
+ #If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
 # Set var for auto-sourcing fun things with *.bash
 export DOT=$HOME/git/dotfiles
 
@@ -18,8 +21,8 @@ export TODOPROMPT=true
 dfiles=`ls $DOT/**/*.bash`
 
 for config_file in $dfiles
-do 
-	source $config_file
+do
+  source $config_file
 done
 
 unset dfiles # Cleaning house like a baus
@@ -29,13 +32,10 @@ unset dfiles # Cleaning house like a baus
 compfiles=`ls $DOT/**/completion.sh`
 for config_file in $compfiles
 do
-	source $config_file
+  source $config_file
 done
 unset compfiles
 
 # Setting time for server reasons
 # You may wish to remove or set to your time
 export TZ="/usr/share/zoneinfo/America/Chicago"
-
- #If not running interactively, don't do anything
-[ -z "$PS1" ] && return
