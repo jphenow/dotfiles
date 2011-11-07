@@ -8,5 +8,5 @@ completion=/etc/bash_completion.d/git
 # Supressing errors for now - too annoying
 if test -f $completion
 then
-  source $completion 1>/dev/null 2>/dev/null
+  source $completion 2> /dev/null
 fi
