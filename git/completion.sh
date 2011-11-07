@@ -5,7 +5,8 @@
 completion=/etc/bash_completion.d/git
 
 # TODO currently errors on zsh because above refers to bash obviously
+# Supressing errors for now - too annoying
 if test -f $completion
 then
-  source $completion
+  source $completion 2> /dev/null
 fi
