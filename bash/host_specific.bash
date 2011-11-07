@@ -9,7 +9,7 @@
 if [[ "$HOSTNAME" =~ "csbsju" ]]; then
 	source $HOME/linuxpaths 2> /dev/null
 	export GITPROMPT=false
-	export TODOPROMPT=false
+	export PATH=/opt/java-jdk:$PATH
 
     # Added this because for some reason default location at school
     # is our physical path, but $HOME dir is the logical path which

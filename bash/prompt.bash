@@ -5,6 +5,7 @@
 git_color() {
   local R='\e[0;31m'
   local G='\e[0;32m'
+  local C='\e[0;36m'
   if [[ $GITPROMPT == true ]]
   then
     st=$(/usr/bin/git status 2>/dev/null | tail -n 1)
@@ -17,6 +18,8 @@ git_color() {
         echo -e "$R"
       fi
     fi
+  else
+    echo -e "$C"
   fi
 }
 
@@ -85,7 +88,7 @@ function prompt() {
 
   # You want this here
   local use_color=false
-  local RESET='\e[0;0m'
+  local nc='\e[0;0m'
   local M='\e[0;35m'
   local DG='\e[1;34m'
   local DR='\e[1;31m'
@@ -114,9 +117,11 @@ function prompt() {
     fi
   fi
 
-  local ps1='${debian_chroot:+($debian_chroot)}\u@\h\[$(git_color)\]$(__git_ps1 "(%s)" 2>/dev/null)'
-  local suffix='\w$(todonum)'
-  export PS1=$(echo '\n\[$(prompt_color)\]'"$ps1" "\[$DG\]" "$suffix" "\[$RESET\]" ' \n[\!]\$ ');
+  local ps1='${debian_chroot:+($debian_chroot)}\u@\h'
+  local git='\[$(git_color)\]$(__git_ps1 " (%s)" 2>/dev/null)'
+  local dir='\w'
+  local todo='$(todonum)'
+  export PS1=$(echo '\n\[$(prompt_color)\]'"$ps1""$git" "\[$DG\]""$dir" "\[$M\]$todo\[$nc\]" "$(rvm_prompt)" "\[$nc\]" ' \n[\!]\$ ');
 
   alias ls='ls --color=auto'
   alias grep='grep --colour=auto'
