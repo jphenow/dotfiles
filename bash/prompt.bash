@@ -121,7 +121,7 @@ function prompt() {
   local git='\[$(git_color)\]$(__git_ps1 " (%s)" 2>/dev/null)'
   local dir='\w'
   local todo='$(todonum)'
-  export PS1=$(echo '\n\[$(prompt_color)\]'"$ps1""$git" "\[$DG\]""$dir" "\[$M\]$todo\[$nc\]" "$(rvm_prompt)" "\[$nc\]" ' \n[\!]\$ ');
+  export PS1=$(echo '\n\[$(prompt_color)\]'"$ps1""$git" "\[$DG\]""$dir" "\[$M\]$todo\[$nc\]" "$(rvm_prompt)" "\[$nc\]" ' \n[\j]\$ ');
 
   alias ls='ls --color=auto'
   alias grep='grep --colour=auto'
