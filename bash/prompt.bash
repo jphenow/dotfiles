@@ -25,10 +25,9 @@ git_color() {
 
 # TODO make easier for anyone to add to prompt
 rvm_prompt(){
-  local Y='\e[0;33m'
   if $(which rvm &> /dev/null)
   then
-    echo -e "${Y}$(rvm tools identifier)"
+    echo -e "$(rvm tools identifier)"
   else
     echo ""
   fi
@@ -93,6 +92,7 @@ function prompt() {
   local DG='\e[1;34m'
   local DR='\e[1;31m'
   local D='\e[1;32m'
+  local Y='\e[0;33m'
   local safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
   local match_lhs=""
 
@@ -121,7 +121,8 @@ function prompt() {
   local git='\[$(git_color)\]$(__git_ps1 " (%s)" 2>/dev/null)'
   local dir='\w'
   local todo='$(todonum)'
-  export PS1=$(echo '\n\[$(prompt_color)\]'"$ps1""$git" "\[$DG\]""$dir" "\[$M\]$todo\[$nc\]" "$(rvm_prompt)" "\[$nc\]" ' \n[\j]\$ ');
+  local rvm='' #'$(rvm_prompt)' needs speed up
+  export PS1=$(echo '\n\[$(prompt_color)\]'"$ps1""$git" "\[$DG\]""$dir" "\[$M\]$todo\[$nc\]" "\[$Y\]$rvm\[$nc\]"' \n[\j]\$ ');
 
   alias ls='ls --color=auto'
   alias grep='grep --colour=auto'
