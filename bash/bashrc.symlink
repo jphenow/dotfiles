@@ -5,7 +5,10 @@
 [ -z "$PS1" ] && return
 
 # Set var for auto-sourcing fun things with *.bash
-export DOT=$HOME/git/dotfiles
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
+dfiles="$( cd -P "$( dirname "$SOURCE" )"; cd .. && pwd )"
+export DOT=$dfiles
 
 # This is to get some of ZHolman's Goodies without fixing names
 # TODO Fix *.bash to use $DOT instead of $ZSH
