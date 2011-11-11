@@ -73,16 +73,16 @@ nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
 " sane movement with wrap turned on
 if (&textwidth < 50)
-	nnoremap j gj
-	nnoremap k gk
-	vnoremap j gj
-	vnoremap k gk
-	nnoremap <Down> gj
-	nnoremap <Up> gk
-	vnoremap <Down> gj
-	vnoremap <Up> gk
-	inoremap <Down> <C-o>gj
-	inoremap <Up> <C-o>gk
+    nnoremap j gj
+    nnoremap k gk
+    vnoremap j gj
+    vnoremap k gk
+    nnoremap <Down> gj
+    nnoremap <Up> gk
+    vnoremap <Down> gj
+    vnoremap <Up> gk
+    inoremap <Down> <C-o>gj
+    inoremap <Up> <C-o>gk
 endif
 
 " Epix to return the cursor to position of last open session
@@ -119,16 +119,16 @@ filetype plugin indent on
 set list
 set listchars=tab:>.,trail:.,extends:#,nbsp:.
 if has('autocomd')
-	:autocmd Bufread,BufNewFile *.py* set ft=python
-	:autocmd Bufread,BufNewFile *.html* set ft=php
-	:autocmd Bufread,BufNewFile *.ctp* set ft=php
-	:autocmd Bufread,BufNewFile *.php* set ft=php
-	:autocmd Bufread,BufNewFile *.xml* set ft=xml
-	:autocmd Bufread,BufNewFile *.sql* set ft=mysql
-	:autocmd Bufread,BufNewFile *.java* set ft=java
-	autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-	autocmd filetype python set expandtab
-	autocmd filetype html,xml set listchars-=tab:>.
+    :autocmd Bufread,BufNewFile *.py* set ft=python
+    :autocmd Bufread,BufNewFile *.html* set ft=php
+    :autocmd Bufread,BufNewFile *.ctp* set ft=php
+    :autocmd Bufread,BufNewFile *.php* set ft=php
+    :autocmd Bufread,BufNewFile *.xml* set ft=xml
+    :autocmd Bufread,BufNewFile *.sql* set ft=mysql
+    :autocmd Bufread,BufNewFile *.java* set ft=java
+    autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+    autocmd filetype python set expandtab
+    autocmd filetype html,xml set listchars-=tab:>.
 endif
 
 let html_my_rendering = 1
@@ -174,40 +174,40 @@ set hidden
 
 " Begin switch mode code: handle either buffer or window c-j/c-k switches
 function MapForBuffers()
-	noremap <c-j> :only<cr>:bnext<cr>
-	inoremap <c-j> <esc>:only<cr>:bnext<cr>
-	noremap <c-k> :only<cr>:bprev<cr>
-	inoremap <c-k> <esc>:only<cr>:bprev<cr>
-	:only
+    noremap <c-j> :only<cr>:bnext<cr>
+    inoremap <c-j> <esc>:only<cr>:bnext<cr>
+    noremap <c-k> :only<cr>:bprev<cr>
+    inoremap <c-k> <esc>:only<cr>:bprev<cr>
+    :only
 endfunction
 
 function MapForWindows()
-	:unhide
-	noremap <c-j> <c-w>j<c-w>_
-	inoremap <c-j> <esc><c-w>j<c-w>_
-	noremap <c-k> <c-w>k<c-w>_
-	inoremap <c-k> <esc><c-w>k<c-w>_
+    :unhide
+    noremap <c-j> <c-w>j<c-w>_
+    inoremap <c-j> <esc><c-w>j<c-w>_
+    noremap <c-k> <c-w>k<c-w>_
+    inoremap <c-k> <esc><c-w>k<c-w>_
 endfunction
 
 function MapSwitchMode()
-	if g:switchmode == "windows"
-		call MapForWindows()
-	else
-		call MapForBuffers()
-	endif
+    if g:switchmode == "windows"
+        call MapForWindows()
+    else
+        call MapForBuffers()
+    endif
 endfunction
 
 let g:switchmode = "windows"
 call MapSwitchMode()
 
 function ToggleSwitchMode()
-	if g:switchmode == "windows"
-		let g:switchmode = "buffers"
-	else
-		let g:switchmode = "windows"
-	endif
-	call MapSwitchMode()
-	
+    if g:switchmode == "windows"
+        let g:switchmode = "buffers"
+    else
+        let g:switchmode = "windows"
+    endif
+    call MapSwitchMode()
+    
 endfunction
 
 noremap <F4> :call ToggleSwitchMode()<cr>:echo "Switching mode now: " . g:switchmode<cr>
@@ -235,21 +235,21 @@ hi cursorline guibg=#333333 " highlight bg color of current line
 hi CursorColumn guibg=#333333 " highlight cursor
 
 if has('cmdline_info')
-	set ruler " show the ruler
-	set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
-	set showcmd " show partial commands in status line and
-	" selected characters/lines in visual mode
+    set ruler " show the ruler
+    set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
+    set showcmd " show partial commands in status line and
+    " selected characters/lines in visual mode
 endif
 if has('statusline')
 set laststatus=2
-	" Broken down into easily includeable segments
-	set statusline=%<%f\ " Filename
-	set statusline+=%w%h%m%r " Options
-	set statusline+=%{fugitive#statusline()} " Git Hotness
-	set statusline+=\ [%{&ff}/%Y] " filetype
-	set statusline+=\ [%{getcwd()}] " current dir
-	"set statusline+=\ [A=\%03.3b/H=\%02.2B] " ASCII / Hexadecimal value of char
-	set statusline+=%=%-14.(%l,%c%V%)\ %p%% " Right aligned file nav info
+    " Broken down into easily includeable segments
+    set statusline=%<%f\ " Filename
+    set statusline+=%w%h%m%r " Options
+    set statusline+=%{fugitive#statusline()} " Git Hotness
+    set statusline+=\ [%{&ff}/%Y] " filetype
+    set statusline+=\ [%{getcwd()}] " current dir
+    "set statusline+=\ [A=\%03.3b/H=\%02.2B] " ASCII / Hexadecimal value of char
+    set statusline+=%=%-14.(%l,%c%V%)\ %p%% " Right aligned file nav info
 endif
 
 " Line numbers. Turn on at startup, F7 toggle
@@ -296,19 +296,19 @@ set noswapfile
 "see http://ethanschoonover.com/solarized/vim-colors-solarized for
 set t_Co=256
 if &t_Co >= 256 || has("gui_running")
-	"let g:solarized_termcolors=256
-	colorscheme solarized
-	call togglebg#map("<F4>")
-	let g:solarized_termtrans=1
-	let g:solarized_bold=1
-	let g:solarized_underline=1
-	let g:solarized_italic=1
-	let g:solarized_visibility=1
+    "let g:solarized_termcolors=256
+    colorscheme solarized
+    call togglebg#map("<F4>")
+    let g:solarized_termtrans=1
+    let g:solarized_bold=1
+    let g:solarized_underline=1
+    let g:solarized_italic=1
+    let g:solarized_visibility=1
 endif
 
 if &t_Co > 2 || has("gui_running")
-	set background=light
-	syntax on
+    set background=light
+    syntax on
 endif
 
 " ----------------------------------------------------------------------------
