@@ -3,6 +3,7 @@ vim/vim.symlink/view
 vim/vim.symlink/.netrwhist
 ssh/ssh.symlink/*
 todo.txt/todo.symlink/*
+git/gitconfig.symlink
 
 # But not these ones
 !ssh/ssh.symlink/config
