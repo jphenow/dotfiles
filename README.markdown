@@ -17,8 +17,8 @@ subject](http://zachholman.com/2010/08/dotfiles-are-meant-to-be-forked/).
 - FIX:
   * zshrc $ZSH var and
   * bashrc {$DOT,$ZSH}
-    * These variables will depend on where you cloned to
-    * Will be a wiki on article soon
+    + These variables will depend on where you cloned to
+    + Will be a wiki on article soon
 - `rake install`
   * I suggest using the `backup` options for a few reasons noted in the WIKI
 
