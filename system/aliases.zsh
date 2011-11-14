@@ -9,13 +9,12 @@ then
   alias la='gls -A --color'
 else
   alias ls='ls -F --color'
+  alias l='ls -CF'
+  alias ll='ls -lah'
+  alias la='ls -A'
 fi
 
-alias l='ls'
 alias grep='grep --colour=auto'
-alias ll='ls -lah'
-alias la='ls -A'
-alias l='ls -CF'
 alias s='ls'
 alias a='cd ..'
 alias c='cd'
