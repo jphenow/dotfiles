@@ -7,8 +7,7 @@
 # Set var for auto-sourcing fun things with *.bash
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
-dfiles="$( cd -P "$( dirname "$SOURCE" )"; cd .. && pwd )"
-export DOT=$dfiles
+export DOT=$( cd -P "$( dirname "$SOURCE" )"; cd .. && pwd )
 
 # This is to get some of ZHolman's Goodies without fixing names
 # TODO Fix *.bash to use $DOT instead of $ZSH
@@ -21,22 +20,21 @@ export PROJECTS=~/git
 # In the domain_specific.bash
 export GITPROMPT=true
 export TODOPROMPT=true
-dfiles=`ls $DOT/**/*.bash`
 
-for config_file in $dfiles
+for config_file in $DOT/**/*.bash
 do
-  source $config_file
+  . $config_file
 done
-
-unset dfiles # Cleaning house like a baus
 
 # For now these are using bashified versions of completion
 # TODO we should check that files are agnosticized ending in .sh
-compfiles=`ls $DOT/**/completion.sh`
-for config_file in $compfiles
+# NOTE: You can see us redirecting source errors, comment out if you
+# see it as benificial to see such errors
+for config_file in $DOT/**/completion.sh
 do
-  source $config_file
+  . $config_file
 done
+
 unset compfiles
 
 # Setting time for server reasons
