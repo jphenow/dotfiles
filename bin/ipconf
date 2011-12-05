@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mac_addr=`ifconfig eth0 | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
+ip_addr=`ifconfig eth0 | grep -o -E '([[:xdigit:]]{1,3}.){4}[[:xdigit:]]{1,2}'|awk 'NR==2 {print $1}'`
+name=`hostname`
+
+echo -en "$name\n$ip_addr\n$mac_addr\n"
