@@ -1,4 +1,4 @@
-alias r='rvm use 1.9.2'
+alias ru='rvm use 1.9.2'
 
 alias sc='script/console'
 alias sg='script/generate'

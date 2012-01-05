@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+curl -s  "http://www.google.com/finance/historical?q=$1&startdate=jan+1&2c+$2&enddate=dec+31%2c+$2&output=csv&histperiod=weekly" \
+| sed -e '1d' \
+| tac \
+| cut -d, -f5 \
+| spark
