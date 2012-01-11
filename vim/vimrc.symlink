@@ -30,7 +30,7 @@ set clipboard=unnamed
 
 " Configure :Align
 call AlignCtrl( 'p1P1l+','=>', '=' )
-map <c-a> vip:Align<cr>
+"map <c-a> vip:Align<cr>
 
 " Fix large paste
 set pastetoggle=<F2>
