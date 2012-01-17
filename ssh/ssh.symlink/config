@@ -1,24 +1,31 @@
 Host jp
-	HostName jphenow.com
-	User j_phenow
-	ServerAliveInterval 300
+  HostName jphenow.com
+  User j_phenow
+  ServerAliveInterval 300
 
 Host sju
-	HostName ssh.csbsju.edu
-	User itsrsw1
+  HostName ssh.csbsju.edu
+  User itsrsw1
 
 Host jsju
-	HostName ssh.csbsju.edu
-	User jrphenow
+  HostName ssh.csbsju.edu
+  User jrphenow
 
 Host bc
-	HostName direct.blendcloud.com
-	User snufflegus
+  HostName direct.blendcloud.com
+  User snufflegus
 
 Host galway
-	HostName jphenow.dyndns-server.com
-	User phenow
+  HostName jphenow.dyndns-server.com
+  User phenow
 
 Host belfast
-	HostName belfast.jphenow.com
-	User belfast
+  HostName belfast.jphenow.com
+  User belfast
+
+Host gh
+  User git
+  Port 22
+  Hostname github.com
+  TCPKeepAlive yes
+  IdentitiesOnly yes
