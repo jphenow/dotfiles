@@ -1,5 +1,5 @@
 alias grep='grep --colour=auto'
-alias ls='ls -CF --color'
+alias ls='ls -CFG '
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls'

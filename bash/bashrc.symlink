@@ -41,4 +41,4 @@ unset compfiles
 # You may wish to remove or set to your time
 export TZ="/usr/share/zoneinfo/America/Chicago"
 
-[[ -s "/home/phenow/.rvm/scripts/rvm" ]] && source "/home/phenow/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+#[[ -s "/home/phenow/.rvm/scripts/rvm" ]] && source "/home/phenow/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

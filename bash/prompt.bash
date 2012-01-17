@@ -2,10 +2,13 @@
 # Mine includes Goodness like:
 #  * Colors
 #  * Git branch name
+
+. /usr/local/etc/bash_completion.d/git-completion.bash
+
 git_color() {
-  local R='\e[0;31m'
-  local G='\e[0;32m'
-  local C='\e[0;36m'
+  local R="\e[0;31m"
+  local G="\e[0;32m"
+  local C="\e[0;36m"
   if [[ $GITPROMPT == true ]]
   then
     st=$(/usr/bin/git status 2>/dev/null | tail -n 1)
@@ -13,13 +16,13 @@ git_color() {
     then
       if [[ $st == "nothing to commit (working directory clean)" ]]
       then
-        echo -e "$G"
+        echo "$G"
       else
-        echo -e "$R"
+        echo "$R"
       fi
     fi
   else
-    echo -e "$C"
+    echo "$C"
   fi
 }
 
@@ -61,7 +64,7 @@ git_ps1 ()
   __git_ps1 1>/dev/null 2>/dev/null
   err=$?
   if [ "$err" == "0" ]; then
-    echo "$(__git_ps1)"
+    echo -e "`__git_ps1`"
   else
     echo ""
   fi
@@ -69,8 +72,8 @@ git_ps1 ()
 
 trim() { echo $1; }
 function prompt_color() {
-  local DR='\e[1;31m'
-  local D='\e[1;32m'
+  local DR="\e[1;31m"
+  local D="\e[1;32m"
   if [[ ${EUID} == 0 ]] ; then
     echo -e "$DR"
   else
@@ -87,12 +90,12 @@ function prompt() {
 
   # You want this here
   local use_color=false
-  local nc='\e[0;0m'
-  local M='\e[0;35m'
-  local DG='\e[1;34m'
-  local DR='\e[1;31m'
-  local D='\e[1;32m'
-  local Y='\e[0;33m'
+  local nc="\e[0;0m"
+  local M="\e[0;35m"
+  local DG="\e[1;34m"
+  local DR="\e[1;31m"
+  local D="\e[1;32m"
+  local Y="\e[0;33m"
   local safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
   local match_lhs=""
 
@@ -118,14 +121,11 @@ function prompt() {
   fi
 
   local ps1='${debian_chroot:+($debian_chroot)}\u@\h'
-  local git='\[$(git_color)\]$(__git_ps1 " (%s)" 2>/dev/null)'
+  local git='\[${git_color}\]`__git_ps1`'
   local dir='\w'
   local todo='$(todonum)'
   local rvm='' #'$(rvm_prompt)' needs speed up
-  export PS1=$(echo '\n\[$(prompt_color)\]'"$ps1""$git" "\[$DG\]""$dir" "\[$M\]$todo\[$nc\]" "\[$Y\]$rvm\[$nc\]"' \n[\j]\$ ');
-
-  alias ls='ls --color=auto'
-  alias grep='grep --colour=auto'
+  export PS1=$(echo '\n\['"$D"'\]'"$ps1$git" "\[$DG\]""$dir" "\[$M\]$todo\[$nc\]" "\[$Y\]$rvm\[$nc\]"' \n[\j]\$ ');
 }
 
 prompt
