@@ -8,9 +8,9 @@ then
   alias ll="gls -l --color"
   alias la='gls -A --color'
 else
-  alias ls='ls -F --color'
+  alias ls='ls -FCG'
   alias l='ls -CF'
-  alias ll='ls -lah'
+  alias ll='ls -lh'
   alias la='ls -A'
 fi
 
