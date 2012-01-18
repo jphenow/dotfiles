@@ -66,7 +66,7 @@ work() {
 # Used by work() and _work() to determine workspace your projects live in. Set
 # the SHARED_WORKSPACE environment variable if this is not ~/workspace/.
 workspace() {
-  result=$([ -s "$SHARED_WORKSPACE" ] && echo $SHARED_WORKSPACE || echo "~/workspace/")
+  result=$([ -s "$SHARED_WORKSPACE" ] && echo $SHARED_WORKSPACE || echo "$HOME/workspace")
   echo "$result"
 }
 
