@@ -5,7 +5,7 @@ export ZSH=$HOME/git/dotfiles
 export DOT=$ZSH
 
 # your project folder that we can `c [tab]` to
-export PROJECTS=~/Development
+export PROJECTS=~/workspace
 
 # source every .zsh file in this rep
 for config_file ($ZSH/**/*.zsh) source $config_file
@@ -23,3 +23,6 @@ compinit
 
 # load every completion after autocomplete loads
 for config_file ($ZSH/**/completion.sh) source $config_file
+
+# This loads RVM into a shell session.
+[[ -s '/Users/jonphenow/.rvm/scripts/rvm' ]] && . '/Users/jonphenow/.rvm/scripts/rvm'

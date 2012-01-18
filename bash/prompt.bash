@@ -121,7 +121,7 @@ function prompt() {
   fi
 
   local ps1='${debian_chroot:+($debian_chroot)}\u@\h'
-  local git='\[${git_color}\]`__git_ps1`'
+  local git="\[$(git_color)\]`__git_ps1`"
   local dir='\w'
   local todo='$(todonum)'
   local rvm='' #'$(rvm_prompt)' needs speed up

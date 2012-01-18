@@ -8,3 +8,5 @@ git/gitconfig.symlink
 # But not these ones
 !ssh/ssh.symlink/config
 !todo.txt/todo.symlink/config
+
+.DS_Store
