@@ -1,14 +1,21 @@
-# shortcut to this dotfiles path is $ZSH
-export ZSH=$HOME/git/dotfiles
 # Did the same in bash
 # TODO sync these two so we don't have unnecessary vars laying about
-export DOT=$ZSH
+export DOT=$HOME/git/dotfiles
+
+#########################
+###### OH MY ZSH ########
+#########################
+#
+# The only .zsh called outside the loop below, needs to load first
+. $DOT/oh-my-zsh/oh-my-zsh.zsh
 
 # your project folder that we can `c [tab]` to
 export PROJECTS=~/workspace
 
 # source every .zsh file in this rep
-for config_file ($ZSH/**/*.zsh) source $config_file
+for config_file ($DOT/**/*.zsh) do
+  [[ ! "$config_file" =~ "oh-my-zsh" ]] && source $config_file
+done
 
 # use .localrc for SUPER SECRET CRAP that you don't
 # want in your public, versioned repo.
@@ -22,7 +29,7 @@ autoload -U compinit
 compinit
 
 # load every completion after autocomplete loads
-for config_file ($ZSH/**/completion.sh) source $config_file
+for config_file ($DOT/**/completion.sh) source $config_file
 
 #########################
 ### TST Media install ###
@@ -88,6 +95,3 @@ export DYLD_LIBRARY_PATH="/usr/local/mysql/lib/:$DYLD_LIBRARY_PATH"
 ### TST Media install ###
 ####### THE END #########
 #########################
-
-# This loads RVM into a shell session.
-[[ -s '/Users/jonphenow/.rvm/scripts/rvm' ]] && . '/Users/jonphenow/.rvm/scripts/rvm'

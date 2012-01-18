@@ -1,17 +1,17 @@
 export TERM=xterm-256color
 eval "`gdircolors $DOT/colors/dir_colors`" >& /dev/null
-if [[ -n $SSH_CONNECTION ]]; then
-  export PS1='%m:%3~$(git_info_for_prompt)%# '
-else
-  export PS1='%3~$(git_info_for_prompt)%# '
-fi
+#if [[ -n $SSH_CONNECTION ]]; then
+#  export PS1='%m:%3~$(git_info_for_prompt)%# '
+#else
+#  export PS1='%3~$(git_info_for_prompt)%# '
+#fi
 
 export LSCOLORS="exfxcxdxbxegedabagacad"
 export CLICOLOR=true
 
-fpath=($ZSH/zsh/functions $fpath)
+fpath=($DOT/zsh/functions $fpath)
 
-autoload -U $ZSH/zsh/functions/*(:t)
+autoload -U $DOT/zsh/functions/*(:t)
 
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
