@@ -1,6 +1,7 @@
 Host jp
 	HostName jphenow.com
 	User j_phenow
+	IdentityFile jp
 	ServerAliveInterval 300
 
 Host sju
