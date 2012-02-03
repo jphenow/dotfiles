@@ -25,6 +25,9 @@ set clipboard=unnamed
 "  Remapping
 " ----------------------------------------------------------------------------
 
+" Quick shortcut for main sesion store
+nmap SQ <ESC>:mksession! ~/.vim/Session.vim<CR>:wqa<CR>
+
 " Toggle shortcut for NERDTree
 :map <F5> :NERDTreeToggle<CR>
 

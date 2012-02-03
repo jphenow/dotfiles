@@ -33,6 +33,7 @@ git_bundles = [
   "git://github.com/itspriddle/vim-jquery.git",
   "git://github.com/tpope/vim-rvm.git",
   "git://github.com/mileszs/ack.vim.git",
+  "git://github.com/jcf/vim-latex.git",
 ]
 
 vim_org_scripts = [
