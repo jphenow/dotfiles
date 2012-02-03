@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+# Usage: texme [latex_file]
+#
+# will compile a latex file, try to do a
+# bibtex on it then recompile twice
+
+file  = ARGV[0]
+
+if file !~ /.tex$/
+  abort "* LaTeX files ending in .tex only"
+end
+
+`latex #{file}; bibtex #{file.chomp(File.extname(file))}; 2> /dev/null`
+2.times do
+  `latex #{file}`
+end

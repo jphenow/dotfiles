@@ -116,9 +116,9 @@ call s:initVariable("g:NERDTreeMapMenu", "m")
 call s:initVariable("g:NERDTreeMapHelp", "?")
 call s:initVariable("g:NERDTreeMapJumpFirstChild", "K")
 call s:initVariable("g:NERDTreeMapJumpLastChild", "J")
-call s:initVariable("g:NERDTreeMapJumpNextSibling", "<C-j>")
+call s:initVariable("g:NERDTreeMapJumpNextSibling", "C-j")
 call s:initVariable("g:NERDTreeMapJumpParent", "p")
-call s:initVariable("g:NERDTreeMapJumpPrevSibling", "<C-k>")
+call s:initVariable("g:NERDTreeMapJumpPrevSibling", "C-k")
 call s:initVariable("g:NERDTreeMapJumpRoot", "P")
 call s:initVariable("g:NERDTreeMapOpenExpl", "e")
 call s:initVariable("g:NERDTreeMapOpenInTab", "t")
@@ -1920,7 +1920,6 @@ function! s:Opener._gotoTargetWin()
         elseif self._where == 'p'
             call self._previousWindow()
         endif
-
         call self._checkToCloseTree(0)
     endif
 endfunction
@@ -2772,9 +2771,13 @@ function! s:Path._str()
 endfunction
 
 "FUNCTION: Path.strTrunk() {{{3
-"Gets the path without the last segment on the end.
+"Gets the path without the last segment on the end, always with an endslash
 function! s:Path.strTrunk()
-    return self.drive . '/' . join(self.pathSegments[0:-2], '/')
+    let toReturn = self.drive . '/' . join(self.pathSegments[0:-2], '/')
+    if toReturn !~# '\/$'
+        let toReturn .= '/'
+    endif
+    return toReturn
 endfunction
 
 " FUNCTION: Path.tabnr() {{{3
@@ -3956,7 +3959,6 @@ endfunction
 function! s:bindMappings()
     "make <cr> do the same as the default 'o' mapping
     exec "nnoremap <silent> <buffer> <cr> :call <SID>KeyMap_Invoke('". g:NERDTreeMapActivateNode ."')<cr>"
-
     call s:KeyMap.BindAll()
 
     command! -buffer -nargs=? Bookmark :call <SID>bookmarkNode('<args>')
@@ -4238,6 +4240,12 @@ endfunction
 function! s:previewNodeVSplit(node)
     call a:node.open({'stay': 1, 'where': 'v', 'keepopen': 1})
 endfunction
+
+"FUNCTION: s:previewNodeVSplit(node) {{{2
+function! s:previewNodeVSplit(node)
+    call a:node.open({'stay': 1, 'where': 'v'})
+endfunction
+
 
 " FUNCTION: s:revealBookmark(name) {{{2
 " put the cursor on the node associate with the given name
