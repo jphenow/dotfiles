@@ -310,7 +310,7 @@ if &t_Co >= 256 || has("gui_running")
 endif
 
 if &t_Co > 2 || has("gui_running")
-    set background=light
+    set background=dark
     syntax on
 endif
 

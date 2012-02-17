@@ -29,3 +29,7 @@ Host gh
   Hostname github.com
   TCPKeepAlive yes
   IdentitiesOnly yes
+
+Host stat_production
+  Hostname ec2-107-20-240-157.compute-1.amazonaws.com
+  User deploy
