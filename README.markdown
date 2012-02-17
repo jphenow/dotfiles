@@ -1,6 +1,6 @@
 # Jon Phenow's dotfiles
 
-## dotfiles
+## Dotfiles
 
 Your dotfiles are how you personalize your system. These are mine. The 
 Linux, bash, Ruby, Rails, git, rvm, vim, etc., etc.. If you
