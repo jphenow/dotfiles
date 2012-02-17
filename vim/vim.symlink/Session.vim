@@ -1,11 +1,3 @@
-let s:cpo_save=&cpo
-set cpo&vim
-inoremap <silent> <S-Tab> =BackwardsSnippet()
-imap <F4> <Plug>ToggleBackground
-imap <F5> <Plug>ToggleBackground
-inoremap <Up> gk
-inoremap <Down> gj
-map  vip:Align
 noremap  :bd
 map  :set nodiff
 snoremap <silent> 	 i<Right>=TriggerSnippet()
