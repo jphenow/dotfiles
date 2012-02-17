@@ -1,5 +1,3 @@
-let SessionLoad = 1
-if &cp | set nocp | endif
 let s:cpo_save=&cpo
 set cpo&vim
 inoremap <silent> <S-Tab> =BackwardsSnippet()
