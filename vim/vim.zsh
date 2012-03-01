@@ -1,1 +1,2 @@
-alias vs='vim -S ~/.vim/Session.vim'
+alias vim='mvim -v -o'
+alias vs='mvim -v -S ~/.vim/Session.vim'
