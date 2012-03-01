@@ -116,9 +116,9 @@ call s:initVariable("g:NERDTreeMapMenu", "m")
 call s:initVariable("g:NERDTreeMapHelp", "?")
 call s:initVariable("g:NERDTreeMapJumpFirstChild", "K")
 call s:initVariable("g:NERDTreeMapJumpLastChild", "J")
-call s:initVariable("g:NERDTreeMapJumpNextSibling", "C-j")
+call s:initVariable("g:NERDTreeMapJumpNextSibling", "<C-j>")
 call s:initVariable("g:NERDTreeMapJumpParent", "p")
-call s:initVariable("g:NERDTreeMapJumpPrevSibling", "C-k")
+call s:initVariable("g:NERDTreeMapJumpPrevSibling", "<C-k>")
 call s:initVariable("g:NERDTreeMapJumpRoot", "P")
 call s:initVariable("g:NERDTreeMapOpenExpl", "e")
 call s:initVariable("g:NERDTreeMapOpenInTab", "t")
@@ -169,6 +169,7 @@ command! -n=0 -bar NERDTreeClose :call s:closeTreeIfOpen()
 command! -n=1 -complete=customlist,s:completeBookmarks -bar NERDTreeFromBookmark call s:initNerdTree('<args>')
 command! -n=0 -bar NERDTreeMirror call s:initNerdTreeMirror()
 command! -n=0 -bar NERDTreeFind call s:findAndRevealPath()
+command! -n=0 -bar NERDTreeFocus call NERDTreeFocus()
 " SECTION: Auto commands {{{1
 "============================================================
 augroup NERDTree
@@ -1229,7 +1230,6 @@ endfunction
 
 "FUNCTION: TreeFileNode.open() {{{3
 function! s:TreeFileNode.open(...)
-    echomsg self.path.str()
     let opts = a:0 ? a:1 : {}
     let opener = s:Opener.New(self.path, opts)
     call opener.open(self)
@@ -1920,6 +1920,7 @@ function! s:Opener._gotoTargetWin()
         elseif self._where == 'p'
             call self._previousWindow()
         endif
+
         call self._checkToCloseTree(0)
     endif
 endfunction
@@ -2074,6 +2075,10 @@ function! s:Opener._openDirectory(node)
             call s:initNerdTreeInPlace(a:node.path.str())
         endif
     endif
+
+    if self._stay
+        call self._restoreCursorPos()
+    endif
 endfunction
 
 "FUNCTION: Opener._previousWindow() {{{3
@@ -2087,7 +2092,6 @@ function! s:Opener._previousWindow()
             else
                 call s:exec('wincmd p')
             endif
-            exec ("edit " . self._path.str({'format': 'Edit'}))
         catch /^Vim\%((\a\+)\)\=:E37/
             call s:putCursorInTreeWin()
             throw "NERDTree.FileAlreadyOpenAndModifiedError: ". self._path.str() ." is already open and modified."
@@ -2771,13 +2775,9 @@ function! s:Path._str()
 endfunction
 
 "FUNCTION: Path.strTrunk() {{{3
-"Gets the path without the last segment on the end, always with an endslash
+"Gets the path without the last segment on the end.
 function! s:Path.strTrunk()
-    let toReturn = self.drive . '/' . join(self.pathSegments[0:-2], '/')
-    if toReturn !~# '\/$'
-        let toReturn .= '/'
-    endif
-    return toReturn
+    return self.drive . '/' . join(self.pathSegments[0:-2], '/')
 endfunction
 
 " FUNCTION: Path.tabnr() {{{3
@@ -2890,6 +2890,10 @@ function! s:createDefaultBindings()
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreview, 'scope': "Node", 'callback': s."previewNodeCurrent" })
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreviewVSplit, 'scope': "Node", 'callback': s."previewNodeVSplit" })
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreviewSplit, 'scope': "Node", 'callback': s."previewNodeHSplit" })
+
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreview, 'scope': "Bookmark", 'callback': s."previewNodeCurrent" })
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreviewVSplit, 'scope': "Bookmark", 'callback': s."previewNodeVSplit" })
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreviewSplit, 'scope': "Bookmark", 'callback': s."previewNodeHSplit" })
 
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapOpenRecursively, 'scope': "DirNode", 'callback': s."openNodeRecursively" })
 
@@ -3257,6 +3261,14 @@ endfunction
 
 function! NERDTreeRender()
     call s:renderView()
+endfunction
+
+function! NERDTreeFocus()
+    if s:isTreeOpen()
+        call s:putCursorInTreeWin()
+    else
+        call s:toggle("")
+    endif
 endfunction
 
 " SECTION: View Functions {{{1
@@ -3959,6 +3971,7 @@ endfunction
 function! s:bindMappings()
     "make <cr> do the same as the default 'o' mapping
     exec "nnoremap <silent> <buffer> <cr> :call <SID>KeyMap_Invoke('". g:NERDTreeMapActivateNode ."')<cr>"
+
     call s:KeyMap.BindAll()
 
     command! -buffer -nargs=? Bookmark :call <SID>bookmarkNode('<args>')
@@ -4240,12 +4253,6 @@ endfunction
 function! s:previewNodeVSplit(node)
     call a:node.open({'stay': 1, 'where': 'v', 'keepopen': 1})
 endfunction
-
-"FUNCTION: s:previewNodeVSplit(node) {{{2
-function! s:previewNodeVSplit(node)
-    call a:node.open({'stay': 1, 'where': 'v'})
-endfunction
-
 
 " FUNCTION: s:revealBookmark(name) {{{2
 " put the cursor on the node associate with the given name

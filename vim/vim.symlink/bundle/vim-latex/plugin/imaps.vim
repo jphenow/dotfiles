@@ -498,7 +498,7 @@ vmap <silent> <Plug>IMAP_JumpBack          <C-\><C-N>`<i<c-r>=IMAP_Jumpfunc('b',
 "		vmap <C-J> <Plug>IMAP_DeleteAndJumpForward
 "	endif
 "endif
-"" }}}
+" }}}
 
 nmap <silent> <script> <plug><+SelectRegion+> `<v`>
 
