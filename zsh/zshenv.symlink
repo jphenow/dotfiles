@@ -2,3 +2,5 @@
 [[ -s '/Users/jonphenow/.rvm/scripts/rvm' ]] && . '/Users/jonphenow/.rvm/scripts/rvm'
 
 skip_global_compinit=1
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
