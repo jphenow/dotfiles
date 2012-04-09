@@ -12,7 +12,7 @@ source ~/.vim/plugin/scmdiff.vim
 source ~/.vim/plugin/gitignore.vim
 
 filetype off
-call pathogen#helptags()
+call pathogen#infect()
 call pathogen#runtime_append_all_bundles()
 
 " Enable vim powers
@@ -340,3 +340,35 @@ function! StripWhitespace ()
     exec ':%s/ \+$//gc'
 endfunction
 map ,s :call StripWhitespace ()<CR>
+
+" ---------------------------------------------------------------------------
+"  Command-T
+" ---------------------------------------------------------------------------
+
+let g:CommandTMaxHeight=5
+let g:CommandTMatchWindowReverse=1
+map <silent> <Leader>t :CommandT<cr>
+map <silent> <Leader>gm :CommandT app/models<cr>
+map <silent> <Leader>gc :CommandT app/controllers<cr>
+map <silent> <Leader>gv :CommandT app/views<cr>
+map <silent> <Leader>gh :CommandT app/helpers<cr>
+map <silent> <Leader>gl :CommandT lib<cr>
+map <silent> <Leader>gp :CommandT public<cr>
+map <silent> <Leader>gt :CommandT test<cr>
+map <silent> <Leader>gs :CommandT spec<cr>
+map <silent> <Leader>gd :CommandT db<cr>
+map <silent> <Leader>gC :CommandT config<cr>
+map <silent> <Leader>gV :CommandT vendor<cr>
+map <silent> <Leader>gF :CommandT factories<cr>
+
+function! InsertTabWrapper()
+  let col = col('.') - 1
+  if !col || getline('.')[col - 1] !~ '\k'
+    return "\<tab>"
+  else
+    return "\<c-n>"
+  endif
+endfunction
+" Tab wrapper
+imap <silent> <tab> <c-r>=InsertTabWrapper()<CR>
+imap <silent> <s-tab> <c-p>
