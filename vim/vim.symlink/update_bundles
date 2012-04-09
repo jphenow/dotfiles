@@ -36,6 +36,7 @@ git_bundles = [
   "git://github.com/jcf/vim-latex.git",
   "git://github.com/vim-scripts/vimspell.git",
   "git://github.com/wincent/Command-T.git",
+  "git://github.com/gregsexton/MatchTag.git",
 ]
 
 vim_org_scripts = [
