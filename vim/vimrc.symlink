@@ -159,11 +159,8 @@ highlight htmlItalic ctermfg=DarkGray ctermbg=NONE
 " au BufWinEnter * silent loadview
 
 " Shortcuts to vertical- or horizontal-split on filename
-:command Hf :sp <cfile>    " can also be done with CTRL-w f 
+:command Hf :sp <cfile>    " can also be done with CTRL-w f
 :command Vf :vsp <cfile>
-
-" Shortcut to open the SVN base file for the current file
-:command Sd :vert diffsplit %:h/.svn/text-base/%:t.svn-base
 
 " Allow for split window expand / collapse using CTRL-j / CTRL-k.  Useful for
 " editing many files in one window, switching back and forth.
@@ -200,8 +197,13 @@ function MapSwitchMode()
     endif
 endfunction
 
-let g:switchmode = "windows"
-call MapSwitchMode()
+let g:switchmode = "buffers"
+
+" Same as MapForBuffers but calling ":only" blows up on start-up
+noremap <c-j> :only<cr>:bnext<cr>
+inoremap <c-j> <esc>:only<cr>:bnext<cr>
+noremap <c-k> :only<cr>:bprev<cr>
+inoremap <c-k> <esc>:only<cr>:bprev<cr>
 
 function ToggleSwitchMode()
     if g:switchmode == "windows"
@@ -210,7 +212,6 @@ function ToggleSwitchMode()
         let g:switchmode = "windows"
     endif
     call MapSwitchMode()
-    
 endfunction
 
 noremap <F4> :call ToggleSwitchMode()<cr>:echo "Switching mode now: " . g:switchmode<cr>
@@ -257,7 +258,7 @@ endif
 
 " Line numbers. Turn on at startup, F7 toggle
 :set number
-:map <F7> :set invnumber<CR> 
+:map <F7> :set invnumber<CR>
 set noshowcmd              " don't display incomplete commands
 set nolazyredraw           " turn off lazy redraw
 set wildmenu               " turn on wild menu
@@ -336,16 +337,16 @@ set visualbell             " shut the fuck up
 "  Strip all trailing whitespace in file
 " ---------------------------------------------------------------------------
 
-function! StripWhitespace ()
+function StripWhitespace()
     exec ':%s/ \+$//gc'
 endfunction
-map ,s :call StripWhitespace ()<CR>
+map <s-s> :call StripWhitespace()<CR>
 
 " ---------------------------------------------------------------------------
 "  Command-T
 " ---------------------------------------------------------------------------
 
-let g:CommandTMaxHeight=5
+let g:CommandTMaxHeight=15
 let g:CommandTMatchWindowReverse=1
 map <silent> <Leader>t :CommandT<cr>
 map <silent> <Leader>gm :CommandT app/models<cr>
