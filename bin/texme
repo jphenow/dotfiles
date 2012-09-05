@@ -10,7 +10,7 @@ if file !~ /.tex$/
   abort "* LaTeX files ending in .tex only"
 end
 
-`latex #{file}; bibtex #{file.chomp(File.extname(file))}; 2> /dev/null`
+`pdflatex #{file}; bibtex #{file.chomp(File.extname(file))}; 2> /dev/null`
 2.times do
-  `latex #{file}`
+  `pdflatex #{file}`
 end
