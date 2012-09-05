@@ -233,6 +233,10 @@ For this, set some variables in your .vimrc. E.g.: >
   let g:ruby_debugger_spec_path = 'c:\gembins\spec'         " set Rspec path
   let g:ruby_debugger_cucumber_path = 'c:\gembins\cucumber' " set Cucumber path
 
+A single rspec test can be invoked by RdbTestSingle which will invoke rspec
+and pass the current line to rspec via "-l" argument to rspec.  For Cucumber
+and Test::Unit all tests/features are run.
+
 ==============================================================================
 RUBY 1.9 AND RAILS 3				*ruby-debugger-ruby19*
 
@@ -317,6 +321,11 @@ interface.
 in your .vimrc, and then open the new issue in Github Issue Tracker
 (or write email to me) and attach ~/.vim/tmp/ruby_debugger_log file.
 
+5. Sometimes the default key bindings can conflict with the key bindings of
+other plugins. In this case you may want to disable the default bindings of
+vim-ruby-debugger and assign your own bindings. For that, use this: >
+  let g:ruby_debugger_no_maps = 1
+in your .vimrc, and then you can specify your own bindings
 
 ==============================================================================
 BUGS					*ruby-debugger-bugs*

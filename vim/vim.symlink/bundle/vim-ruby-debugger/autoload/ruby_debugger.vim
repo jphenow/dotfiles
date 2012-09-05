@@ -692,10 +692,11 @@ endfunction
 
 
 " Debug current opened test
-function! RubyDebugger.run_test() dict
+function! RubyDebugger.run_test(...) dict
   let file = s:get_filename()
   if file =~ '_spec\.rb$'
-    call g:RubyDebugger.start(g:ruby_debugger_spec_path . ' ' . file)
+    let line = a:0 && a:0 > 0 && !empty(a:1) ? a:1 : " "
+    call g:RubyDebugger.start(g:ruby_debugger_spec_path . ' ' . file . line)
   elseif file =~ '\.feature$'
     call g:RubyDebugger.start(g:ruby_debugger_cucumber_path . ' ' . file)
   elseif file =~ '_test\.rb$'
@@ -2033,6 +2034,9 @@ if !exists("g:ruby_debugger_progname")
 endif
 if !exists("g:ruby_debugger_default_script")
   let g:ruby_debugger_default_script = 'script/server webrick'
+endif
+if !exists("g:ruby_debugger_no_maps")
+  let g:ruby_debugger_no_maps = 0
 endif
 
 " Creating windows

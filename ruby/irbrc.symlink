@@ -32,7 +32,7 @@ class Object
 end
 
 def me
-  User.find_by_login('jphenow')
+  User.find_by_user_name('jonphenow')
 end
 
 def r
