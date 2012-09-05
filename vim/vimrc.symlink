@@ -94,6 +94,87 @@ if has("autocmd")
  \| exe "normal g'\"" | endif
 endif
 
+" Rename current file
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'))
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+:command! RenameFile :call RenameFile()
+map <leader>q :RenameFile<cr>
+
+" Promot Variable to Rspec let
+function! PromoteToLet()
+  :normal! dd
+  :normal! P
+  :.s/\(\w\+\) = \(.*\)$/let(:\1) { \2 }/
+  :normal ==
+endfunction
+:command! PromoteToLet :call PromoteToLet()
+:map <leader>p :PromoteToLet<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" RUNNING TESTS DESTROY ALL SOFTWARE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! RunTestFile(...)
+  if a:0
+    let command_suffix = a:1
+  else
+    let command_suffix = ""
+  endif
+
+  " Run the tests for the previously-marked file.
+  let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\)$') != -1
+  if in_test_file
+    call SetTestFile()
+  elseif !exists("t:grb_test_file")
+    return
+  end
+  call RunTests(t:grb_test_file . command_suffix)
+endfunction
+
+function! RunNearestTest()
+  let spec_line_number = line('.')
+  call RunTestFile(":" . spec_line_number . " -b")
+endfunction
+
+function! SetTestFile()
+  " Set the spec file that tests will be run for.
+  let t:grb_test_file=@%
+endfunction
+
+function! RunTests(filename)
+  " Write the file and run tests for the given filename
+  :w
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  if match(a:filename, '\.feature$') != -1
+    exec ":!script/features " . a:filename
+  else
+    if filereadable("script/test")
+      exec ":!script/test " . a:filename
+    elseif filereadable("Gemfile")
+      exec ":!bundle exec rspec --color " . a:filename
+    else
+      exec ":!rspec --color " . a:filename
+    end
+  end
+endfunction
+map <leader>r :call RunTestFile()<cr>
+map <leader>R :call RunNearestTest()<cr>
+map <leader>a :call RunTests('')<cr>
+map <leader>A :w\|:!script/features<cr>
+map <leader>w :w\|:!script/features --profile wip<cr>
+
+
 " ----------------------------------------------------------------------------
 "  Text Formatting
 " ----------------------------------------------------------------------------
@@ -116,6 +197,7 @@ set virtualedit=block      " allow virtual edit in visual block ..
 
 " Clear hlsearch highlights
 noremap <F6> :let @/=""<CR>:echo "Highlights Cleared"<CR>
+:nnoremap <CR> :nohlsearch<cr>
 
 " Tweak filetypes
 filetype plugin indent on
@@ -166,7 +248,12 @@ highlight htmlItalic ctermfg=DarkGray ctermbg=NONE
 " editing many files in one window, switching back and forth.
 map <c-j> <c-w>j<c-w>_
 map <c-k> <c-w>k<c-w>_
+imap <c-l> <space>=><space>
 set winminheight=0
+
+" RUBY DEBUGGER
+let g:ruby_debugger_progname = 'mvim'
+let g:ruby_debugger_no_maps = 1
 
 " Amendment to the window-switching tip above.  This allows them
 " to be hidden out of sight for more real estate.
@@ -217,7 +304,17 @@ endfunction
 noremap <F4> :call ToggleSwitchMode()<cr>:echo "Switching mode now: " . g:switchmode<cr>
 " End switch mode code
 
+function DeleteHiddenBuffers()
+    let tpbl=[]
+    call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
+    for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
+        silent execute 'bwipeout' buf
+    endfor
+endfunction
+
 " Handy buffer shortcuts
+noremap <c-p> :call DeleteHiddenBuffers()<cr>
+inoremap <c-p> <esc>:call DeleteHiddenBuffers()<cr>
 noremap <c-c> :bd<cr>
 inoremap <c-c> <esc>:bd<cr>
 noremap <s-k> :ls<cr>
@@ -326,7 +423,7 @@ set mat=5                  " duration to show matching brace (1/10 sec)
 set noincsearch              " do incremental searching
 set laststatus=2           " always show the status line
 set ignorecase             " ignore case when searching
-set nohlsearch             " don't highlight searches
+set hlsearch             " don't highlight searches
 set visualbell             " shut the fuck up
 "set noincsearch
 "set hlsearch
@@ -352,7 +449,7 @@ map <silent> <Leader>t :CommandT<cr>
 map <silent> <Leader>gm :CommandT app/models<cr>
 map <silent> <Leader>gc :CommandT app/controllers<cr>
 map <silent> <Leader>gv :CommandT app/views<cr>
-map <silent> <Leader>gh :CommandT app/helpers<cr>
+map <silent> <Leader>ge :CommandT app/helpers<cr>
 map <silent> <Leader>gl :CommandT lib<cr>
 map <silent> <Leader>gp :CommandT public<cr>
 map <silent> <Leader>gt :CommandT test<cr>
@@ -361,6 +458,9 @@ map <silent> <Leader>gd :CommandT db<cr>
 map <silent> <Leader>gC :CommandT config<cr>
 map <silent> <Leader>gV :CommandT vendor<cr>
 map <silent> <Leader>gF :CommandT factories<cr>
+map <silent> <Leader>gh :CommandT ~/<cr>
+map <silent> <Leader>gr :CommandT /<cr>
+map <silent> <Leader>z :CommandTFlush<cr>
 
 function! InsertTabWrapper()
   let col = col('.') - 1
@@ -373,3 +473,76 @@ endfunction
 " Tab wrapper
 imap <silent> <tab> <c-r>=InsertTabWrapper()<CR>
 imap <silent> <s-tab> <c-p>
+
+map <C-F> :Ack<space><C-r><C-w>
+
+map <c-w>d :%s/\s*$//g \| :nohlsearch<cr>
+
+nnoremap <F8> :NumbersToggle<CR>
+
+" Bda -  Delete all open buffers.
+command! -nargs=0 -bang Bda
+      \ :call BufDeleteAll('<bang>')
+function! BufDeleteAll(bang)
+  let last_buffer = bufnr('$')
+  let n = 1
+  while n <= last_buffer
+    if a:bang == '' && getbufvar(n, '&modified')
+      echohl ErrorMsg
+      echomsg 'No write since last change for buffer'
+            \ n '(add ! to override)'
+      echohl None
+      return 0
+    endif
+    let n = n+1
+  endwhile
+
+  let delete_count = 0
+  let n = 1
+  while n <= last_buffer
+    if buflisted(n)
+      silent exe 'bdel' . a:bang . ' ' . n
+      if ! buflisted(n)
+        let delete_count = delete_count+1
+      endif
+    endif
+    let n = n+1
+  endwhile
+
+  if delete_count == 1
+    echomsg delete_count "buffer deleted"
+  elseif delete_count > 1
+    echomsg delete_count "buffers deleted"
+  endif
+endfunction
+
+map <leader>a :Bda<cr>
+map <leader>o :w\|:!rake spec<cr>
+
+" Want to turn fooBar into foo_bar? Press crs (coerce to snake_case). MixedCase
+" (crm), camelCase (crc), snake_case (crs), and UPPER_CASE (cru) are all just 3
+" keystrokes away. These commands support repeat.vim.
+" Courtesy of vim-abolish
+
+" Default Ruby-Conque Maps
+"nmap <silent> <Leader>rcrr :call RunRubyCurrentFileConque()<CR>
+"nmap <silent> <Leader>rcss :call RunRspecCurrentFileConque()<CR>
+"nmap <silent> <Leader>rcll :call RunRspecCurrentLineConque()<CR>
+"nmap <silent> <Leader>rccc :call RunCucumberCurrentFileConque()<CR>
+"nmap <silent> <Leader>rccl :call RunCucumberCurrentLineConque()<CR>
+"nmap <silent> <Leader>rcRR :call RunRakeConque()<CR>
+"nmap <silent> <Leader>rcrl :call RunLastConqueCommand()<CR>
+
+"nnoremap <silent> <C-s> :call RelatedSpecVOpen()<CR>
+"nnoremap <silent> ,<C-s> :call RelatedSpecOpen()<CR>
+
+" Cmd-Shift-R for RSpec
+nmap <silent> <D-R> :call RunRspecCurrentFileConque()<CR>
+" Cmd-Shift-L for RSpec Current Line
+nmap <silent> <D-L> :call RunRspecCurrentLineConque()<CR>
+" ,Cmd-R for Last conque command
+nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
+
+" Fix poor spec-file highlight finder
+autocmd BufRead *_spec.rb syn keyword rubyRspec describe context it specify it_should_behave_like before after setup subject its shared_examples_for shared_context let
+highlight def link rubyRspec Function
