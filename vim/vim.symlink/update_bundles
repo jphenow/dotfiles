@@ -34,14 +34,13 @@ git_bundles = %w[
   git://github.com/wincent/Command-T.git
   git://github.com/gregsexton/MatchTag.git
   git://github.com/scrooloose/nerdcommenter.git
+  https://github.com/myusuf3/numbers.vim.git
   https://github.com/Lokaltog/vim-powerline.git
   git://github.com/tpope/vim-abolish.git
   git://github.com/tpope/vim-speeddating.git
   git://github.com/rson/vim-conque.git
   git://github.com/skwp/vim-ruby-conque.git
 ]
-# DECOMMISSIONED
-# * https://github.com/myusuf3/numbers.vim.git
 
 git_old_bundles = %w[
   git://github.com/skwp/vim-rspec.git
