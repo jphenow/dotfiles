@@ -88,12 +88,6 @@ if (&textwidth < 50)
     inoremap <Up> <C-o>gk
 endif
 
-" Epix to return the cursor to position of last open session
-if has("autocmd")
- au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
- \| exe "normal g'\"" | endif
-endif
-
 " Rename current file
 function! RenameFile()
   let old_name = expand('%')
@@ -204,16 +198,23 @@ filetype plugin indent on
 set list
 set listchars=tab:>.,trail:.,extends:#,nbsp:.
 if has('autocomd')
-    :autocmd Bufread,BufNewFile *.py* set ft=python
-    :autocmd Bufread,BufNewFile *.html* set ft=php
-    :autocmd Bufread,BufNewFile *.ctp* set ft=php
-    :autocmd Bufread,BufNewFile *.php* set ft=php
-    :autocmd Bufread,BufNewFile *.xml* set ft=xml
-    :autocmd Bufread,BufNewFile *.sql* set ft=mysql
-    :autocmd Bufread,BufNewFile *.java* set ft=java
-    autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-    autocmd filetype python set expandtab
-    autocmd filetype html,xml set listchars-=tab:>.
+  " Epix to return the cursor to position of last open session
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+        \| exe "normal g'\"" | endif
+
+  autocmd Bufread,BufNewFile *.py* set ft=python
+  autocmd Bufread,BufNewFile *.html* set ft=php
+  autocmd Bufread,BufNewFile *.ctp* set ft=php
+  autocmd Bufread,BufNewFile *.php* set ft=php
+  autocmd Bufread,BufNewFile *.xml* set ft=xml
+  autocmd Bufread,BufNewFile *.sql* set ft=mysql
+  autocmd Bufread,BufNewFile *.java* set ft=java
+  autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+  autocmd filetype python set expandtab
+  autocmd filetype html,xml set listchars-=tab:>.
+
+  " Fix poor spec-file highlight finder
+  autocmd BufRead,BufNewFile *_spec.rb syn keyword rubyRspec describe context it specify it_should_behave_like before after setup subject its shared_examples_for shared_context let
 endif
 
 let html_my_rendering = 1
@@ -474,11 +475,9 @@ endfunction
 imap <silent> <tab> <c-r>=InsertTabWrapper()<CR>
 imap <silent> <s-tab> <c-p>
 
-map <C-F> :Ack<space><C-r><C-w>
+" map <C-F> :Ack<space><C-r><C-w>
 
 map <c-w>d :%s/\s*$//g \| :nohlsearch<cr>
-
-nnoremap <F8> :NumbersToggle<CR>
 
 " Bda -  Delete all open buffers.
 command! -nargs=0 -bang Bda
@@ -543,6 +542,5 @@ nmap <silent> <D-L> :call RunRspecCurrentLineConque()<CR>
 " ,Cmd-R for Last conque command
 nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
 
-" Fix poor spec-file highlight finder
-autocmd BufRead *_spec.rb syn keyword rubyRspec describe context it specify it_should_behave_like before after setup subject its shared_examples_for shared_context let
-highlight def link rubyRspec Function
+" Bundle
+map <leader>b :!bundle install<cr>
