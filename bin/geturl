@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+
+from subprocess import CalledProcessError
+try:
+	from subprocess import check_output
+except ImportError:
+	from check_output import check_output
+
+import json
+import sys
+import os
+import ConfigParser
+
+#######################
+# Constants
+FPURL = "https://www.filepicker.io"
+FPAPIURL = "https://developers.filepicker.io"
+CONFIG_FILE = os.path.expanduser('~/.geturl')
+
+#######################
+# Loading Config
+APIKEY = ""
+config = ConfigParser.ConfigParser()
+config.read(CONFIG_FILE)
+if config.has_option('filepicker', 'apikey'):
+    APIKEY = config.get('filepicker', 'apikey')
+
+#######################
+# Make sure we have curl
+try:
+    check_output('curl --help > /dev/null', shell=True)
+except CalledProcessError:
+    exit("`curl` is required. Please install it")
+
+#######################
+# Find or register for an Filepicker.io account
+if not APIKEY:
+    email = ''
+    while not email:
+        email = raw_input('Enter your email to link or create your filepicker.io acccount: ')
+
+    # pretty sure this isn't public. found it by looking at the jotform integration
+    APIKEY = check_output(['curl', '--silent', "%(fpurl)s/getKey?email=%(email)s" % {'fpurl': FPAPIURL, 'email': email}])
+
+    if not config.has_section('filepicker'):
+        config.add_section('filepicker')
+    config.set('filepicker', 'apikey', APIKEY)
+    config.write(open(CONFIG_FILE, 'w+'))
+
+#######################
+# Usage if no right number of args
+if len(sys.argv) != 2:
+    print "usage: geturl <filename>"
+    exit()
+
+#######################
+# Upload the file
+print
+print "Uploading the file to Filepicker.io..."
+output = check_output('curl --progress-bar -F "fileUpload=@%(filename)s" -F "apikey=%(apikey)s" %(fpurl)s/api/path/storage/%(filename)s' %
+        {"filename": sys.argv[1], "apikey": APIKEY, "fpurl": FPURL}, shell=True)
+data = json.loads(output)
+url = data['data'][0]['url']
+
+print
+print "A Public Share URL for: %s" % sys.argv[1]
+print url
+print
+
+#######################
+# Copy to the clipboard
+try:
+    if sys.platform == 'darwin':
+        check_output('echo "%s" | pbcopy' % (url), shell=True)
+        print "Also in your clipboard"
+    elif sys.platform == 'linux2':
+        try:
+            check_output('echo "%s" | xclip -selection clipboard > /dev/null 2>&1' % (url), shell=True)
+            print "Also in your clipboard"
+        except CalledProcessError:
+            try:
+                check_output('echo "%s" | xsel -b -i > /dev/null 2>&1' % (url), shell=True)
+                print "Also in your clipboard"
+            except CalledProcessError:
+                pass
+except Exception:
+    pass
+        
