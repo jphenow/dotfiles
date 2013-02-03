@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+aws rm bucket.jphenow.com/$1
