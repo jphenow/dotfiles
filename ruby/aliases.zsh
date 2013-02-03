@@ -11,3 +11,5 @@ alias irr='pry -r ./config/environment'
 #alias r='rails'
 
 alias dn='touch tmp/debug.txt; powder restart'
+
+alias rr="rake spec | grep \"rspec.*#\" | awk '{ print \$2 }' | sed -e 's/\.rb:.*/\.rb/' | uniq"

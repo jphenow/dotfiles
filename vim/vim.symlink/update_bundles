@@ -39,6 +39,7 @@ git_bundles = %w[
   git://github.com/tpope/vim-speeddating.git
   git://github.com/rson/vim-conque.git
   git://github.com/skwp/vim-ruby-conque.git
+  git://github.com/yaymukund/vim-rabl.git
 ]
 # DECOMMISSIONED
 # * https://github.com/myusuf3/numbers.vim.git

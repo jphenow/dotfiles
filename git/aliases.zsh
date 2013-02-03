@@ -32,3 +32,18 @@ alias g="git"
 
 alias prn="hub pull-request -b :production"
 alias pr='hub pull-request'
+
+alias goconf='vim $(git conflicts)'
+
+# Set terminal window name to current git repo or current directory
+#git_repo() {
+#  git remote -v | grep '(fetch)' | grep -o "\/[a-z,A-Z,\_,\-]*\." | cut -c 2- | grep -o ^[a-z,A-Z,\_,\-]*
+#}
+#
+#cd() {
+#  command cd "$@"
+#  git remote >/dev/null 2>&1
+#  if -n (($?)); then
+#    echo -n -e "\033]0;`git_repo`\007"
+#  fi
+#}

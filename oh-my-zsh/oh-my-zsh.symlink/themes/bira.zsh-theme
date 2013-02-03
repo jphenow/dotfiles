@@ -23,7 +23,7 @@ ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[cyan]%} ✭"
 PROMPT="╭─${user_host} ${current_dir} ${rvm_ruby} %{$fg[blue]%}on%{$reset_color%} ${git_branch}
 ╰─%B$%b "
 #RPROMPT="${right_time} ${return_code}"
-RPROMPT="${return_code}"
+#RPROMPT="${return_code}"
 
 #ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}‹"
 #ZSH_THEME_GIT_PROMPT_SUFFIX="› %{$reset_color%}"
