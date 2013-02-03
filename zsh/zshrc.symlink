@@ -95,3 +95,38 @@ export DYLD_LIBRARY_PATH="/usr/local/mysql/lib/:$DYLD_LIBRARY_PATH"
 ### TST Media install ###
 ####### THE END #########
 #########################
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
+
+# Set terminal window name to current git repo (and branch) or current directory
+git-repo() {
+  git remote -v | grep '(fetch)' | awk '{ print $2 }' | awk -F/ '{print $NF }' | sed "s,\.git,,"
+}
+
+git-branch() {
+  git branch | grep \* | cut -c 3-
+}
+
+git-term() {
+  title "`git-repo`: `git-branch`"
+}
+
+mpwd () {
+  pwd | sed "s,$HOME,~,"
+}
+
+term_tab_name() {
+  git remote >/dev/null 2>&1
+  if (($?)); then
+    title "`mpwd`"
+  else
+    git-term
+  fi
+}
+
+# Use a bash hook rather than aliasing 'cd'
+#export PROMPT_COMMAND="term-tab-name; $PROMPT_COMMAND"
+precmd() {
+  term_tab_name
+}

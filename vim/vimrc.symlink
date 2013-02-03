@@ -545,5 +545,37 @@ nmap <silent> <D-L> :call RunRspecCurrentLineConque()<CR>
 " ,Cmd-R for Last conque command
 nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
 
-" Bundle
 map <leader>b :!bundle install<cr>
+" Bundle
+
+"map <leader>p :s/\:\<\(\w\+\)\>\s\+=>\s\+/\1: /g <cr>
+"map <leader>l :%s/\:\<\(\w\+\)\>\s\+=>\s\+/\1: /g <cr>
+"map <leader>pl :s/\<\(\w\+\)\>\:\s\+/\:\1 => /g <cr>
+"map <leader>lp :%s/\<\(\w\+\)\>\:\s\+/\:\1 => /g <cr>
+
+nnoremap <Leader>H :call<SID>LongLineHLToggle()<cr>
+hi OverLength ctermbg=none cterm=none
+match OverLength /\%>80v/
+fun! s:LongLineHLToggle()
+ if !exists('w:longlinehl')
+  let w:longlinehl = matchadd('ErrorMsg', '.\%>80v', 0)
+  echo "Long lines highlighted"
+ else
+  call matchdelete(w:longlinehl)
+  unl w:longlinehl
+  echo "Long lines unhighlighted"
+ endif
+endfunction
+
+nnoremap <Leader>h :call<SID>EightyLine()<cr>
+fun! s:EightyLine()
+ if !exists('w:eightyline')
+  let w:eightyline = 1
+  :set colorcolumn=80  " highlight three columns after 'textwidth'
+  :highlight ColorColumn ctermbg=16 guibg=#000000
+ else
+  unl w:eightyline
+  :set colorcolumn=80  " highlight three columns after 'textwidth'
+  :highlight ColorColumn NONE
+ endif
+endfunction
