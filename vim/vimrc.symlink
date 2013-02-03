@@ -12,8 +12,65 @@ source ~/.vim/plugin/scmdiff.vim
 source ~/.vim/plugin/gitignore.vim
 
 filetype off
-call pathogen#infect()
-call pathogen#runtime_append_all_bundles()
+set rtp+=~/.vim/bundle/vundle
+call vundle#rc()
+" let Vundle manage Vundle
+ " required!
+Bundle 'gmarik/vundle'
+Bundle 'astashov/vim-ruby-debugger'
+Bundle 'godlygeek/tabular'
+Bundle 'msanders/snipmate.vim'
+Bundle 'pangloss/vim-javascript'
+Bundle 'scrooloose/nerdtree'
+Bundle 'timcharper/textile.vim'
+Bundle 'tpope/vim-cucumber'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-git'
+Bundle 'tpope/vim-haml'
+Bundle 'tpope/vim-markdown'
+Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-endwise'
+Bundle 'tsaleh/vim-matchit'
+Bundle 'tsaleh/vim-shoulda'
+Bundle 'tsaleh/vim-tmux'
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'vim-scripts/Gist.vim'
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'othree/html5.vim'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'cakebaker/scss-syntax.vim'
+Bundle 'itspriddle/vim-jquery'
+Bundle 'tpope/vim-rvm'
+Bundle 'mileszs/ack.vim'
+Bundle 'jcf/vim-latex'
+Bundle 'vim-scripts/vimspell'
+Bundle 'wincent/Command-T'
+Bundle 'gregsexton/MatchTag'
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'Lokaltog/vim-powerline'
+Bundle 'tpope/vim-abolish'
+Bundle 'tpope/vim-speeddating'
+Bundle 'rson/vim-conque'
+Bundle 'skwp/vim-ruby-conque'
+Bundle 'yaymukund/vim-rabl'
+Bundle 'tobiassvn/vim-gemfile'
+
+Bundle 'tComment'
+Bundle 'IndexedSearch'
+Bundle 'jQuery'
+Bundle 'RDoc'
+" https://github.com/myusuf3/numbers.vim.git
+
+" git_old_bundles = %w[
+"   git://github.com/skwp/vim-rspec.git
+"   git://github.com/tsaleh/taskpaper.vim.git
+"   git://github.com/tpope/vim-vividchalk.git
+"   git://github.com/hallison/vim-rdoc.git
+"   git://github.com/ervandew/supertab.git
+" ]
+
 
 " Enable vim powers
 set nocompatible
