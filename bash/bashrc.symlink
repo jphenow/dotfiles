@@ -44,3 +44,5 @@ export TZ="/usr/share/zoneinfo/America/Chicago"
 #[[ -s "/home/phenow/.rvm/scripts/rvm" ]] && source "/home/phenow/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+export MYSQL_CONFIG=/usr/local/bin/mysql_config
+export DYLD_LIBRARY_PATH=/usr/local/mysql/lib/
