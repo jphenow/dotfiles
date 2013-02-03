@@ -2,6 +2,7 @@
 " Language:	git commit file
 " Maintainer:	Tim Pope <vimNOSPAM@tpope.org>
 " Filenames:	*.git/COMMIT_EDITMSG
+" Last Change:	2012 April 7
 
 if exists("b:current_syntax")
   finish
@@ -25,7 +26,7 @@ syn match   gitcommitComment	"^#.*"
 syn match   gitcommitHead	"^\%(#   .*\n\)\+#$" contained transparent
 syn match   gitcommitOnBranch	"\%(^# \)\@<=On branch" contained containedin=gitcommitComment nextgroup=gitcommitBranch skipwhite
 syn match   gitcommitOnBranch	"\%(^# \)\@<=Your branch .\{-\} '" contained containedin=gitcommitComment nextgroup=gitcommitBranch skipwhite
-syn match   gitcommitBranch	"[^ \t']\+" contained
+syn match   gitcommitBranch	"[^ ']\+" contained
 syn match   gitcommitNoBranch	"\%(^# \)\@<=Not currently on any branch." contained containedin=gitcommitComment
 syn match   gitcommitHeader	"\%(^# \)\@<=.*:$"	contained containedin=gitcommitComment
 syn region  gitcommitAuthor	matchgroup=gitCommitHeader start=/\%(^# \)\@<=\%(Author\|Committer\):/ end=/$/ keepend oneline contained containedin=gitcommitComment transparent

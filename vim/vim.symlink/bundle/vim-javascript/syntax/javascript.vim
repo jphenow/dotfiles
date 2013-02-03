@@ -48,15 +48,15 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax region javaScriptDocComment      matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=javaScriptDocTags,javaScriptCommentTodo,javaScriptCvsTag,@javaScriptHtml,@Spell fold
 
   " tags containing a param
-  syntax match  javaScriptDocTags         contained "@\(augments\|base\|borrows\|class\|constructs\|default\|exception\|exports\|extends\|file\|member\|memberOf\|module\|name\|namespace\|optional\|requires\|title\|throws\|version\)\>" nextgroup=javaScriptDocParam skipwhite
+  syntax match  javaScriptDocTags         contained "@\(augments\|base\|borrows\|class\|constructs\|default\|exception\|exports\|extends\|file\|member\|memberOf\|methodOf\|module\|name\|namespace\|optional\|requires\|title\|throws\|version\)\>" nextgroup=javaScriptDocParam skipwhite
   " tags containing type and param
   syntax match  javaScriptDocTags         contained "@\(argument\|param\|property\)\>" nextgroup=javaScriptDocType skipwhite
   " tags containing type but no param
-  syntax match  javaScriptDocTags         contained "@\(type\|return\|returns\)\>" nextgroup=javaScriptDocTypeNoParam skipwhite
+  syntax match  javaScriptDocTags         contained "@\(type\|return\|returns\|api\)\>" nextgroup=javaScriptDocTypeNoParam skipwhite
   " tags containing references
   syntax match  javaScriptDocTags         contained "@\(lends\|link\|see\)\>" nextgroup=javaScriptDocSeeTag skipwhite
   " other tags (no extra syntax)
-  syntax match  javaScriptDocTags         contained "@\(access\|addon\|alias\|author\|beta\|constant\|constructor\|copyright\|deprecated\|description\|event\|example\|exec\|field\|fileOverview\|fileoverview\|function\|global\|ignore\|inner\|license\|overview\|private\|protected\|project\|public\|readonly\|since\|static\)\>"
+  syntax match  javaScriptDocTags         contained "@\(access\|addon\|alias\|author\|beta\|constant\|const\|constructor\|copyright\|deprecated\|description\|event\|example\|exec\|field\|fileOverview\|fileoverview\|function\|global\|ignore\|inner\|license\|overview\|private\|protected\|project\|public\|readonly\|since\|static\)\>"
 
   syntax region javaScriptDocType         start="{" end="}" oneline contained nextgroup=javaScriptDocParam skipwhite
   syntax match  javaScriptDocType         contained "\%(#\|\"\|\w\|\.\|:\|\/\)\+" nextgroup=javaScriptDocParam skipwhite
@@ -75,7 +75,7 @@ syntax match   javaScriptSpecial        "\\\d\d\d\|\\x\x\{2\}\|\\u\x\{4\}\|\\."
 syntax region  javaScriptStringD        start=+"+  skip=+\\\\\|\\$"+  end=+"+  contains=javaScriptSpecial,@htmlPreproc
 syntax region  javaScriptStringS        start=+'+  skip=+\\\\\|\\$'+  end=+'+  contains=javaScriptSpecial,@htmlPreproc
 syntax region  javaScriptRegexpCharClass start=+\[+ end=+\]+ contained
-syntax region  javaScriptRegexpString   start=+\(\(\(return\|case\)\s\+\)\@<=\|\(\([)\]"']\|\d\|\w\)\s*\)\@<!\)/\(\*\|/\)\@!+ skip=+\\\\\|\\/+ end=+/[gim]\{,3}+ contains=javaScriptSpecial,javaScriptRegexpCharClass,@htmlPreproc oneline
+syntax region  javaScriptRegexpString   start=+\(\(\(return\|case\)\s\+\)\@<=\|\(\([)\]"']\|\d\|\w\)\s*\)\@<!\)/\(\*\|/\)\@!+ skip=+\\\\\|\\/+ end=+/[gimy]\{,4}+ contains=javaScriptSpecial,javaScriptRegexpCharClass,@htmlPreproc oneline
 syntax match   javaScriptNumber         /\<-\=\d\+L\=\>\|\<0[xX]\x\+\>/
 syntax match   javaScriptFloat          /\<-\=\%(\d\+\.\d\+\|\d\+\.\|\.\d\+\)\%([eE][+-]\=\d\+\)\=\>/
 syntax match   javaScriptLabel          /\<\w\+\(\s*:\)\@=/
@@ -253,6 +253,8 @@ endif
 "syntax clear javaScriptExpression
 syntax cluster  htmlJavaScript contains=@javaScriptAll,javaScriptBracket,javaScriptParen,javaScriptBlock,javaScriptParenError
 syntax cluster  javaScriptExpression contains=@javaScriptAll,javaScriptBracket,javaScriptParen,javaScriptBlock,javaScriptParenError,@htmlPreproc
+" Vim's default html.vim highlights all javascript as 'Special'
+hi! def link javaScript NONE
 
 let b:current_syntax = "javascript"
 if main_syntax == 'javascript'

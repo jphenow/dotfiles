@@ -1,11 +1,10 @@
 This project adds [CoffeeScript] support to the vim editor. It handles syntax,
-indenting, compiling, and more. Also included is an [eco] syntax and support for
-CoffeeScript in Haml and HTML.
+indenting, compiling, and more. Also included is support for CoffeeScript in
+Haml and HTML.
 
-![Screenshot](http://i.imgur.com/BV29H.png)
+![Screenshot](http://i.imgur.com/eUBvm.png)
 
 [CoffeeScript]: http://jashkenas.github.com/coffee-script/
-[eco]: https://github.com/sstephenson/eco
 
 ### Install from a Zipball
 
@@ -63,11 +62,7 @@ directory and updates are just a `git pull` away.
 
 The `CoffeeMake` command compiles the current file and parses any errors:
 
-  ![CoffeeMake](http://i.imgur.com/OKRKE.png)
-
-  ![CoffeeMake](http://i.imgur.com/PQ6ed.png)
-
-  ![CoffeeMake](http://i.imgur.com/Jp6NI.png)
+  ![CoffeeMake](http://i.imgur.com/cr9xI.png)
 
 The full signature of the command is:
 
@@ -135,16 +130,14 @@ CoffeeScript is compiled to JavaScript. The full signature of the command is:
 
 Calling `CoffeeCompile` without a range compiles the whole file:
 
-  ![CoffeeCompile](http://i.imgur.com/pTesp.png)
-
-  ![Compiled](http://i.imgur.com/81QMf.png)
+  ![CoffeeCompile](http://i.imgur.com/KJfSZ.png)
 
 Calling `CoffeeCompile` with a range, like in visual mode, compiles the selected
 snippet of CoffeeScript:
 
-  ![CoffeeCompile Snippet](http://i.imgur.com/Rm7iu.png)
+  ![CoffeeCompile Snippet](http://i.imgur.com/mbaUA.png)
 
-  ![Compiled Snippet](http://i.imgur.com/KmrG8.png)
+  ![Compiled Snippet](http://i.imgur.com/Ocjuc.png)
 
 This scratch buffer can be quickly closed by hitting the `q` key.
 
@@ -166,9 +159,9 @@ The initial size of the CoffeeCompile buffer can be given as a number:
 Watch mode is like the Try CoffeeScript preview box on the CoffeeScript
 homepage:
 
-  ![Watch Mode](http://i.imgur.com/wIN6h.png)
-  ![Watch Mode](http://i.imgur.com/GgdCo.png)
-  ![Watch Mode](http://i.imgur.com/QdpAP.png)
+  ![Watch Mode](http://i.imgur.com/M6l1j.png)
+
+  ![Watch Mode](http://i.imgur.com/qtNmU.png)
 
 Writing some code and then exiting insert mode automatically updates the
 compiled JavaScript buffer.
@@ -192,14 +185,14 @@ Use `unwatch` to stop watching a buffer:
 
 ### CoffeeLint: Lint your CoffeeScript
 
-The `CoffeeLint` command runs [coffeelint](http://www.coffeelint.org/) on the
-current file and parses any errors:
+The `CoffeeLint` command runs [coffeelint](http://www.coffeelint.org/) (version
+0.4.0 or later required) on the current file and parses any errors:
 
     :[RANGE] CoffeeLint[!] [COFFEELINT-OPTIONS]
 
 Use it like `CoffeeMake`.
 
-    :CoffeeLint! | cwindow
+  ![CoffeeLint](http://i.imgur.com/dlxF7.png)
 
 #### Default coffeelint options
 
@@ -221,9 +214,9 @@ This option is set to `coffeelint` by default.
 The `CoffeeRun` command compiles the current file or selected snippet and runs
 the resulting JavaScript. Output is shown at the bottom of the screen:
 
-  ![CoffeeRun](http://i.imgur.com/d4yXC.png)
+  ![CoffeeRun](http://i.imgur.com/7hwSy.png)
 
-  ![CoffeeRun Output](http://i.imgur.com/m6UID.png)
+  ![CoffeeRun Output](http://i.imgur.com/WNWvC.png)
 
 ### Configure Syntax Highlighting
 
@@ -258,7 +251,7 @@ Changing these core settings can make vim more CoffeeScript friendly.
 
 Folding by indentation works well for CoffeeScript functions and classes:
 
-  ![Folding](http://i.imgur.com/lpDWo.png)
+  ![Folding](http://i.imgur.com/Y0rDC.png)
 
 To fold by indentation in CoffeeScript files, add this line to your `vimrc`:
 

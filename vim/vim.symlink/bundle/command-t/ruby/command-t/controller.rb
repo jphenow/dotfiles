@@ -79,6 +79,12 @@ module CommandT
       end
     end
 
+    def refresh
+      return unless @active_finder && @active_finder.respond_to?(:flush)
+      @active_finder.flush
+      list_matches
+    end
+
     def flush
       @max_height   = nil
       @min_height   = nil
@@ -254,6 +260,7 @@ module CommandT
       selection = File.expand_path selection, @path
       selection = relative_path_under_working_directory selection
       selection = sanitize_path_string selection
+      selection = File.join('.', selection) if selection =~ /^\+/
       ensure_appropriate_window_selection
 
       @active_finder.open_selection command, selection, options
@@ -264,12 +271,8 @@ module CommandT
         ":call CommandT#{function}(#{param})<CR>"
     end
 
-    def xterm?
-      !!(::VIM::evaluate('&term') =~ /\Axterm/)
-    end
-
-    def vt100?
-      !!(::VIM::evaluate('&term') =~ /\Avt100/)
+    def term
+      @term ||= ::VIM::evaluate('&term')
     end
 
     def register_for_key_presses
@@ -283,28 +286,33 @@ module CommandT
       end
 
       # "special" keys (overridable by settings)
-      { 'Backspace'             => '<BS>',
-        'Delete'                => '<Del>',
+      {
         'AcceptSelection'       => '<CR>',
         'AcceptSelectionSplit'  => ['<C-CR>', '<C-s>'],
         'AcceptSelectionTab'    => '<C-t>',
         'AcceptSelectionVSplit' => '<C-v>',
-        'ToggleFocus'           => '<Tab>',
+        'Backspace'             => '<BS>',
         'Cancel'                => ['<C-c>', '<Esc>'],
-        'SelectNext'            => ['<C-n>', '<C-j>', '<Down>'],
-        'SelectPrev'            => ['<C-p>', '<C-k>', '<Up>'],
         'Clear'                 => '<C-u>',
+        'CursorEnd'             => '<C-e>',
         'CursorLeft'            => ['<Left>', '<C-h>'],
         'CursorRight'           => ['<Right>', '<C-l>'],
-        'CursorEnd'             => '<C-e>',
-        'CursorStart'           => '<C-a>' }.each do |key, value|
+        'CursorStart'           => '<C-a>',
+        'Delete'                => '<Del>',
+        'Refresh'               => '<C-f>',
+        'SelectNext'            => ['<C-n>', '<C-j>', '<Down>'],
+        'SelectPrev'            => ['<C-p>', '<C-k>', '<Up>'],
+        'ToggleFocus'           => '<Tab>',
+      }.each do |key, value|
         if override = get_list_or_string("g:CommandT#{key}Map")
-          [override].flatten.each do |mapping|
+          Array(override).each do |mapping|
             map mapping, key
           end
         else
-          [value].flatten.each do |mapping|
-            map mapping, key unless mapping == '<Esc>' && (xterm? || vt100?)
+          Array(value).each do |mapping|
+            unless mapping == '<Esc>' && term =~ /\A(screen|xterm|vt100)/
+              map mapping, key
+            end
           end
         end
       end

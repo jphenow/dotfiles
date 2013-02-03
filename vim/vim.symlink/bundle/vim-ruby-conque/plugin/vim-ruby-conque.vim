@@ -16,16 +16,23 @@
 " installed, or 'spec' for rspec1. You can override
 " This by setting up your vimrc like this:
 "
-" let g:ruby_conque_rspec_command='spec'
+" let g:ruby_conque_rspec_runner='spec'
 "
-if !exists('g:ruby_conque_rspec_command')
-  if executable('rspec')
-    let g:ruby_conque_rspec_command='rspec'
-  elseif executable('spec')
-    let g:ruby_conque_rspec_command='spec'
+function! GetRubyConqueRspecCommand()
+  if exists('g:ruby_conque_rspec_runner')
+    return g:ruby_conque_rspec_runner
+  else
+    if executable('rspec')
+      return 'rspec'
+    elseif executable('bundle exec rspec')
+      return 'bundle exec rspec'
+    elseif executable('spec')
+      return 'spec'
+    elseif executable('bundle exec spec')
+      return 'bundle exec spec'
+    endif
   endif
-
-endif
+endfunction
 
 " Always deletes any existing instance prior to runing the next one
 function! RunSingleConque(command)
@@ -54,11 +61,11 @@ function! RunRubyCurrentFileConque()
 endfunction
 
 function! RunRspecCurrentLineConque()
-  call RunSingleConque(g:ruby_conque_rspec_command . " " . bufname('%') . " -l "  . line('.') . " --color")
+  call RunSingleConque(GetRubyConqueRspecCommand() . " " . bufname('%') . " -l "  . line('.') . " --color")
 endfunction
 
 function! RunRspecCurrentFileConque()
-  call RunSingleConque(g:ruby_conque_rspec_command . " " . bufname('%') . " --color")
+  call RunSingleConque(GetRubyConqueRspecCommand() . " " . bufname('%') . " --color")
 endfunction
 
 function! RunCucumberCurrentLineConque()
@@ -83,7 +90,7 @@ endfunction
 
 " Requires https://github.com/skwp/vim-spec-finder
 function! RunRspecRelated()
-  call RunSingleConque(g:ruby_conque_rspec_command . " " . RelatedSpec() . " --color")
+  call RunSingleConque(GetRubyConqueRspecCommand() . " " . RelatedSpec() . " --color")
 endfunction
 
 " Get around Conques annoying trapping of input in some kind of strange
@@ -99,6 +106,16 @@ function! RubyConqueControls(single_conque)
   :map <silent><buffer> f /Finished in<CR>:noh<CR>zt
 endfunction
 
+function! UseRspec1()
+  let g:ruby_conque_rspec_runner='spec'
+  echo "Now using spec runner (RSpec 1)"
+endfunction
+
+function! UseRspec2()
+  let g:ruby_conque_rspec_runner='rspec'
+  echo "Now using rspec runner (RSpec 2)"
+endfunction
+
 call conque_term#register_function('after_startup', 'RubyConqueControls')
 
 command! RunRubyCurrentFileConque call RunRubyCurrentFileConque()
@@ -110,6 +127,8 @@ command! RunRakeConque call RunRakeConque()
 command! RunLastConqueCommand call RunLastConqueCommand()
 command! RunRspecRelated call RunRspecRelated()
 command! CloseSingleConque call CloseSingleConque()
+command! Rspec1 call UseRspec1()
+command! Rspec2 call UseRspec2()
 
 nmap <silent> <Leader>rcrr :RunRubyCurrentFileConque<CR>
 nmap <silent> <Leader>rcss :RunRspecCurrentFileConque<CR>
@@ -120,3 +139,5 @@ nmap <silent> <Leader>rcRR :RunRakeConque<CR>
 nmap <silent> <Leader>rcrl :RunLastConqueCommand<CR>
 nmap <silent> <Leader>rcrel :RunRspecRelated<CR>
 nmap <silent> <Leader>rccc :CloseSingleConque<CR>
+nmap <silent> <Leader>rcr1 :Rspec1<CR>
+nmap <silent> <Leader>rcr2 :Rspec2<CR>

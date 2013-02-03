@@ -17,8 +17,8 @@ syn cluster sassCssAttributes contains=css.*Attr,scssComment,cssValue.*,cssColor
 
 syn region sassDefinition matchgroup=cssBraces start="{" end="}" contains=TOP
 
-syn match sassProperty "\%([{};]\s*\|^\)\@<=\%([[:alnum:]-]\|#{[^{}]*}\)\+:" contains=css.*Prop skipwhite nextgroup=sassCssAttribute contained containedin=sassDefinition
-syn match sassProperty "^\s*\zs\s\%(\%([[:alnum:]-]\|#{[^{}]*}\)\+:\|:[[:alnum:]-]\+\)"hs=s+1 contains=css.*Prop skipwhite nextgroup=sassCssAttribute
+syn match sassProperty "\%([{};]\s*\|^\)\@<=\%([[:alnum:]-]\|#{[^{}]*}\)\+\s*:" contains=css.*Prop skipwhite nextgroup=sassCssAttribute contained containedin=sassDefinition
+syn match sassProperty "^\s*\zs\s\%(\%([[:alnum:]-]\|#{[^{}]*}\)\+\s*:\|:[[:alnum:]-]\+\)"hs=s+1 contains=css.*Prop skipwhite nextgroup=sassCssAttribute
 syn match sassProperty "^\s*\zs\s\%(:\=[[:alnum:]-]\+\s*=\)"hs=s+1 contains=css.*Prop skipwhite nextgroup=sassCssAttribute
 syn match sassCssAttribute +\%("\%([^"]\|\\"\)*"\|'\%([^']\|\\'\)*'\|#{[^{}]*}\|[^{};]\)*+ contained contains=@sassCssAttributes,sassVariable,sassFunction,sassInterpolation
 syn match sassDefault "!default\>" contained
@@ -34,7 +34,7 @@ syn match sassFunction "\<\%(unquote\|quote\)\>(\@=" contained
 syn match sassFunction "\<\%(percentage\|round\|ceil\|floor\|abs\)\>(\@=" contained
 syn match sassFunction "\<\%(type-of\|unit\|unitless\|comparable\)\>(\@=" contained
 
-syn region sassInterpolation matchgroup=sassInterpolationDelimiter start="#{" end="}" contains=@sassCssAttributes,sassVariable,sassFunction containedin=cssStringQ,cssStringQQ,sassProperty
+syn region sassInterpolation matchgroup=sassInterpolationDelimiter start="#{" end="}" contains=@sassCssAttributes,sassVariable,sassFunction containedin=cssStringQ,cssStringQQ,cssPseudoClass,sassProperty
 
 syn match sassMixinName "[[:alnum:]_-]\+" contained nextgroup=sassCssAttribute
 syn match sassMixin  "^="               nextgroup=sassMixinName skipwhite
@@ -42,6 +42,11 @@ syn match sassMixin  "\%([{};]\s*\|^\s*\)\@<=@mixin"   nextgroup=sassMixinName s
 syn match sassMixing "^\s\+\zs+"        nextgroup=sassMixinName
 syn match sassMixing "\%([{};]\s*\|^\s*\)\@<=@include" nextgroup=sassMixinName skipwhite
 syn match sassExtend "\%([{};]\s*\|^\s*\)\@<=@extend"
+syn match sassPlaceholder "\%([{};]\s*\|^\s*\)\@<=%"   nextgroup=sassMixinName skipwhite
+
+syn match sassFunctionName "[[:alnum:]_-]\+" contained nextgroup=sassCssAttribute
+syn match sassFunctionDecl "\%([{};]\s*\|^\s*\)\@<=@function"   nextgroup=sassFunctionName skipwhite
+syn match sassReturn "\%([{};]\s*\|^\s*\)\@<=@return"
 
 syn match sassEscape     "^\s*\zs\\"
 syn match sassIdChar     "#[[:alnum:]_-]\@=" nextgroup=sassId
@@ -53,7 +58,7 @@ syn match sassAmpersand  "&"
 " TODO: Attribute namespaces
 " TODO: Arithmetic (including strings and concatenation)
 
-syn region sassInclude start="@import" end=";\|$" contains=scssComment,cssURL,cssUnicodeEscape,cssMediaType
+syn region sassInclude start="@import" end=";\|$" contains=scssComment,cssStringQ,cssStringQQ,cssURL,cssUnicodeEscape,cssMediaType
 syn region sassDebugLine end=";\|$" matchgroup=sassDebug start="@debug\>" contains=@sassCssAttributes,sassVariable,sassFunction
 syn region sassWarnLine end=";\|$" matchgroup=sassWarn start="@warn\>" contains=@sassCssAttributes,sassVariable,sassFunction
 syn region sassControlLine matchgroup=sassControl start="@\%(if\|else\%(\s\+if\)\=\|while\|for\|each\)\>" end="[{};]\@=\|$" contains=sassFor,@sassCssAttributes,sassVariable,sassFunction
@@ -70,7 +75,10 @@ hi def link sassVariable                Identifier
 hi def link sassFunction                Function
 hi def link sassMixing                  PreProc
 hi def link sassMixin                   PreProc
+hi def link sassPlaceholder             PreProc
 hi def link sassExtend                  PreProc
+hi def link sassFunctionDecl            PreProc
+hi def link sassReturn                  PreProc
 hi def link sassTodo                    Todo
 hi def link sassInclude                 Include
 hi def link sassDebug                   sassControl

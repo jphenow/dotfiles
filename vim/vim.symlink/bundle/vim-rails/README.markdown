@@ -57,24 +57,35 @@ then simply copy and paste:
 
     cd ~/.vim/bundle
     git clone git://github.com/tpope/vim-rails.git
+    git clone git://github.com/tpope/vim-bundler.git
+
+
+You don't strictly need [bundler.vim][], but it helps.
 
 Once help tags have been generated, you can view the manual with
 `:help rails`.
 
+[bundler.vim]: https://github.com/tpope/vim-bundler
+
 FAQ
 ---
 
-> I installed the plugin and started Vim.  Why does only the :Rails
+> I installed the plugin and started Vim.  Why does only the `:Rails`
 > command exist?
 
 This plugin cares about the current file, not the current working
 directory.  Edit a file from a Rails application.
 
-> I opened a new tab.  Why does only the :Rails command exist?
+> I opened a new tab.  Why does only the `:Rails` command exist?
 
 This plugin cares about the current file, not the current working
 directory.  Edit a file from a Rails application.  You can use the `:RT`
 family of commands to open a new tab and edit a file at the same time.
+
+> Can I use rails.vim to edit Rails engines?
+
+It's not supported, but if you `touch config/environment.rb` in the root
+of the engine, things should mostly work.
 
 > Can I use rails.vim to edit other Ruby projects?
 
@@ -90,6 +101,11 @@ Of course.
 
 Baby, you can go all the way back to Rails 1 if you like (give or take
 some syntax highlighting).
+
+> Can I use rails.vim with engines?
+
+Not officially, but if you create `config/environment.rb` in the root of
+the engine, it will mostly work.
 
 > Rake is slow.  How about making `:Rake` run
 > `testrb`/`rspec`/`cucumber` directly instead of `rake`?
@@ -108,7 +124,7 @@ meantime, here's how you can set up `:make` to run the current test:
           \   compiler ruby | setl makeprg=ruby\ -wc\ \"%:p\" |
           \ endif
     autocmd User Bundler
-          \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
+          \ if &makeprg !~# 'bundle' | setl makeprg^=bundle\ exec\  | endif
 
 Contributing
 ------------
