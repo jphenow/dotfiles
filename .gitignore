@@ -1,6 +1,5 @@
 # Ignore stuff
 vim/vim.symlink/view
-vim/vim.symlink/.netrwhist
 vim/vim.symlink/Session.vim
 ssh/ssh.symlink/*
 todo.txt/todo.symlink/*
@@ -11,3 +10,4 @@ git/gitconfig.symlink
 !todo.txt/todo.symlink/config
 
 .DS_Store
+.netrwhist
