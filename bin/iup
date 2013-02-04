@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+bname=${2-$1}
+if test -t 0; then
+  file=$1
+  aws put "Content-Type: image/jpg" bucket.jphenow.com/$bname $file
+else
+  aws put "Content-Type: image/jpg" bucket.jphenow.com/$bname
+fi
