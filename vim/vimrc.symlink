@@ -44,7 +44,6 @@ Bundle 'cakebaker/scss-syntax.vim'
 Bundle 'itspriddle/vim-jquery'
 Bundle 'tpope/vim-rvm'
 Bundle 'mileszs/ack.vim'
-Bundle 'jcf/vim-latex'
 Bundle 'vim-scripts/vimspell'
 Bundle 'wincent/Command-T'
 Bundle 'gregsexton/MatchTag'
@@ -306,8 +305,8 @@ highlight htmlItalic ctermfg=DarkGray ctermbg=NONE
 
 " Allow for split window expand / collapse using CTRL-j / CTRL-k.  Useful for
 " editing many files in one window, switching back and forth.
-map <c-j> <c-w>j<c-w>_
-map <c-k> <c-w>k<c-w>_
+map <A-J> <c-w>j<c-w>_
+map <A-K> <c-w>k<c-w>_
 imap <c-l> <space>=><space>
 set winminheight=0
 
