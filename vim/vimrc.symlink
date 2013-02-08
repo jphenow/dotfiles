@@ -45,7 +45,6 @@ Bundle 'itspriddle/vim-jquery'
 Bundle 'tpope/vim-rvm'
 Bundle 'mileszs/ack.vim'
 Bundle 'vim-scripts/vimspell'
-Bundle 'wincent/Command-T'
 Bundle 'gregsexton/MatchTag'
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'Lokaltog/vim-powerline'
@@ -55,6 +54,7 @@ Bundle 'rson/vim-conque'
 Bundle 'skwp/vim-ruby-conque'
 Bundle 'yaymukund/vim-rabl'
 Bundle 'tobiassvn/vim-gemfile'
+Bundle 'kien/ctrlp.vim'
 
 Bundle 'tComment'
 Bundle 'IndexedSearch'
@@ -497,24 +497,44 @@ map <s-s> :call StripWhitespace()<CR>
 "  Command-T
 " ---------------------------------------------------------------------------
 
-let g:CommandTMaxHeight=15
-let g:CommandTMatchWindowReverse=1
-map <silent> <Leader>t :CommandT<cr>
-map <silent> <Leader>gm :CommandT app/models<cr>
-map <silent> <Leader>gc :CommandT app/controllers<cr>
-map <silent> <Leader>gv :CommandT app/views<cr>
-map <silent> <Leader>ge :CommandT app/helpers<cr>
-map <silent> <Leader>gl :CommandT lib<cr>
-map <silent> <Leader>gp :CommandT public<cr>
-map <silent> <Leader>gt :CommandT test<cr>
-map <silent> <Leader>gs :CommandT spec<cr>
-map <silent> <Leader>gd :CommandT db<cr>
-map <silent> <Leader>gC :CommandT config<cr>
-map <silent> <Leader>gV :CommandT vendor<cr>
-map <silent> <Leader>gF :CommandT factories<cr>
-map <silent> <Leader>gh :CommandT ~/<cr>
-map <silent> <Leader>gr :CommandT /<cr>
-map <silent> <Leader>z :CommandTFlush<cr>
+"let g:CommandTMaxHeight=15
+"let g:CommandTMatchWindowReverse=1
+"map <silent> <Leader>t :CommandT<cr>
+"map <silent> <Leader>gm :CommandT app/models<cr>
+"map <silent> <Leader>gc :CommandT app/controllers<cr>
+"map <silent> <Leader>gv :CommandT app/views<cr>
+"map <silent> <Leader>ge :CommandT app/helpers<cr>
+"map <silent> <Leader>gl :CommandT lib<cr>
+"map <silent> <Leader>gp :CommandT public<cr>
+"map <silent> <Leader>gt :CommandT test<cr>
+"map <silent> <Leader>gs :CommandT spec<cr>
+"map <silent> <Leader>gd :CommandT db<cr>
+"map <silent> <Leader>gC :CommandT config<cr>
+"map <silent> <Leader>gV :CommandT vendor<cr>
+"map <silent> <Leader>gF :CommandT factories<cr>
+"map <silent> <Leader>gh :CommandT ~/<cr>
+"map <silent> <Leader>gr :CommandT /<cr>
+"map <silent> <Leader>z :CommandTFlush<cr>
+
+map <silent> <Leader>t :CtrlP<cr>
+map <silent> <Leader>z :ClearCtrlPCache<cr>\|:CtrlP<cr>
+map <silent> <Leader>r :CtrlPMRU<cr>
+map <silent> <Leader>b :CtrlPBuffer<cr>
+
+map <silent> <Leader>gm :CtrlP app/models<cr>
+map <silent> <Leader>gc :CtrlP app/controllers<cr>
+map <silent> <Leader>gv :CtrlP app/views<cr>
+map <silent> <Leader>ge :CtrlP app/helpers<cr>
+map <silent> <Leader>gl :CtrlP lib<cr>
+map <silent> <Leader>gp :CtrlP public<cr>
+map <silent> <Leader>gt :CtrlP test<cr>
+map <silent> <Leader>gs :CtrlP spec<cr>
+map <silent> <Leader>gd :CtrlP db<cr>
+map <silent> <Leader>gC :CtrlP config<cr>
+map <silent> <Leader>gV :CtrlP vendor<cr>
+map <silent> <Leader>gF :CtrlP factories<cr>
+map <silent> <Leader>gh :CtrlP ~/<cr>
+"nnoremap <silent> <leader>T :ClearCtrlPCache<cr>\|:CtrlP<cr>
 
 function! InsertTabWrapper()
   let col = col('.') - 1
@@ -595,9 +615,6 @@ nmap <silent> <D-R> :call RunRspecCurrentFileConque()<CR>
 nmap <silent> <D-L> :call RunRspecCurrentLineConque()<CR>
 " ,Cmd-R for Last conque command
 nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
-
-map <leader>b :!bundle install<cr>
-" Bundle
 
 "map <leader>p :s/\:\<\(\w\+\)\>\s\+=>\s\+/\1: /g <cr>
 "map <leader>l :%s/\:\<\(\w\+\)\>\s\+=>\s\+/\1: /g <cr>
