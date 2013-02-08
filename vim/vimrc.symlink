@@ -391,8 +391,6 @@ noremap <s-k> :ls<cr>
 set viminfo='10,\"100,:20,%,n~/.viminfo
 
 set cursorline " highlight current line
-hi cursorline guibg=#333333 " highlight bg color of current line
-hi CursorColumn guibg=#333333 " highlight cursor
 
 if has('cmdline_info')
     set ruler " show the ruler
@@ -465,6 +463,7 @@ let g:solarized_italic=1
 let g:solarized_visibility=1
 set background=dark
 syntax on
+hi clear LineNr
 
 " ----------------------------------------------------------------------------
 " Visual Cues
