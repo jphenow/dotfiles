@@ -48,17 +48,11 @@ function! s:SetOptDefault(opt,val)
   endif
 endfunction
 
-call s:SetOptDefault("rails_syntax",1)
-call s:SetOptDefault("rails_mappings",1)
-call s:SetOptDefault("rails_abbreviations",1)
+call s:SetOptDefault("rails_abbreviations", {})
 call s:SetOptDefault("rails_ctags_arguments","--languages=-javascript")
 call s:SetOptDefault("rails_default_file","README")
 call s:SetOptDefault("rails_root_url",'http://localhost:3000/')
 call s:SetOptDefault("rails_gnu_screen",1)
-if exists("g:loaded_dbext") && executable("sqlite3") && ! executable("sqlite")
-  " Since dbext can't find it by itself
-  call s:SetOptDefault("dbext_default_SQLITE_bin","sqlite3")
-endif
 
 " }}}1
 " Detection {{{1

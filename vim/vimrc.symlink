@@ -454,22 +454,17 @@ set noswapfile
 " ----------------------------------------------------------------------------
 " Highlight the syntax!
 "see http://ethanschoonover.com/solarized/vim-colors-solarized for
+"    call togglebg#map("<F4>")
 set t_Co=256
-if &t_Co >= 256 || has("gui_running")
-    "let g:solarized_termcolors=256
-    colorscheme solarized
-    call togglebg#map("<F4>")
-    let g:solarized_termtrans=1
-    let g:solarized_bold=1
-    let g:solarized_underline=1
-    let g:solarized_italic=1
-    let g:solarized_visibility=1
-endif
-
-if &t_Co > 2 || has("gui_running")
-    set background=dark
-    syntax on
-endif
+let g:solarized_termcolors=256
+colorscheme solarized
+let g:solarized_termtrans=1
+let g:solarized_bold=1
+let g:solarized_underline=1
+let g:solarized_italic=1
+let g:solarized_visibility=1
+set background=dark
+syntax on
 
 " ----------------------------------------------------------------------------
 " Visual Cues

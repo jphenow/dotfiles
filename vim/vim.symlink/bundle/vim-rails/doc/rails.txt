@@ -61,21 +61,11 @@ actually edit a file from a Rails application.
 						*rails-:Rlcd*
 :Rlcd [{directory}]	|:lcd| to /path/to/railsapp/{directory}.
 
-						*rails-:Rdoc*
-:Rdoc			Browse to the Rails API, either in doc/api in the
-			current Rails application, gem_server if it is
-			running, or http://api.rubyonrails.org/ .  Requires
-			:OpenURL to be defined (see |rails-:OpenURL|).
-
-						*rails-:Rdoc!*
-:Rdoc!			Make the appropriate |:helptags| call and invoke
-			|:help| rails.
-
 						*rails-:Redit*
-:Redit {file}		Deprecated in favor of |:R|.
+:Redit {file}		Obsolete alias for |:R|.
 
 						*rails-:Rfind*
-:Rfind [{file}]		Deprecated in favor of |:R| or |:find|.
+:Rfind [{file}]		Obsolete alias for |:find|.
 
 						*rails-:Rlog*
 :Rlog [{logfile}]	Split window and open {logfile} ($RAILS_ENV or
@@ -676,12 +666,10 @@ detected, so all navigation commands should work as expected inside a spec
 file.  :Rake in a spec runs just that spec, and in a model, controller, or
 helper, runs the associated spec.
 
-|:Runittest| and |:Rfunctionaltest| lead double lives, handling model and
-controller specs respectively.  For helper and view specs, you can use
-|:Rspec| or define your own navigation commands:
+|:Runittest| and |:Rfunctionaltest| lead double lives, handling model/helper
+and controller/mailer specs respectively.  For view specs, you can use
+|:Rspec|, or define your own navigation commands:
 >
-	Rnavcommand spechelper     spec/helpers     -glob=**/*
-		\ -suffix=_helper_spec.rb        -default=controller()
 	Rnavcommand specview spec/views -glob=**/* -suffix=_spec.rb
 <
 ABBREVIATIONS				*rails-abbreviations* *rails-snippets*
@@ -860,7 +848,7 @@ be checked into version control.  Example:
 	      "template": "Fabricator :%s do\nend"
 	    }
 	  },
-	  "path": ["app/services"]
+	  "path_additions": ["app/services"]
 	}
 <
 This "classifications" section is used to provide navigation commands.  The
@@ -924,7 +912,15 @@ are being considered for removal.
 Set this include guard to prevent the plugin from being loaded.
 
 						*g:rails_abbreviations*
-Enable Rails abbreviations.  See |rails-abbreviations|.  Enabled by default.
+Dictionary of additional |:Rabbrev| abbreviations.  Example:
+>
+  let g:rails_abbreviations = {
+        \ "AE::": "ActiveResource",
+	\ "p[": "params",
+	\ "rj(": ["render", "json: "]}
+<
+This variable was formerly used to globally disable abbreviations.  Use
+g:rails_no_abbreviations if you want to do that.
 
 						*g:rails_ctags_arguments*  >
 	let g:rails_ctags_arguments='--languages=-javascript'
@@ -940,29 +936,10 @@ File to load when a new Rails application is created.  Defaults to the README.
 Use GNU Screen or Tmux (if it is running) to launch |:Rscript| console and
 |:Rserver| in the background.  Enabled by default.
 
-						*g:rails_mappings*  >
-	let g:rails_mappings=1
-Enables a few mappings (mostly for |rails-navigation|). Enabled by default.
-
-						*g:rails_modelines*  >
-	let g:rails_modelines=1
-Enable modelines like the following: >
-	# Rset task=db:schema:load
-Modelines set buffer-local options using the :Rset command.
-Also enables method specific modelines (note the case difference): >
-	  def show
-	    # rset preview=blog/show/1
-Modelines are deprecated and disabled by default.
-
 						*g:rails_url*  >
 	let g:rails_url='http://localhost:3000/'
 Used for the |:Rpreview| command.  Default is as shown above.  Overridden by
 b:rails_url.
-
-						*g:rails_syntax*  >
-	let g:rails_syntax=1
-When enabled, this tweaks the syntax highlighting to be more Rails friendly.
-Enabled by default.  See |rails-syntax|.
 
 					*rails-tabs* *g:rails_tabstop*  >
 	let g:rails_tabstop=4
