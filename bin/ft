@@ -15,7 +15,7 @@ if [ $# -gt 0 ]; then # we have args
     need_rails=''
   fi
 else # we have args
-  filename='spec'
+  filename=''
 fi
 
 command='rspec'
