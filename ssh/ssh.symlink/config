@@ -30,6 +30,15 @@ Host gh
   TCPKeepAlive yes
   IdentitiesOnly yes
 
+Host dc
+  HostName discourse.jphenow.com
+  User ubuntu
+  IdentityFile ~/.ec2/discourse.pem
+
+Host *.amazonaws.com
+UserKnownHostsFile /dev/null
+StrictHostKeyChecking no
+
 #Host stat_production
 #  Hostname ec2-107-20-240-157.compute-1.amazonaws.com
 #  User deploy
