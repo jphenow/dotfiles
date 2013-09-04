@@ -29,11 +29,12 @@ alias gs='git status -sb' # upgrade your git if -sb breaks for you. it's fun.
 alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 alias gv="git status | grep both\ modified | awk '{print \$3}' | xargs vim -o"
 alias g="git"
+alias gm="git checkout master"
 
 alias prn="hub pull-request -b :production"
 alias pr='hub pull-request'
 
-alias goconf='vim $(git conflicts)'
+alias vgc='vim $(git cnf)'
 
 # Set terminal window name to current git repo or current directory
 #git_repo() {
