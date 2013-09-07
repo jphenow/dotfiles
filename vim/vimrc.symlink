@@ -402,8 +402,6 @@ noremap <s-k> :ls<cr>
 set viminfo='10,\"100,:20,%,n~/.viminfo
 
 set cursorline " highlight current line
-hi cursorline guibg=#333333 " highlight bg color of current line
-hi CursorColumn guibg=#333333 " highlight cursor
 
 if has('cmdline_info')
     set ruler " show the ruler
@@ -465,22 +463,18 @@ set noswapfile
 " ----------------------------------------------------------------------------
 " Highlight the syntax!
 "see http://ethanschoonover.com/solarized/vim-colors-solarized for
+"    call togglebg#map("<F4>")
 set t_Co=256
-if &t_Co >= 256 || has("gui_running")
-    "let g:solarized_termcolors=256
-    colorscheme solarized
-    call togglebg#map("<F4>")
-    let g:solarized_termtrans=1
-    let g:solarized_bold=1
-    let g:solarized_underline=1
-    let g:solarized_italic=1
-    let g:solarized_visibility=1
-endif
-
-if &t_Co > 2 || has("gui_running")
-    set background=dark
-    syntax on
-endif
+let g:solarized_termcolors=256
+colorscheme solarized
+let g:solarized_termtrans=1
+let g:solarized_bold=1
+let g:solarized_underline=1
+let g:solarized_italic=1
+let g:solarized_visibility=1
+set background=dark
+syntax on
+hi clear LineNr
 
 " ----------------------------------------------------------------------------
 " Visual Cues
@@ -608,6 +602,8 @@ endfunction
 
 map <leader>a :Bda<cr>
 
+map <leader>s :w\|:!%<cr>
+
 " Want to turn fooBar into foo_bar? Press crs (coerce to snake_case). MixedCase
 " (crm), camelCase (crc), snake_case (crs), and UPPER_CASE (cru) are all just 3
 " keystrokes away. These commands support repeat.vim.
@@ -669,3 +665,7 @@ map <Leader>i :call RunCurrentSpecFile()<CR>
 map <Leader>u :call RunNearestSpec()<CR>
 map <Leader>l :call RunLastSpec()<CR>
 "map <leader>i :w\|:!ft %<cr>
+
+autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
+autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
+autocmd FileType ruby,eruby let g:rubycomplete_rails = 1

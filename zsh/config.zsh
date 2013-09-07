@@ -1,5 +1,5 @@
 export TERM=xterm-256color
-eval "`gdircolors $DOT/colors/dir_colors`" >& /dev/null
+gdircolors $DOT/colors/dir_colors 2> /dev/null
 #if [[ -n $SSH_CONNECTION ]]; then
 #  export PS1='%m:%3~$(git_info_for_prompt)%# '
 #else

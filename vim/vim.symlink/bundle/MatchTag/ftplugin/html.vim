@@ -7,7 +7,7 @@ if exists("b:did_ftplugin")
 endif
 
 augroup matchhtmlparen
-  autocmd! CursorMoved,CursorMovedI,WinEnter <buffer> call s:Highlight_Matching_Pair()
+    autocmd! CursorMoved,CursorMovedI,WinEnter <buffer> call s:Highlight_Matching_Pair()
 augroup END
 
 fu! s:Highlight_Matching_Pair()
@@ -40,25 +40,36 @@ fu! s:GetCurrentCursorTag()
 
     let c_col  = col('.')
     let matched = matchstr(getline('.'), '\(<[^<>]*\%'.c_col.'c.\{-}>\)\|\(\%'.c_col.'c<.\{-}>\)')
-    if matched == "" || matched =~ '/>$'
+    if matched =~ '/>$'
         return ""
+    elseif matched == ""
+        " The tag itself may be spread over multiple lines.
+        let matched = matchstr(getline('.'), '\(<[^<>]*\%'.c_col.'c.\{-}$\)\|\(\%'.c_col.'c<.\{-}$\)')
+        if matched == ""
+            return ""
+        endif
     endif
 
-    let tagname = matchstr(matched, '<\zs.\{-}\ze[ >]')
+    " XML Tag definition is
+    "   (Letter | '_' | ':') (Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender)*
+    " Instead of dealing with CombiningChar and Extender, and because Vim's
+    " [:alpha:] only includes 8-bit characters, let's include all non-ASCII
+    " characters.
+    let tagname = matchstr(matched, '<\zs/\?\%([[:alpha:]_:]\|[^\x00-\x7F]\)\%([-._:[:alnum:]]\|[^\x00-\x7F]\)*')
     return tagname
 endfu
 
 fu! s:SearchForMatchingTag(tagname, forwards)
     "returns the position of a matching tag or [0 0]
 
-    let starttag = '<'.a:tagname.'.\{-}/\@<!>'
+    let starttag = '\V<'.escape(a:tagname, '\').'\%(\_s\%(\.\{-}\|\_.\{-}\%<'.line('.').'l\)/\@<!\)\?>'
     let midtag = ''
-    let endtag = '</'.a:tagname.'.\{-}'.(a:forwards?'':'\zs').'>'
+    let endtag = '\V</'.escape(a:tagname, '\').'\_s\*'.(a:forwards?'':'\zs').'>'
     let flags = 'nW'.(a:forwards?'':'b')
 
     " When not in a string or comment ignore matches inside them.
     let skip ='synIDattr(synID(line("."), col("."), 0), "name") ' .
-                \ '=~?  "htmlString\\|htmlCommentPart"'
+                \ '=~?  "\\%(html\\|xml\\)String\\|\\%(html\\|xml\\)CommentPart"'
     execute 'if' skip '| let skip = 0 | endif'
 
     " Limit the search to lines visible in the window.
@@ -67,9 +78,9 @@ fu! s:SearchForMatchingTag(tagname, forwards)
 
     " The searchpairpos() timeout parameter was added in 7.2
     if v:version >= 702
-      return searchpairpos(starttag, midtag, endtag, flags, skip, stopline, timeout)
+        return searchpairpos(starttag, midtag, endtag, flags, skip, stopline, timeout)
     else
-      return searchpairpos(starttag, midtag, endtag, flags, skip, stopline)
+        return searchpairpos(starttag, midtag, endtag, flags, skip, stopline)
     endif
 endfu
 
@@ -79,9 +90,11 @@ fu! s:HighlightTagAtPosition(position)
     endif
 
     let [m_lnum, m_col] = a:position
-    exe '2match MatchParen /\(\%' . m_lnum . 'l\%' . m_col .  'c<\zs.\{-}\ze[ >]\)\|'
-                \ .'\(\%' . line('.') . 'l\%' . col('.') .  'c<\zs.\{-}\ze[ >]\)\|'
-                \ .'\(\%' . line('.') . 'l<\zs[^<> ]*\%' . col('.') . 'c.\{-}\ze[ >]\)\|'
-                \ .'\(\%' . line('.') . 'l<\zs[^<>]\{-}\ze\s[^<>]*\%' . col('.') . 'c.\{-}>\)/'
+    exe '2match MatchParen /\(\%' . m_lnum . 'l\%' . m_col .  'c<\zs.\{-}\ze[\n >]\)\|'
+                \ .'\(\%' . line('.') . 'l\%' . col('.') .  'c<\zs.\{-}\ze[\n >]\)\|'
+                \ .'\(\%' . line('.') . 'l<\zs[^<> ]*\%' . col('.') . 'c.\{-}\ze[\n >]\)\|'
+                \ .'\(\%' . line('.') . 'l<\zs[^<>]\{-}\ze\s[^<>]*\%' . col('.') . 'c.\{-}[\n>]\)/'
     let w:tag_hl_on = 1
 endfu
+
+" vim: set ts=8 sts=4 sw=4 expandtab :

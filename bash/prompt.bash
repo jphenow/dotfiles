@@ -3,7 +3,7 @@
 #  * Colors
 #  * Git branch name
 
-. /usr/local/etc/bash_completion.d/git-completion.bash
+. /usr/local/etc/bash_completion.d/git-completion.bash &> /dev/null
 
 git_color() {
   local R="\e[0;31m"
