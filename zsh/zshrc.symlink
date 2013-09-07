@@ -130,3 +130,5 @@ term_tab_name() {
 precmd() {
   term_tab_name
 }
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM

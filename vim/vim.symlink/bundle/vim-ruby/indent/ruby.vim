@@ -2,7 +2,6 @@
 " Language:		Ruby
 " Maintainer:		Nikolai Weibull <now at bitwi.se>
 " URL:			https://github.com/vim-ruby/vim-ruby
-" Anon CVS:		See above site
 " Release Coordinator:	Doug Kearns <dougkearns@gmail.com>
 
 " 0. Initialization {{{1
@@ -32,9 +31,9 @@ set cpo&vim
 " 1. Variables {{{1
 " ============
 
-" Regex of syntax group names that are or delimit string or are comments.
+" Regex of syntax group names that are or delimit strings/symbols or are comments.
 let s:syng_strcom = '\<ruby\%(Regexp\|RegexpDelimiter\|RegexpEscape' .
-      \ '\|String\|StringDelimiter\|StringEscape\|ASCIICode' .
+      \ '\|Symbol\|String\|StringDelimiter\|StringEscape\|ASCIICode' .
       \ '\|Interpolation\|NoInterpolation\|Comment\|Documentation\)\>'
 
 " Regex of syntax group names that are strings.
@@ -161,7 +160,7 @@ function s:GetMSL(lnum)
     " Otherwise, terminate search as we have found our MSL already.
     let line = getline(lnum)
 
-    if line =~ s:splat_regex
+    if s:Match(lnum, s:splat_regex)
       " If the above line looks like the "*" of a splat, use the current one's
       " indentation.
       "
@@ -171,8 +170,8 @@ function s:GetMSL(lnum)
       "       something
       "
       return msl
-    elseif line =~ s:non_bracket_continuation_regex &&
-          \ msl_body =~ s:non_bracket_continuation_regex
+    elseif s:Match(line, s:non_bracket_continuation_regex) &&
+          \ s:Match(msl, s:non_bracket_continuation_regex)
       " If the current line is a non-bracket continuation and so is the
       " previous one, keep its indent and continue looking for an MSL.
       "
@@ -182,8 +181,8 @@ function s:GetMSL(lnum)
       "     three
       "
       let msl = lnum
-    elseif line =~ s:non_bracket_continuation_regex &&
-          \ (msl_body =~ s:bracket_continuation_regex || msl_body =~ s:block_continuation_regex)
+    elseif s:Match(lnum, s:non_bracket_continuation_regex) &&
+          \ (s:Match(msl, s:bracket_continuation_regex) || s:Match(msl, s:block_continuation_regex))
       " If the current line is a bracket continuation or a block-starter, but
       " the previous is a non-bracket one, respect the previous' indentation,
       " and stop here.
@@ -194,8 +193,8 @@ function s:GetMSL(lnum)
       "     three
       "
       return lnum
-    elseif line =~ s:bracket_continuation_regex &&
-          \ (msl_body =~ s:bracket_continuation_regex || msl_body =~ s:block_continuation_regex)
+    elseif s:Match(lnum, s:bracket_continuation_regex) &&
+          \ (s:Match(msl, s:bracket_continuation_regex) || s:Match(msl, s:block_continuation_regex))
       " If both lines are bracket continuations (the current may also be a
       " block-starter), use the current one's and stop here
       "
@@ -204,9 +203,9 @@ function s:GetMSL(lnum)
       "     other_method_call(
       "       foo
       return msl
-    elseif line =~ s:block_regex &&
-          \ msl_body !~ s:continuation_regex &&
-          \ msl_body !~ s:block_continuation_regex
+    elseif s:Match(lnum, s:block_regex) &&
+          \ !s:Match(msl, s:continuation_regex) &&
+          \ !s:Match(msl, s:block_continuation_regex)
       " If the previous line is a block-starter and the current one is
       " mostly ordinary, use the current one as the MSL.
       "
@@ -430,7 +429,12 @@ function GetRubyIndent(...)
     elseif closing.pos != -1
       call cursor(lnum, closing.pos + 1)
       normal! %
-      return indent('.')
+
+      if s:Match(line('.'), s:ruby_indent_keywords)
+        return indent('.') + &sw
+      else
+        return indent('.')
+      endif
     else
       call cursor(clnum, vcol)
     end
@@ -496,11 +500,9 @@ function GetRubyIndent(...)
     return ind
   endif
 
-  " If the previous line ended with [*+/.,-=], but wasn't a block ending,
-  " indent one extra level.
-  if s:Match(lnum, s:non_bracket_continuation_regex)
-        \ && !s:Match(lnum, '^\s*\(}\|end\)')
-        \ && !s:IsInStringOrComment(lnum, len(line))
+  " If the previous line ended with [*+/.,-=], but wasn't a block ending or a
+  " closing bracket, indent one extra level.
+  if s:Match(lnum, s:non_bracket_continuation_regex) && !s:Match(lnum, '^\s*\([\])}]\|end\)')
     if lnum == p_lnum
       let ind = msl_ind + &sw
     else

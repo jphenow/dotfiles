@@ -591,6 +591,8 @@ map <leader>a :Bda<cr>
 map <leader>o :w\|:!bundle exec rake spec<cr>
 map <leader>i :w\|:!ft %<cr>
 
+map <leader>s :w\|:!%<cr>
+
 " Want to turn fooBar into foo_bar? Press crs (coerce to snake_case). MixedCase
 " (crm), camelCase (crc), snake_case (crs), and UPPER_CASE (cru) are all just 3
 " keystrokes away. These commands support repeat.vim.
@@ -646,3 +648,7 @@ fun! s:EightyLine()
   :highlight ColorColumn NONE
  endif
 endfunction
+
+autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
+autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
+autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
