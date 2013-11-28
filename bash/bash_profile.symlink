@@ -64,3 +64,5 @@ command -v complete > /dev/null && complete -o nospace -F _work work
 
 # necessary for mysql gem when using mysql 5.5 on mac os x
 export DYLD_LIBRARY_PATH="/usr/local/mysql/lib/:$DYLD_LIBRARY_PATH"
+
+[ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh # This loads NVM
