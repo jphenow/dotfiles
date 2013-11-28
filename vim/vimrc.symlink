@@ -59,6 +59,7 @@ Bundle 'scrooloose/nerdtree'
 "Bundle 'airblade/vim-gitgutter'
 Bundle 'thoughtbot/vim-rspec'
 Bundle 'slim-template/vim-slim.git'
+Bundle 'nono/vim-handlebars'
 
 
 Bundle 'IndentAnything'
@@ -282,8 +283,13 @@ autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd filetype python set expandtab
 autocmd filetype html,xml set listchars-=tab:>.
 
+"au FileType markdown set textwidth=115 formatoptions=t1
+"au FileType markdown autocmd InsertEnter * set formatoptions+=a
+"au FileType markdown autocmd InsertLeave * set formatoptions-=a
+"au FileType markdown noremap Q gqip
+
 " Fix poor spec-file highlight finder
-autocmd BufRead,BufNewFile *_\(spec\|shared_example\).rb syn keyword rubyRspec shared_examples expect to double with describe context it specify it_should_behave_like before after setup subject its shared_examples_for shared_context let
+autocmd BufRead,BufNewFile *_\(spec\|shared_example\).rb syn keyword rubyRspec described_class shared_examples expect to double with describe context it specify it_should_behave_like before after setup subject its shared_examples_for shared_context let
 highlight def link rubyRspec Function
 
 let html_my_rendering = 1
@@ -669,3 +675,16 @@ map <Leader>i :call RunCurrentSpecFile()<CR>
 map <Leader>u :call RunNearestSpec()<CR>
 map <Leader>l :call RunLastSpec()<CR>
 "map <leader>i :w\|:!ft %<cr>
+
+let g:lightline = {
+      \   'component': {
+      \     'readonly': '%{&readonly?"⭤":""}',
+      \   },
+      \   'component_function': {
+      \     'filename': 'MyFilename',
+      \   },
+      \ }
+
+function! MyFilename()
+        return ('' != expand('%') ? expand('%') : '[No Name]')
+endfunction
