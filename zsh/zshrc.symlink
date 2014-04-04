@@ -130,3 +130,8 @@ term_tab_name() {
 precmd() {
   term_tab_name
 }
+
+ulimit -n 10000
+
+# Display time to complete commands longer than $REPORTTIME
+export REPORTTIME=5
