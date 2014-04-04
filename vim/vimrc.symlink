@@ -12,7 +12,7 @@ source ~/.vim/plugin/scmdiff.vim
 source ~/.vim/plugin/gitignore.vim
 
 filetype off
-set rtp+=~/.vim/bundle/vundle
+set rtp+=~/.vim/vundle
 call vundle#rc()
 " let Vundle manage Vundle
  " required!
@@ -32,7 +32,7 @@ Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-repeat'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-endwise'
-Bundle 'tsaleh/vim-matchit'
+"Bundle 'tsaleh/vim-matchit'
 Bundle 'tsaleh/vim-shoulda'
 Bundle 'tsaleh/vim-tmux'
 Bundle 'vim-ruby/vim-ruby'
@@ -50,10 +50,10 @@ Bundle 'scrooloose/nerdcommenter'
 Bundle 'itchyny/lightline.vim'
 Bundle 'tpope/vim-abolish'
 Bundle 'tpope/vim-speeddating'
-Bundle 'rson/vim-conque'
-Bundle 'skwp/vim-ruby-conque'
+"Bundle 'rson/vim-conque'
+"Bundle 'skwp/vim-ruby-conque'
 Bundle 'yaymukund/vim-rabl'
-Bundle 'tobiassvn/vim-gemfile'
+"Bundle 'tobiassvn/vim-gemfile'
 Bundle 'kien/ctrlp.vim'
 "Bundle 'airblade/vim-gitgutter'
 Bundle 'thoughtbot/vim-rspec'
@@ -586,8 +586,8 @@ map <leader>a :Bda<cr>
 
 " Default Ruby-Conque Maps
 "nmap <silent> <Leader>rcrr :call RunRubyCurrentFileConque()<CR>
-nmap <silent> <Leader>rc :call RunRspecCurrentFileConque()<CR>
-nmap <silent> <Leader>rcll :call RunRspecCurrentLineConque()<CR>
+"nmap <silent> <Leader>rc :call RunRspecCurrentFileConque()<CR>
+"nmap <silent> <Leader>rcll :call RunRspecCurrentLineConque()<CR>
 "nmap <silent> <Leader>rccc :call RunCucumberCurrentFileConque()<CR>
 "nmap <silent> <Leader>rccl :call RunCucumberCurrentLineConque()<CR>
 "nmap <silent> <Leader>rcRR :call RunRakeConque()<CR>
@@ -597,11 +597,11 @@ map <leader>e :call RelatedSpecVOpen()<CR>
 "nnoremap <silent> ,<C-s> :call RelatedSpecOpen()<CR>
 
 " Cmd-Shift-R for RSpec
-nmap <silent> <D-R> :call RunRspecCurrentFileConque()<CR>
+"nmap <silent> <D-R> :call RunRspecCurrentFileConque()<CR>
 " Cmd-Shift-L for RSpec Current Line
-nmap <silent> <D-L> :call RunRspecCurrentLineConque()<CR>
+"nmap <silent> <D-L> :call RunRspecCurrentLineConque()<CR>
 " ,Cmd-R for Last conque command
-nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
+"nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
 
 "map <leader>p :s/\:\<\(\w\+\)\>\s\+=>\s\+/\1: /g <cr>
 "map <leader>l :%s/\:\<\(\w\+\)\>\s\+=>\s\+/\1: /g <cr>
