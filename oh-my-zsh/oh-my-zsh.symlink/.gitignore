@@ -2,9 +2,8 @@ locals.zsh
 log/.zsh_history
 projects.zsh
 custom
-custom/*.zsh
-*.un~
-cache
+!custom/plugins/example
+!custom/example.zsh
 *.swp
-
-.DS_Store
+!custom/example.zshcache
+cache/
