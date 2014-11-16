@@ -32,7 +32,7 @@ bind -t vi-copy Escape cancel
 # move x clipboard into tmux paste buffer
 bind C-p run-shell "tmux set-buffer \"$(pbpaste)\"; tmux paste-buffer"
 # # move tmux copy buffer into x clipboard
-bind C-g run-shell "tmux show-buffer | pbcopy"
+bind C-g run-shell "tmux show-buffer | xclip -i"
 
 set -g mode-mouse on
 
@@ -47,3 +47,7 @@ set -g base-index 1
 # soften status bar color from harsh green to light gray
 set -g status-bg '#666667'
 set -g status-fg '#aaaaaa'
+
+bind '"' split-window -c "#{pane_current_path}"
+bind % split-window -h -c "#{pane_current_path}"
+bind c new-window -c "#{pane_current_path}"

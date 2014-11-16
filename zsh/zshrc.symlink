@@ -135,3 +135,6 @@ ulimit -n 10000
 
 # Display time to complete commands longer than $REPORTTIME
 export REPORTTIME=5
+unset NOKOGIRI_USE_SYSTEM_LIBRARIES
+export ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future
+

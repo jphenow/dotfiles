@@ -40,7 +40,8 @@ Bundle 'vim-scripts/Gist.vim'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'othree/html5.vim'
 Bundle 'kchmck/vim-coffee-script'
-Bundle 'cakebaker/scss-syntax.vim'
+"Bundle 'cakebaker/scss-syntax.vim'
+Bundle 'hail2u/vim-css3-syntax'
 Bundle 'itspriddle/vim-jquery'
 Bundle 'tpope/vim-rvm'
 Bundle 'mileszs/ack.vim'
@@ -64,7 +65,6 @@ Bundle 'tpope/vim-dispatch'
 Bundle 'tpope/vim-jdaddy'
 
 let g:rspec_command = "Dispatch rspec {spec}"
-
 
 Bundle 'IndentAnything'
 Bundle 'closetag.vim'
@@ -300,7 +300,7 @@ let g:ruby_debugger_no_maps = 1
 set hidden
 
 " Begin switch mode code: handle either buffer or window c-j/c-k switches
-function MapForBuffers()
+function! MapForBuffers()
     noremap <c-j> :only<cr>:bnext<cr>
     inoremap <c-j> <esc>:only<cr>:bnext<cr>
     noremap <c-k> :only<cr>:bprev<cr>
@@ -308,7 +308,7 @@ function MapForBuffers()
     :only
 endfunction
 
-function MapForWindows()
+function! MapForWindows()
     :unhide
     noremap <c-j> <c-w>j<c-w>_
     inoremap <c-j> <esc><c-w>j<c-w>_
@@ -316,7 +316,7 @@ function MapForWindows()
     inoremap <c-k> <esc><c-w>k<c-w>_
 endfunction
 
-function MapSwitchMode()
+function! MapSwitchMode()
     if g:switchmode == "windows"
         call MapForWindows()
     else
@@ -332,7 +332,7 @@ inoremap <c-j> <esc>:only<cr>:bnext<cr>
 noremap <c-k> :only<cr>:bprev<cr>
 inoremap <c-k> <esc>:only<cr>:bprev<cr>
 
-function ToggleSwitchMode()
+function! ToggleSwitchMode()
     if g:switchmode == "windows"
         let g:switchmode = "buffers"
     else
@@ -344,7 +344,7 @@ endfunction
 noremap <F4> :call ToggleSwitchMode()<cr>:echo "Switching mode now: " . g:switchmode<cr>
 " End switch mode code
 
-function DeleteHiddenBuffers()
+function! DeleteHiddenBuffers()
     let tpbl=[]
     call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
     for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
@@ -474,7 +474,7 @@ set visualbell             " shut the fuck up
 "  Strip all trailing whitespace in file
 " ---------------------------------------------------------------------------
 
-function StripWhitespace()
+function! StripWhitespace()
     exec ':%s/ \+$//gc'
 endfunction
 map <s-s> :call StripWhitespace()<CR>
@@ -672,11 +672,13 @@ autocmd Bufread,BufNewFile *.sql* set ft=mysql
 autocmd Bufread,BufNewFile *.java* set ft=java
 autocmd Bufread,BufNewFile *.jbuilder* set ft=ruby
 autocmd Bufread,BufNewFile *.xml.builder* set ft=ruby
+autocmd Bufread,BufNewFile Gemfile set ft=ruby
 autocmd Bufread,BufNewFile *.slim set ft=slim
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd filetype python set expandtab
 autocmd filetype html,xml set listchars-=tab:>.
-au BufRead,BufNewFile *.go set filetype=go
+au BufRead,BufNewFile *.go set filetype=go nolist
+au BufNewFile,BufRead *.go setlocal noet ts=4 sw=4 sts=4
 
 "au FileType markdown set textwidth=115 formatoptions=t1
 "au FileType markdown autocmd InsertEnter * set formatoptions+=a
@@ -686,6 +688,9 @@ au BufRead,BufNewFile *.go set filetype=go
 " Fix poor spec-file highlight finder
 autocmd BufRead,BufNewFile *_\(spec\|shared_example\).rb syn keyword rubyRspec described_class shared_examples expect to double with describe context it specify it_should_behave_like before after setup subject its shared_examples_for shared_context let
 highlight def link rubyRspec Function
+
+autocmd BufRead,BufNewFile Gemfile syn keyword rubyGemfile gem group source
+highlight def link rubyGemfile Function
 
 function s:MkNonExDir(file, buf)
   if empty(getbufvar(a:buf, '&buftype')) && a:file!~#'\v^\w+\:\/'
@@ -707,3 +712,10 @@ highlight htmlBoldUnderlineItalic cterm=bold,underline ctermfg=DarkGray ctermbg=
 highlight htmlUnderline cterm=underline
 highlight htmlUnderlineItalic cterm=underline ctermfg=DarkGray ctermbg=NONE
 highlight htmlItalic ctermfg=DarkGray ctermbg=NONE
+
+set splitright
+function! OpenRelatedSpec()
+  let specfile=substitute(expand('%:r'), "app", "spec", "") . "_spec.rb"
+  exec "vs " . specfile
+endfunction
+nmap <leader>e :call OpenRelatedSpec()<cr>
