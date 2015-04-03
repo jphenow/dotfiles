@@ -1,3 +1,8 @@
+Host jpdo
+  HostName 104.236.54.238
+  User jonphenow
+  ServerAliveInterval 300
+
 Host jp
   HostName jphenow.com
   User j_phenow
@@ -36,8 +41,8 @@ Host dc
   IdentityFile ~/.ec2/discourse.pem
 
 Host *.amazonaws.com
-UserKnownHostsFile /dev/null
-StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
 
 #Host stat_production
 #  Hostname ec2-107-20-240-157.compute-1.amazonaws.com
