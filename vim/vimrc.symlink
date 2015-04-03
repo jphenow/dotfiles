@@ -65,6 +65,7 @@ Plugin 'jnwhiteh/vim-golang'
 Plugin 'tpope/vim-dispatch'
 Plugin 'tpope/vim-jdaddy'
 Plugin 'rking/ag.vim'
+Plugin 'wting/rust.vim'
 
 let g:rspec_command = "Dispatch rspec {spec}"
 
