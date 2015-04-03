@@ -17,6 +17,7 @@ call vundle#rc()
 " let Vundle manage Vundle
  " required!
 Bundle 'gmarik/vundle'
+Bundle 'cespare/vim-toml'
 Bundle 'astashov/vim-ruby-debugger'
 Bundle 'godlygeek/tabular'
 Bundle 'msanders/snipmate.vim'
@@ -63,6 +64,7 @@ Bundle 'nono/vim-handlebars'
 Bundle 'jnwhiteh/vim-golang'
 Bundle 'tpope/vim-dispatch'
 Bundle 'tpope/vim-jdaddy'
+Bundle 'rking/ag.vim'
 
 let g:rspec_command = "Dispatch rspec {spec}"
 
@@ -235,9 +237,11 @@ function! RunTests(filename)
 endfunction
 map <leader>r :call RunTestFile()<cr>
 map <leader>R :call RunNearestTest()<cr>
-map <leader>a :call RunTests('')<cr>
+"map <leader>a :call RunTests('')<cr>
 map <leader>A :w\|:!script/features<cr>
 map <leader>w :w\|:!script/features --profile wip<cr>
+
+nnoremap <leader>a :Ag<space>
 
 
 " ----------------------------------------------------------------------------
@@ -719,3 +723,6 @@ function! OpenRelatedSpec()
   exec "vs " . specfile
 endfunction
 nmap <leader>e :call OpenRelatedSpec()<cr>
+
+" Fix exc delay
+set timeoutlen=1000 ttimeoutlen=0
