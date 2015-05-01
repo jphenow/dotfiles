@@ -22,7 +22,7 @@ Plugin 'astashov/vim-ruby-debugger'
 Plugin 'godlygeek/tabular'
 Plugin 'msanders/snipmate.vim'
 Plugin 'pangloss/vim-javascript'
-"Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdtree'
 Plugin 'timcharper/textile.vim'
 Plugin 'tpope/vim-cucumber'
 Plugin 'tpope/vim-fugitive'
@@ -107,9 +107,6 @@ endif
 
 " Quick shortcut for main sesion store
 nmap SQ <ESC>:mksession! ~/.vim/Session.vim<CR>:wqa<CR>
-
-" Toggle shortcut for NERDTree
-":map <F5> :NERDTreeToggle<CR>
 
 " Configure :Align
 call AlignCtrl( 'p1P1l+','=>', '=' )
@@ -733,3 +730,10 @@ nmap <leader>e :call OpenRelatedSpec()<cr>
 
 " Fix exc delay
 set timeoutlen=1000 ttimeoutlen=0
+
+" Toggle shortcut for NERDTree
+map <leader>d :NERDTreeToggle<CR>
+
+" Auto open nerdtree on no file
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
