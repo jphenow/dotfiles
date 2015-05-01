@@ -138,3 +138,6 @@ export REPORTTIME=5
 unset NOKOGIRI_USE_SYSTEM_LIBRARIES
 export ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future
 export CC=/usr/bin/gcc
+
+export NVM_DIR="/Users/jonphenow/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm

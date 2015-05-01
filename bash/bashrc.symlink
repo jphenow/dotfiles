@@ -46,3 +46,6 @@ export TZ="/usr/share/zoneinfo/America/Chicago"
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 export MYSQL_CONFIG=/usr/local/bin/mysql_config
 export DYLD_LIBRARY_PATH=/usr/local/mysql/lib/
+
+export NVM_DIR="/Users/jonphenow/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
