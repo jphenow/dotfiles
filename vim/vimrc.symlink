@@ -531,7 +531,7 @@ map <silent> <Leader>gV :CtrlP vendor<cr>
 map <silent> <Leader>gF :CtrlP factories<cr>
 map <silent> <Leader>gh :CtrlP ~/<cr>
 "nnoremap <silent> <leader>T :ClearCtrlPCache<cr>\|:CtrlP<cr>
-let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|public\|**/bower_components\|tmp'
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|**/bower_components\|tmp'
 
 function! InsertTabWrapper()
   let col = col('.') - 1
@@ -673,6 +673,7 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
 
 autocmd Bufread,BufNewFile *.py* set ft=python
 autocmd Bufread,BufNewFile *.html set ft=html
+autocmd Bufread,BufNewFile *.tmpl set ft=html
 autocmd Bufread,BufNewFile *.ctp* set ft=php
 autocmd Bufread,BufNewFile *.php* set ft=php
 autocmd Bufread,BufNewFile *.xml* set ft=xml
@@ -733,6 +734,7 @@ set timeoutlen=1000 ttimeoutlen=0
 
 " Toggle shortcut for NERDTree
 map <leader>d :NERDTreeToggle<CR>
+nmap <leader>f :NERDTreeFind<CR>
 
 " Auto open nerdtree on no file
 autocmd StdinReadPre * let s:std_in=1
