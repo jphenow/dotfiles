@@ -1,6 +1,6 @@
 " abolish.vim - Language friendly searches, substitutions, and abbreviations
 " Maintainer:   Tim Pope <http://tpo.pe/>
-" Version:      1.0
+" Version:      1.1
 " GetLatestVimScripts: 1545 1 :AutoInstall: abolish.vim
 
 " Initialization {{{1
@@ -121,7 +121,7 @@ function! s:snakecase(word)
   let word = substitute(a:word,'::','/','g')
   let word = substitute(word,'\(\u\+\)\(\u\l\)','\1_\2','g')
   let word = substitute(word,'\(\l\|\d\)\(\u\)','\1_\2','g')
-  let word = substitute(word,'-','_','g')
+  let word = substitute(word,'[.-]','_','g')
   let word = tolower(word)
   return word
 endfunction
@@ -134,12 +134,17 @@ function! s:dashcase(word)
   return substitute(s:snakecase(a:word),'_','-','g')
 endfunction
 
+function! s:dotcase(word)
+  return substitute(s:snakecase(a:word),'_','.','g')
+endfunction
+
 call extend(Abolish, {
       \ 'camelcase':  s:function('s:camelcase'),
       \ 'mixedcase':  s:function('s:mixedcase'),
       \ 'snakecase':  s:function('s:snakecase'),
       \ 'uppercase':  s:function('s:uppercase'),
-      \ 'dashcase':   s:function('s:dashcase')
+      \ 'dashcase':   s:function('s:dashcase'),
+      \ 'dotcase':    s:function('s:dotcase')
       \ }, 'keep')
 
 function! s:create_dictionary(lhs,rhs,opts)
@@ -317,7 +322,7 @@ endfunction
 " Searching {{{1
 
 function! s:subesc(pattern)
-  return substitute(a:pattern,'[][\\/.*~]','\\&','g')
+  return substitute(a:pattern,'[][\\/.*~%()&]','\\&','g')
 endfunction
 
 function! s:sort(a,b)
@@ -556,6 +561,8 @@ call extend(Abolish.Coercions, {
       \ 'u': Abolish.uppercase,
       \ 'U': Abolish.uppercase,
       \ '-': Abolish.dashcase,
+      \ 'k': Abolish.dashcase,
+      \ '.': Abolish.dotcase,
       \ "function missing": s:function("s:unknown_coercion")
       \}, "keep")
 

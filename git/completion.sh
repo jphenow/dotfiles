@@ -14,3 +14,9 @@ elif test -f $completion2
 then
   source $completion2 2> /dev/null
 fi
+
+hubcompletion=/usr/local/share/zsh/site-functions
+if test -f $hubcompletion
+then
+  source $hubcompletion 2> /dev/null
+fi

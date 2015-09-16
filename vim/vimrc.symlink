@@ -16,7 +16,7 @@ set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
 " let Vundle manage Vundle
  " required!
-Bundle 'gmarik/vundle'
+"Bundle 'vundle'
 Bundle 'astashov/vim-ruby-debugger'
 Bundle 'godlygeek/tabular'
 Bundle 'msanders/snipmate.vim'
@@ -50,16 +50,16 @@ Bundle 'scrooloose/nerdcommenter'
 Bundle 'itchyny/lightline.vim'
 Bundle 'tpope/vim-abolish'
 Bundle 'tpope/vim-speeddating'
-Bundle 'rson/vim-conque'
-Bundle 'skwp/vim-ruby-conque'
+"Bundle 'rson/vim-conque'
+"Bundle 'skwp/vim-ruby-conque'
 Bundle 'yaymukund/vim-rabl'
-Bundle 'tobiassvn/vim-gemfile'
+"Bundle 'tobiassvn/vim-gemfile'
 Bundle 'kien/ctrlp.vim'
-Bundle 'scrooloose/nerdtree'
 "Bundle 'airblade/vim-gitgutter'
 Bundle 'thoughtbot/vim-rspec'
 Bundle 'slim-template/vim-slim.git'
 Bundle 'nono/vim-handlebars'
+Bundle 'mxw/vim-jsx'
 
 
 Bundle 'IndentAnything'
@@ -447,6 +447,7 @@ set showmatch
 
 " Fix my HID
 set mouse=a
+set ttymouse=xterm2
 
 " CTags
 set cpo+=d
@@ -478,7 +479,7 @@ let g:solarized_bold=1
 let g:solarized_underline=1
 let g:solarized_italic=1
 let g:solarized_visibility=1
-set background=dark
+set background=light
 syntax on
 hi clear LineNr
 

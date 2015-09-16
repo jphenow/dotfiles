@@ -1,7 +1,4 @@
-" speeddating.vim - Use CTRL-A/CTRL-X to increment dates, times, and more
-" Maintainer:   Tim Pope <http://tpo.pe/>
-" Version:      20100301
-" GetLatestVimScripts: 2120 1 :AutoInstall: speeddating.vim
+" Location:     autoload/speeddating.vim
 
 " Initialization {{{1
 
@@ -464,7 +461,7 @@ function! s:strftime(pattern,time)
 endfunction
 
 function! s:localtime(...)
-  let ts = a:0 ? a:1 : reltimestr(reltime())
+  let ts = a:0 ? a:1 : has('unix') ? reltimestr(reltime()) : localtime().'.0'
   let us = matchstr(ts,'\.\zs.\{0,6\}')
   let us .= repeat(0,6-strlen(us))
   let us = +matchstr(us,'[1-9].*')
@@ -799,10 +796,10 @@ function! speeddating#adddate(master,count,bang)
   endif
 endfunction
 
-let s:time_handlers = []
-
-" Mark that we've loaded so further format definitions will happen immediately
-call speeddating#loadformats()
+if !exists('s:time_handlers')
+  let s:time_handlers = []
+  call speeddating#loadformats()
+endif
 
 " }}}1
 

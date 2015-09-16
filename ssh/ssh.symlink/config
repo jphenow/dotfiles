@@ -43,6 +43,10 @@ Host dc
   Hostname discourse.jphenow.com
   IdentityFile ".ec2/discourse.pem"
 
+Host jpdo
+  User jonphenow
+  Hostname jphenow.com
+
 #Host stat_production
 #  Hostname ec2-107-20-240-157.compute-1.amazonaws.com
 #  User deploy

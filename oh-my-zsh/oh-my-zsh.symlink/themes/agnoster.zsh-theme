@@ -133,7 +133,7 @@ build_prompt() {
   #prompt_context
   prompt_dir
   prompt_git
-  prompt_rvm
+  #prompt_rvm
   prompt_end
 }
 

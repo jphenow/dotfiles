@@ -1,6 +1,6 @@
 " speeddating.vim - Use CTRL-A/CTRL-X to increment dates, times, and more
 " Maintainer:   Tim Pope <http://tpo.pe/>
-" Version:      20100301
+" Version:      20150124
 " GetLatestVimScripts: 2120 1 :AutoInstall: speeddating.vim
 
 " Initialization {{{1
@@ -14,7 +14,6 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 let g:speeddating_handlers = []
-let g:speeddating_formats = []
 
 " }}}1
 " Time Handler {{{1
@@ -60,6 +59,10 @@ endif
 " }}}1
 " Default Formats {{{1
 
+if exists('g:speeddating_formats')
+  finish
+endif
+let g:speeddating_formats = []
 SpeedDatingFormat %i, %d %h %Y %H:%M:%S %z        " RFC822
 SpeedDatingFormat %i, %h %d, %Y at %I:%M:%S%^P %z " mutt default date format
 SpeedDatingFormat %a %b %_d %H:%M:%S %Z %Y        " default date(1) format
@@ -67,6 +70,8 @@ SpeedDatingFormat %a %h %-d %H:%M:%S %Y %z        " git
 SpeedDatingFormat %h %_d %H:%M:%S                 " syslog
 SpeedDatingFormat %Y-%m-%d%[ T_-]%H:%M:%S %z
 SpeedDatingFormat %Y-%m-%d%[ T_-]%H:%M:%S%?[Z]    " SQL, etc.
+SpeedDatingFormat %Y-%m-%d%[ T_-]%H:%M%z          " date -Im
+SpeedDatingFormat %Y-%m-%d%[ T_-]%H:%M
 SpeedDatingFormat %Y-%m-%d
 SpeedDatingFormat %-I:%M:%S%?[ ]%^P
 SpeedDatingFormat %-I:%M%?[ ]%^P

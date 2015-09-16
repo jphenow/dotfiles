@@ -10,7 +10,7 @@ export DOT=$HOME/git/dotfiles
 . $DOT/oh-my-zsh/oh-my-zsh.zsh
 
 # your project folder that we can `c [tab]` to
-export PROJECTS=~/workspace
+# export PROJECTS=~/workspace
 
 # source every .zsh file in this rep
 for config_file ($DOT/**/*.zsh) do
@@ -31,21 +31,8 @@ compinit
 # load every completion after autocomplete loads
 for config_file ($DOT/**/completion.sh) source $config_file
 
-#########################
-### TST Media install ###
-#########################
-
-# This helps Ruby install on Linon
-export CC=/usr/bin/gcc-4.2
-
-
-# Add our custom MySQL to the $PATH
-export PATH=/usr/local/mysql/bin:$PATH
-
-
 # Add Homebrew the $PATH
 export PATH=/usr/local/bin:$PATH
-
 
 # solves issues with rake having mismatched versions with what Gemfile.lock expects
 rake() {
@@ -55,7 +42,6 @@ rake() {
     command rake "$@"
   fi
 }
-
 
 # `work foo` to navigate to SHARED_WORKSPACE/foo.
 work() {
