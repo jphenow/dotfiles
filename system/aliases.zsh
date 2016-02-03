@@ -17,7 +17,7 @@ fi
 
 vimcmd=""
 
-if $(mvim &>/dev/null)
+if $(command -v mvim >/dev/null 2>&1)
 then
   vimcmd="mvim"
 else

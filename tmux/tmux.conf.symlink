@@ -34,7 +34,8 @@ bind C-p run-shell "tmux set-buffer \"$(pbpaste)\"; tmux paste-buffer"
 # # move tmux copy buffer into x clipboard
 bind C-g run-shell "tmux show-buffer | pbcopy"
 
-set -g mode-mouse on
+set -g mouse on
+bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e; send-keys -M'"
 
 set-option -g default-command "reattach-to-user-namespace -l zsh"
 
@@ -43,6 +44,7 @@ set -g bell-action none
 set -g set-titles on
 set -g set-titles-string "tmux (#I:#W)"
 set -g base-index 1
+set-window-option -g pane-base-index 1
 
 # soften status bar color from harsh green to light gray
 set -g status-bg '#666667'

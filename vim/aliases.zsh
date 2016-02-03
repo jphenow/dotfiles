@@ -1,0 +1,1 @@
+alias vl='vim $(!$)'

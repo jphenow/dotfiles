@@ -118,3 +118,5 @@ precmd() {
 }
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM
+
+[ -s "/Users/jonphenow/.dnx/dnvm/dnvm.sh" ] && . "/Users/jonphenow/.dnx/dnvm/dnvm.sh" # Load dnvm

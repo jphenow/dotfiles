@@ -1,6 +1,6 @@
 vimcmd="" &> /dev/null
 
-if $(mvim &>/dev/null)
+if $(command -v mvmim >/dev/null 2>&1)
 then
   vimcmd="mvim" &> /dev/null
 else

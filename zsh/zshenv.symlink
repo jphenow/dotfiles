@@ -4,3 +4,7 @@
 skip_global_compinit=1
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+#autoload bashcompinit
+#bashcompinit
+#eval "$($HOME/.37/bin/37 init -)"
+PATH="$HOME/.37/bin:$PATH"

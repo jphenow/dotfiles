@@ -59,9 +59,10 @@ todonum(){
     fi
   fi
 }
+source /Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh >& /dev/null
 git_ps1 ()
 {
-  __git_ps1 1>/dev/null 2>/dev/null
+  __git_ps1 >& /dev/null
   err=$?
   if [ "$err" == "0" ]; then
     echo -e "`__git_ps1`"
