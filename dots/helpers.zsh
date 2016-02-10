@@ -5,6 +5,6 @@ function rt () {
     ruby -I"lib:test" "$@"
   else
     # This is a Rails1 project. No bundler.
-    ruby -e 'ARGV.each { |f| load f unless f =~ /^-/ ; break if f == "-n" }' "$@"
+    ruby -I"lib:test" -e 'ARGV.each { |f| load f unless f =~ /^-/ ; break if f == "-n" }' "$@"
   fi
 }

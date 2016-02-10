@@ -5,12 +5,18 @@ export DOT=$HOME/git/dotfiles
 # your project folder that we can `c [tab]` to
 # export PROJECTS=~/workspace
 
+source $DOT/zsh/config.zsh
+
+for config_file ($DOT/dependencies/*.zsh) do
+  source $config_file
+done
+
 for config_file ($DOT/lib/*.zsh) do
   source $config_file
 done
 
 # source every .zsh file in this rep
-for config_file ($DOT/**/*.zsh) do
+for config_file ($DOT/dots/*.zsh) do
   source $config_file
 done
 

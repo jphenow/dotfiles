@@ -2,12 +2,12 @@
 if [ "$TERM" != "dumb" ]; then
   export TERM="xterm-256color"
   export CLICOLOR=1
-  gdircolors -b $DOT/colors/dir_colors &> /dev/null
+  gdircolors -b $DOT/dependencies/dir_colors &> /dev/null
 fi
-# Enable colors for ls, etc.  Prefer $DOT/colors/dir_colors #64489
+# Enable colors for ls, etc.  Prefer $DOT/dependencies/dir_colors #64489
 if whence dircolors > /dev/null ; then
-  if [[ -f $DOT/colors/dir_colors ]] ; then
-    eval $(dircolors -b $DOT/colors/dir_colors) &> /dev/null
+  if [[ -f $DOT/dependencies/dir_colors ]] ; then
+    eval $(dircolors -b $DOT/dependencies/dir_colors) &> /dev/null
   elif [[ -f /etc/DIR_COLORS ]] ; then
     eval $(dircolors -b /etc/DIR_COLORS) &> /dev/null
   fi
