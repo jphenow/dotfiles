@@ -1,7 +1,0 @@
-#!/bin/sh
-#
-# Quick search in a directory for a string ($1).
-#
-set -e
-
-grep -ir $1 *
