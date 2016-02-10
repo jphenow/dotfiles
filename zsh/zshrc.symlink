@@ -2,19 +2,16 @@
 # TODO sync these two so we don't have unnecessary vars laying about
 export DOT=$HOME/git/dotfiles
 
-#########################
-###### OH MY ZSH ########
-#########################
-#
-# The only .zsh called outside the loop below, needs to load first
-. $DOT/oh-my-zsh/oh-my-zsh.zsh
-
 # your project folder that we can `c [tab]` to
 # export PROJECTS=~/workspace
 
+for config_file ($DOT/lib/*.zsh) do
+  source $config_file
+done
+
 # source every .zsh file in this rep
 for config_file ($DOT/**/*.zsh) do
-  [[ ! "$config_file" =~ "oh-my-zsh" ]] && source $config_file
+  source $config_file
 done
 
 # use .localrc for SUPER SECRET CRAP that you don't
@@ -73,7 +70,6 @@ _work() {
 # enable completion for work() function using _work(), but only if `complete` exists
 command -v complete > /dev/null && complete -o nospace -F _work work
 
-
 # necessary for mysql gem when using mysql 5.5 on mac os x
 export DYLD_LIBRARY_PATH="/usr/local/mysql/lib/:$DYLD_LIBRARY_PATH"
 
@@ -117,6 +113,6 @@ precmd() {
   term_tab_name
 }
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM
-
 [ -s "/Users/jonphenow/.dnx/dnvm/dnvm.sh" ] && . "/Users/jonphenow/.dnx/dnvm/dnvm.sh" # Load dnvm
+
+source $DOT/zsh/theme.zsh-theme
