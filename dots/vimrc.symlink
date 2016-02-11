@@ -1,168 +1,132 @@
-" Jon Phenow's .vmrc
+" don't bother with vi compatibility
+set nocompatible
 
-" Static plugins
-" TODO replace with pathogen autoloads
-source ~/.vim/plugin/Align.vim
-source ~/.vim/plugin/AlignMaps.vim
-source ~/.vim/plugin/VisualSearch.vim
-source ~/.vim/plugin/CamelCaseMotion.vim
-"source ~/.vim/plugin/NERD_commenter.vim
-source ~/.vim/plugin/lodgeit.vim
-source ~/.vim/plugin/scmdiff.vim
-source ~/.vim/plugin/gitignore.vim
+" enable syntax highlighting
+syntax enable
 
+" configure Vundle
+filetype on " without this vim emits a zero exit status, later, because of :ft off
 filetype off
-set rtp+=~/.vim/bundle/vundle
+set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" let Vundle manage Vundle
- " required!
-"Bundle 'vundle'
-Bundle 'astashov/vim-ruby-debugger'
-Bundle 'godlygeek/tabular'
-Bundle 'msanders/snipmate.vim'
-Bundle 'pangloss/vim-javascript'
-Bundle 'scrooloose/nerdtree'
-Bundle 'timcharper/textile.vim'
-Bundle 'tpope/vim-cucumber'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-git'
-Bundle 'tpope/vim-haml'
-Bundle 'tpope/vim-markdown'
-Bundle 'tpope/vim-rails'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-endwise'
-Bundle 'tsaleh/vim-matchit'
-Bundle 'tsaleh/vim-shoulda'
-Bundle 'tsaleh/vim-tmux'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'vim-scripts/Gist.vim'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'othree/html5.vim'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'cakebaker/scss-syntax.vim'
-Bundle 'itspriddle/vim-jquery'
-Bundle 'tpope/vim-rvm'
-Bundle 'mileszs/ack.vim'
-Bundle 'vim-scripts/vimspell'
-Bundle 'gregsexton/MatchTag'
-Bundle 'scrooloose/nerdcommenter'
-Bundle 'itchyny/lightline.vim'
-Bundle 'tpope/vim-abolish'
-Bundle 'tpope/vim-speeddating'
-"Bundle 'rson/vim-conque'
-"Bundle 'skwp/vim-ruby-conque'
-Bundle 'yaymukund/vim-rabl'
-"Bundle 'tobiassvn/vim-gemfile'
-Bundle 'kien/ctrlp.vim'
-"Bundle 'airblade/vim-gitgutter'
-Bundle 'thoughtbot/vim-rspec'
-Bundle 'slim-template/vim-slim.git'
-Bundle 'nono/vim-handlebars'
-Bundle 'mxw/vim-jsx'
 
-" Go
-Bundle 'fatih/vim-go'
-"Bundle 'Blackrush/vim-gocode.git'
-Bundle 'Shougo/neocomplete.vim'
-Bundle 'majutsushi/tagbar'
+" install Vundle bundles
+if filereadable(expand("~/git/dotfiles/vim/bundles.vim"))
+  source ~/git/dotfiles/vim/bundles.vim
+  "source ~/git/dotfiles/vim/bundles.local.vim
+endif
+let g:airline_theme='solarized'
+let g:airline_powerline_fonts = 1
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.space = "\ua0"
 
-Bundle 'IndentAnything'
-Bundle 'closetag.vim'
-Bundle 'tComment'
-Bundle 'IndexedSearch'
-Bundle 'jQuery'
-Bundle 'RDoc'
 call vundle#end()
+
+" ensure ftdetect et al work by including this after the Vundle stuff
 filetype plugin indent on
 
-" https://github.com/myusuf3/numbers.vim.git
-
-" git_old_bundles = %w[
-"   git://github.com/skwp/vim-rspec.git
-"   git://github.com/tsaleh/taskpaper.vim.git
-"   git://github.com/tpope/vim-vividchalk.git
-"   git://github.com/hallison/vim-rdoc.git
-"   git://github.com/ervandew/supertab.git
-" ]
-nmap <silent> ]h :<C-U>execute v:count1 . "GitGutterNextHunk"<CR>
-nmap <silent> [h :<C-U>execute v:count1 . "GitGutterPrevHunk"<CR>
-
-" Enable vim powers
-set nocompatible
+set autoindent
+set autoread                                                 " reload files when changed on disk, i.e. via `git checkout`
+set backspace=2                                              " Fix broken backspace in some setups
+set backupcopy=yes                                           " see :help crontab
+set clipboard=unnamed                                        " yank and paste with the system clipboard
+set directory-=.                                             " don't store swapfiles in the current directory
+set encoding=utf-8
+set expandtab                                                " expand tabs to spaces
+set ignorecase                                               " case-insensitive search
+set incsearch                                                " search as you type
+set laststatus=2                                             " always show statusline
+set list                                                     " show trailing whitespace
+set listchars=tab:▸\ ,trail:▫
+set number                                                   " show line numbers
+set ruler                                                    " show where you are
+set scrolloff=3                                              " show context above/below cursorline
+set shiftwidth=2                                             " normal mode indentation commands use 2 spaces
+set showcmd
+set smartcase                                                " case-sensitive search if any caps
+set softtabstop=2                                            " insert mode tab and backspace use 2 spaces
+set tabstop=8                                                " actual tabs occupy 8 characters
+set wildignore=log/**,node_modules/**,target/**,tmp/**,*.rbc
+set wildmenu                                                 " show a navigable menu for tab completion
+set wildmode=longest,list,full
+set showmatch              " brackets/braces that is
+set mat=5                  " duration to show matching brace (1/10 sec)
+set history=1000
+set undolevels=1000
+set wildignore=*.swp,*.bak,*.pyc,*.class
+set title
+set visualbell
+set noerrorbells
+set nobackup
+set noswapfile
 setlocal formatoptions=ctnqro
-setlocal comments+=n:*,n:#
-if $TMUX == ''
-  set clipboard=unnamed
+
+" Tell vim to remember certain things when we exit
+"  '10  :  marks will be remembered for up to 10 previously edited files
+"  "100 :  will save up to 100 lines for each register
+"  :20  :  up to 20 lines of command-line history will be remembered
+"  %    :  saves and restores the buffer list
+"  n... :  where to save the viminfo files
+set viminfo='10,\"100,:20,%,n~/.viminfo
+" Epix to return the cursor to position of last open session
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+      \| exe "normal g'\"" | endif
+
+" Enable basic mouse behavior such as resizing buffers.
+set mouse=a
+if exists('$TMUX')  " Support resizing in tmux
+  set ttymouse=xterm2
 endif
 
-" ----------------------------------------------------------------------------
-"  Remapping
-" ----------------------------------------------------------------------------
+" Appearance
+set cursorline
+set t_Co=256
+set background=dark
+colorscheme solarized
+let g:solarized_termcolors=256
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+let g:solarized_bold=1
+let g:solarized_underline=1
+let g:solarized_italic=1
+let g:solarized_visibility=1
+hi clear LineNr
 
-" Quick shortcut for main sesion store
-nmap SQ <ESC>:mksession! ~/.vim/Session.vim<CR>:wqa<CR>
-
-" Toggle shortcut for NERDTree
-:map <F5> :NERDTreeToggle<CR>
-
-" Configure :Align
-call AlignCtrl( 'p1P1l+','=>', '=' )
-"map <c-a> vip:Align<cr>
-
-" Fix large paste
-set pastetoggle=<F2>
-
+" keyboard shortcuts
+let mapleader = ','
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
+noremap <leader>l :Align
+nnoremap <leader>a :Ag<space>
+nnoremap <leader>b :CtrlPBuffer<CR>
+nnoremap <leader>d :NERDTreeToggle<CR>
+nnoremap <leader>f :NERDTreeFind<CR>
+nnoremap <leader>t :CtrlP<CR>
+nnoremap <leader>T :CtrlPClearCache<CR>:CtrlP<CR>
+nnoremap <leader>] :TagbarToggle<CR>
+nnoremap <leader><space> :%s/\s*$//g \| :nohlsearch<CR>
+nnoremap <leader>g :GitGutterToggle<CR>
+noremap <silent> <leader>V :source ~/.vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
+nmap <silent> <leader>ev :e $MYVIMRC<CR>
+set pastetoggle=<F2> " Fix large paste
 " use ';' rather than ':' for w or wq
 nnoremap ; :
-
-" Fix paragraph
-vmap Q gq
-nmap Q gqap
-
 " Forget arrow keys, bitch
 map <up> <nop>
 map <down> <nop>
 map <left> <nop>
 map <right> <nop>
-
 " Finally can sudo after a file is openned
 cmap w!! w !sudo tee % >/dev/null
-
 " Be able to scroll wrapped lines of text
 nnoremap j gj
 nnoremap k gk
-
-
-" change the mapleader from \ to ,
-let mapleader=","
-
-" exit to normal mode with 'jj'
-inoremap jj <ESC>
-inoremap kk <ESC>
-
-" reflow paragraph with Q in normal and visual mode
-nnoremap Q gqap
-vnoremap Q gq
-
-" Quickly edit/reload the vimrc file
-nmap <silent> <leader>ev :e $MYVIMRC<CR>
-nmap <silent> <leader>sv :so $MYVIMRC<CR>
-
-" sane movement with wrap turned on
-if (&textwidth < 50)
-    nnoremap j gj
-    nnoremap k gk
-    vnoremap j gj
-    vnoremap k gk
-    nnoremap <Down> gj
-    nnoremap <Up> gk
-    vnoremap <Down> gj
-    vnoremap <Up> gk
-    inoremap <Down> <C-o>gj
-    inoremap <Up> <C-o>gk
-endif
-
+" in case you forgot to sudo
+cnoremap w!! %!sudo tee > /dev/null %
 " Rename current file
 function! RenameFile()
   let old_name = expand('%')
@@ -176,613 +140,57 @@ endfunction
 :command! RenameFile :call RenameFile()
 map <leader>q :RenameFile<cr>
 
-" Promot Variable to Rspec let
-function! PromoteToLet()
-  :normal! dd
-  :normal! P
-  :.s/\(\w\+\) = \(.*\)$/let(:\1) { \2 }/
-  :normal ==
-endfunction
-:command! PromoteToLet :call PromoteToLet()
-:map <leader>p :PromoteToLet<cr>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" RUNNING TESTS DESTROY ALL SOFTWARE
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! RunTestFile(...)
-  if a:0
-    let command_suffix = a:1
-  else
-    let command_suffix = ""
-  endif
-
-  " Run the tests for the previously-marked file.
-  let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_shared_example.rb\)$') != -1
-  if in_test_file
-    call SetTestFile()
-  elseif !exists("t:grb_test_file")
-    return
-  end
-  call RunTests(t:grb_test_file . command_suffix)
-endfunction
-
-function! RunNearestTest()
-  let spec_line_number = line('.')
-  call RunTestFile(":" . spec_line_number . " -b")
-endfunction
-
-function! SetTestFile()
-  " Set the spec file that tests will be run for.
-  let t:grb_test_file=@%
-endfunction
-
-function! RunTests(filename)
-  " Write the file and run tests for the given filename
-  :w
-  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-  if match(a:filename, '\.feature$') != -1
-    exec ":!script/features " . a:filename
-  else
-    if filereadable("script/test")
-      exec ":!script/test " . a:filename
-    elseif filereadable("Gemfile")
-      exec ":!bundle exec rspec --color " . a:filename
-    else
-      exec ":!rspec --color " . a:filename
-    end
-  end
-endfunction
-map <leader>r :call RunTestFile()<cr>
-map <leader>R :call RunNearestTest()<cr>
-map <leader>a :call RunTests('')<cr>
-map <leader>A :w\|:!script/features<cr>
-map <leader>w :w\|:!script/features --profile wip<cr>
-
-set list
-set listchars=tab:».,trail:.,extends:>,precedes:<,nbsp:.
-
-autocmd Bufread,BufNewFile *.py* set ft=python
-"autocmd Bufread,BufNewFile *.html set ft=php
-autocmd Bufread,BufNewFile *.ctp* set ft=php
-autocmd Bufread,BufNewFile *.php* set ft=php
-autocmd Bufread,BufNewFile *.xml* set ft=xml
-autocmd Bufread,BufNewFile *.sql* set ft=mysql
-autocmd Bufread,BufNewFile *.java* set ft=java
-autocmd Bufread,BufNewFile *.rb set ft=ruby
-autocmd Bufread,BufNewFile *.jbuilder* set ft=ruby
-autocmd Bufread,BufNewFile *.xml.builder* set ft=ruby
-autocmd Bufread,BufNewFile *.slim set ft=slim
-autocmd Bufread,BufNewFile *.go set ft=go
-autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-autocmd filetype python set expandtab
-autocmd filetype html,xml set listchars-=tab:>·
-autocmd filetype go set nolist
-
-"au FileType markdown set textwidth=115 formatoptions=t1
-"au FileType markdown autocmd InsertEnter * set formatoptions+=a
-"au FileType markdown autocmd InsertLeave * set formatoptions-=a
-"au FileType markdown noremap Q gqip
-
-" Fix poor spec-file highlight finder
-autocmd BufRead,BufNewFile *_\(spec\|shared_example\).rb syn keyword rubyRspec described_class shared_examples expect to double with describe context it specify it_should_behave_like before after setup subject its shared_examples_for shared_context let
-highlight def link rubyRspec Function
-
-" ----------------------------------------------------------------------------
-"  Text Formatting
-" ----------------------------------------------------------------------------
-"Indents
-set autoindent
-set copyindent
-set smartindent
-set shiftround
-
-" All things tab
-let tabBlacklist = ['go']
-set softtabstop=2
-set shiftwidth=2
-set tabstop=4
-set expandtab
-set nosmarttab
-
-autocmd filetype go set tabstop=2
-autocmd filetype go set noexpandtab
-autocmd filetype go set smarttab
-
-set formatoptions+=n       " support for numbered/bullet lists
-"set textwidth=80           " wrap at 80 chars by default
-set textwidth=0
-set virtualedit=block      " allow virtual edit in visual block ..
-
-" Clear hlsearch highlights
-noremap <F6> :let @/=""<CR>:echo "Highlights Cleared"<CR>
-:nnoremap <CR> :nohlsearch<cr>
-
-" Epix to return the cursor to position of last open session
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-      \| exe "normal g'\"" | endif
-
-
-let html_my_rendering = 1
-highlight htmlBold cterm=bold
-highlight htmlBoldUnderline cterm=bold,underline
-highlight htmlBoldUnderlineItalic cterm=bold,underline ctermfg=DarkGray ctermbg=NONE
-highlight htmlUnderline cterm=underline
-highlight htmlUnderlineItalic cterm=underline ctermfg=DarkGray ctermbg=NONE
-highlight htmlItalic ctermfg=DarkGray ctermbg=NONE
-
-" Spell checking
-:map <F10> :setlocal spell! spell?<CR>
-:set spellfile=~/.vim.spellfile.utf-8.add
-:highlight clear SpellBad
-:highlight SpellBad term=standout ctermfg=1 term=underline cterm=underline
-:highlight clear SpellCap
-:highlight SpellCap term=underline cterm=underline
-:highlight clear SpellRare
-:highlight SpellRare term=underline cterm=underline
-:highlight clear SpellLocal
-:highlight SpellLocal term=underline cterm=underline
-
-" Save fold status.  TODO: Figure out how to prevent warning messages on * and :help
-" au BufWinLeave * mkview
-" au BufWinEnter * silent loadview
-
-" Shortcuts to vertical- or horizontal-split on filename
-:command Hf :sp <cfile>    " can also be done with CTRL-w f
-:command Vf :vsp <cfile>
-
-" Allow for split window expand / collapse using CTRL-j / CTRL-k.  Useful for
-" editing many files in one window, switching back and forth.
-map <A-J> <c-w>j<c-w>_
-map <A-K> <c-w>k<c-w>_
-imap <c-l> <space>=><space>
-set winminheight=0
-
-" RUBY
-let g:ruby_debugger_progname = 'mvim'
-let g:ruby_debugger_no_maps = 1
-let g:ruby_indent_access_modifier_style="indent"
-
-" Amendment to the window-switching tip above.  This allows them
-" to be hidden out of sight for more real estate.
-set hidden
-
-" Begin switch mode code: handle either buffer or window c-j/c-k switches
-function MapForBuffers()
-    noremap <c-j> :only<cr>:bnext<cr>
-    inoremap <c-j> <esc>:only<cr>:bnext<cr>
-    noremap <c-k> :only<cr>:bprev<cr>
-    inoremap <c-k> <esc>:only<cr>:bprev<cr>
-    :only
-endfunction
-
-function MapForWindows()
-    :unhide
-    noremap <c-j> <c-w>j<c-w>_
-    inoremap <c-j> <esc><c-w>j<c-w>_
-    noremap <c-k> <c-w>k<c-w>_
-    inoremap <c-k> <esc><c-w>k<c-w>_
-endfunction
-
-function MapSwitchMode()
-    if g:switchmode == "windows"
-        call MapForWindows()
-    else
-        call MapForBuffers()
-    endif
-endfunction
-
-let g:switchmode = "buffers"
-
-" Same as MapForBuffers but calling ":only" blows up on start-up
-noremap <c-j> :only<cr>:bnext<cr>
-inoremap <c-j> <esc>:only<cr>:bnext<cr>
-noremap <c-k> :only<cr>:bprev<cr>
-inoremap <c-k> <esc>:only<cr>:bprev<cr>
-
-function ToggleSwitchMode()
-    if g:switchmode == "windows"
-        let g:switchmode = "buffers"
-    else
-        let g:switchmode = "windows"
-    endif
-    call MapSwitchMode()
-endfunction
-
-noremap <F4> :call ToggleSwitchMode()<cr>:echo "Switching mode now: " . g:switchmode<cr>
-" End switch mode code
-
-function DeleteHiddenBuffers()
-    let tpbl=[]
-    call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
-    for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
-        silent execute 'bwipeout' buf
-    endfor
-endfunction
-
-" Handy buffer shortcuts
-noremap <c-p> :call DeleteHiddenBuffers()<cr>
-inoremap <c-p> <esc>:call DeleteHiddenBuffers()<cr>
-noremap <c-c> :bd<cr>
-inoremap <c-c> <esc>:bd<cr>
-noremap <s-k> :ls<cr>
-
-" ----------------------------------------------------------------------------
-"  UI
-" ----------------------------------------------------------------------------
-
-" Tell vim to remember certain things when we exit
-"  '10  :  marks will be remembered for up to 10 previously edited files
-"  "100 :  will save up to 100 lines for each register
-"  :20  :  up to 20 lines of command-line history will be remembered
-"  %    :  saves and restores the buffer list
-"  n... :  where to save the viminfo files
-set viminfo='10,\"100,:20,%,n~/.viminfo
-
-set cursorline " highlight current line
-
-if has('cmdline_info')
-    set ruler " show the ruler
-    set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
-    set showcmd " show partial commands in status line and
-    " selected characters/lines in visual mode
-endif
-if has('statusline')
-set laststatus=2
-    " Broken down into easily includeable segments
-    set statusline=%<%f\ " Filename
-    set statusline+=%w%h%m%r " Options
-    set statusline+=%{fugitive#statusline()} " Git Hotness
-    set statusline+=\ [%{&ff}/%Y] " filetype
-    set statusline+=\ [%{getcwd()}] " current dir
-    "set statusline+=\ [A=\%03.3b/H=\%02.2B] " ASCII / Hexadecimal value of char
-    set statusline+=%=%-14.(%l,%c%V%)\ %p%% " Right aligned file nav info
-endif
-
-" Line numbers. Turn on at startup, F7 toggle
-:set number
-:map <F7> :set invnumber<CR>
-set noshowcmd              " don't display incomplete commands
-set nolazyredraw           " turn off lazy redraw
-set wildmenu               " turn on wild menu
-set wildmode=list:longest,full
-set ch=2                   " command line height
-set backspace=2            " allow backspacing over everything in insert mode
-"set backspace=indent,eol,start
-set whichwrap+=<,>,h,l,[,] " backspace and cursor keys wrap to
-set shortmess=filtIoOA     " shorten messages
-set report=0               " tell us about changes
-set nostartofline          " don't jump to the start of line when scrolling
-
-" Match my brackets
-set showmatch
-
-" Fix my HID
-set mouse=a
-set ttymouse=xterm2
-
-" CTags
-set cpo+=d
-set tags=./tags/all
-
-" History
-set history=1000
-set undolevels=1000
-set wildignore=*.swp,*.bak,*.pyc,*.class
-set title
-set visualbell
-set noerrorbells
-
-set nobackup
-set noswapfile
-
-
-" ----------------------------------------------------------------------------
-" Colors
-" ----------------------------------------------------------------------------
-" Highlight the syntax!
-"see http://ethanschoonover.com/solarized/vim-colors-solarized for
-"    call togglebg#map("<F4>")
-set t_Co=256
-let g:solarized_termcolors=256
-colorscheme solarized
-let g:solarized_termtrans=1
-let g:solarized_bold=1
-let g:solarized_underline=1
-let g:solarized_italic=1
-let g:solarized_visibility=1
-set background=dark
-syntax on
-hi clear LineNr
-
-" ----------------------------------------------------------------------------
-" Visual Cues
-" ----------------------------------------------------------------------------
-
-set showmatch              " brackets/braces that is
-set mat=5                  " duration to show matching brace (1/10 sec)
-
-" Search
-set noincsearch              " do incremental searching
-set laststatus=2           " always show the status line
-set ignorecase             " ignore case when searching
-set hlsearch             " don't highlight searches
-set visualbell             " shut the fuck up
-"set noincsearch
-"set hlsearch
-" highlight Search ctermbg=LightGray
-
-
-" ---------------------------------------------------------------------------
-"  Strip all trailing whitespace in file
-" ---------------------------------------------------------------------------
-
-function StripWhitespace()
-    exec ':%s/ \+$//gc'
-endfunction
-map <s-s> :call StripWhitespace()<CR>
-
-" ---------------------------------------------------------------------------
-"  Command-T
-" ---------------------------------------------------------------------------
-
-"let g:CommandTMaxHeight=15
-"let g:CommandTMatchWindowReverse=1
-"map <silent> <Leader>t :CommandT<cr>
-"map <silent> <Leader>gm :CommandT app/models<cr>
-"map <silent> <Leader>gc :CommandT app/controllers<cr>
-"map <silent> <Leader>gv :CommandT app/views<cr>
-"map <silent> <Leader>ge :CommandT app/helpers<cr>
-"map <silent> <Leader>gl :CommandT lib<cr>
-"map <silent> <Leader>gp :CommandT public<cr>
-"map <silent> <Leader>gt :CommandT test<cr>
-"map <silent> <Leader>gs :CommandT spec<cr>
-"map <silent> <Leader>gd :CommandT db<cr>
-"map <silent> <Leader>gC :CommandT config<cr>
-"map <silent> <Leader>gV :CommandT vendor<cr>
-"map <silent> <Leader>gF :CommandT factories<cr>
-"map <silent> <Leader>gh :CommandT ~/<cr>
-"map <silent> <Leader>gr :CommandT /<cr>
-"map <silent> <Leader>z :CommandTFlush<cr>
-
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/](vendor[\/]rails)',
-  \ }
-
-map <silent> <Leader>t :CtrlP<cr>
-map <silent> <Leader>t :CtrlP .<cr>
-map <silent> <Leader>m :CtrlPMixed<cr>
-map <silent> <Leader>z :ClearCtrlPCache<cr>\|:CtrlP<cr>
-map <silent> <Leader>r :CtrlPMRU<cr>
-map <silent> <Leader>b :CtrlPBuffer<cr>
-
-map <silent> <Leader>gm :CtrlP app/models<cr>
-map <silent> <Leader>gc :CtrlP app/controllers<cr>
-map <silent> <Leader>gv :CtrlP app/views<cr>
-map <silent> <Leader>ge :CtrlP app/helpers<cr>
-map <silent> <Leader>gl :CtrlP lib<cr>
-map <silent> <Leader>gp :CtrlP public<cr>
-map <silent> <Leader>gt :CtrlP test<cr>
-map <silent> <Leader>gs :CtrlP spec<cr>
-map <silent> <Leader>gd :CtrlP db<cr>
-map <silent> <Leader>gC :CtrlP config<cr>
-map <silent> <Leader>gV :CtrlP vendor<cr>
-map <silent> <Leader>gF :CtrlP factories<cr>
-map <silent> <Leader>gh :CtrlP ~/<cr>
-"nnoremap <silent> <leader>T :ClearCtrlPCache<cr>\|:CtrlP<cr>
-
-" function! InsertTabWrapper()
-"   let col = col('.') - 1
-"   if !col || getline('.')[col - 1] !~ '\k'
-"     return "\<tab>"
-"   else
-"     return "\<c-n>"
-"   endif
-" endfunction
-" " Tab wrapper
-" imap <silent> <tab> <c-r>=InsertTabWrapper()<CR>
-" imap <silent> <s-tab> <c-p>
-
-map <C-F> :Ack<space><C-r><C-w>
-
-map <c-w>d :%s/\s*$//g \| :nohlsearch<cr>
-
-" Bda -  Delete all open buffers.
-command! -nargs=0 -bang Bda
-      \ :call BufDeleteAll('<bang>')
-function! BufDeleteAll(bang)
-  let last_buffer = bufnr('$')
-  let n = 1
-  while n <= last_buffer
-    if a:bang == '' && getbufvar(n, '&modified')
-      echohl ErrorMsg
-      echomsg 'No write since last change for buffer'
-            \ n '(add ! to override)'
-      echohl None
-      return 0
-    endif
-    let n = n+1
-  endwhile
-
-  let delete_count = 0
-  let n = 1
-  while n <= last_buffer
-    if buflisted(n)
-      silent exe 'bdel' . a:bang . ' ' . n
-      if ! buflisted(n)
-        let delete_count = delete_count+1
-      endif
-    endif
-    let n = n+1
-  endwhile
-
-  if delete_count == 1
-    echomsg delete_count "buffer deleted"
-  elseif delete_count > 1
-    echomsg delete_count "buffers deleted"
-  endif
-endfunction
-
-map <leader>a :Bda<cr>
-
-map <leader>s :w\|:!%<cr>
-
-" Want to turn fooBar into foo_bar? Press crs (coerce to snake_case). MixedCase
-" (crm), camelCase (crc), snake_case (crs), and UPPER_CASE (cru) are all just 3
-" keystrokes away. These commands support repeat.vim.
-" Courtesy of vim-abolish
-
-" Default Ruby-Conque Maps
-"nmap <silent> <Leader>rcrr :call RunRubyCurrentFileConque()<CR>
-nmap <silent> <Leader>rc :call RunRspecCurrentFileConque()<CR>
-nmap <silent> <Leader>rcll :call RunRspecCurrentLineConque()<CR>
-"nmap <silent> <Leader>rccc :call RunCucumberCurrentFileConque()<CR>
-"nmap <silent> <Leader>rccl :call RunCucumberCurrentLineConque()<CR>
-"nmap <silent> <Leader>rcRR :call RunRakeConque()<CR>
-"nmap <silent> <Leader>rcrl :call RunLastConqueCommand()<CR>
-
-map <leader>e :call RelatedSpecVOpen()<CR>
-"nnoremap <silent> ,<C-s> :call RelatedSpecOpen()<CR>
-
-" Cmd-Shift-R for RSpec
-nmap <silent> <D-R> :call RunRspecCurrentFileConque()<CR>
-" Cmd-Shift-L for RSpec Current Line
-nmap <silent> <D-L> :call RunRspecCurrentLineConque()<CR>
-" ,Cmd-R for Last conque command
-nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
-
-"map <leader>p :s/\:\<\(\w\+\)\>\s\+=>\s\+/\1: /g <cr>
-"map <leader>l :%s/\:\<\(\w\+\)\>\s\+=>\s\+/\1: /g <cr>
-"map <leader>pl :s/\<\(\w\+\)\>\:\s\+/\:\1 => /g <cr>
-"map <leader>lp :%s/\<\(\w\+\)\>\:\s\+/\:\1 => /g <cr>
-
-nnoremap <Leader>H :call<SID>LongLineHLToggle()<cr>
-hi OverLength ctermbg=none cterm=none
-match OverLength /\%>80v/
-fun! s:LongLineHLToggle()
- if !exists('w:longlinehl')
-  let w:longlinehl = matchadd('ErrorMsg', '.\%>80v', 0)
-  echo "Long lines highlighted"
- else
-  call matchdelete(w:longlinehl)
-  unl w:longlinehl
-  echo "Long lines unhighlighted"
- endif
-endfunction
-
-nnoremap <Leader>h :call<SID>EightyLine()<cr>
-fun! s:EightyLine()
- if !exists('w:eightyline')
-  let w:eightyline = 1
-  :set colorcolumn=80  " highlight three columns after 'textwidth'
-  :highlight ColorColumn ctermbg=16 guibg=#000000
- else
-  unl w:eightyline
-  :set colorcolumn=80  " highlight three columns after 'textwidth'
-  :highlight ColorColumn NONE
- endif
-endfunction
-
-map <leader>o :w\|:!bundle exec rake spec<cr>
-map <Leader>i :call RunCurrentSpecFile()<CR>
-map <Leader>u :call RunNearestSpec()<CR>
-map <Leader>l :call RunLastSpec()<CR>
-"map <leader>i :w\|:!ft %<cr>
-
-autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
-autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
-autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
-
-let g:lightline = {
-      \   'component': {
-      \     'readonly': '%{&readonly?"⭤":""}',
-      \   },
-      \   'component_function': {
-      \     'filename': 'MyFilename',
-      \   },
-      \ }
-
-function! MyFilename()
-  return ('' != expand('%') ? expand('%') : '[No Name]')
-endfunction
-
-let g:tagbar_ctags_bin = "/usr/local/Cellar/ctags/5.8_1/bin/ctags"
-let g:tagbar_left = 1
-nnoremap <Leader>ct :TagbarToggle<cr>
-nnoremap <F8> :TagbarToggle<cr>
-
+" plugin settings
+let g:ctrlp_match_window = 'order:ttb,max:20'
+let g:NERDSpaceDelims=1
+let g:gitgutter_enabled = 0
+
+" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
 if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
+  " Use Ag over Grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 endif
 
-" Neocomplete thangs
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-set completeopt-=preview
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-autocmd FileType ruby nested NeoCompleteLock
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+" fdoc is yaml
+autocmd BufRead,BufNewFile *.fdoc set filetype=yaml
+" md is markdown
+autocmd BufRead,BufNewFile *.md set filetype=markdown
+autocmd BufRead,BufNewFile *.md set spell
+" extra rails.vim help
+autocmd User Rails silent! Rnavcommand decorator      app/decorators            -glob=**/* -suffix=_decorator.rb
+autocmd User Rails silent! Rnavcommand observer       app/observers             -glob=**/* -suffix=_observer.rb
+autocmd User Rails silent! Rnavcommand feature        features                  -glob=**/* -suffix=.feature
+autocmd User Rails silent! Rnavcommand job            app/jobs                  -glob=**/* -suffix=_job.rb
+autocmd User Rails silent! Rnavcommand mediator       app/mediators             -glob=**/* -suffix=_mediator.rb
+autocmd User Rails silent! Rnavcommand stepdefinition features/step_definitions -glob=**/* -suffix=_steps.rb
+" automatically rebalance windows on vim resize
+autocmd VimResized * :wincmd =
 
-" Define dictionary.
-let g:neocomplete#sources#dictionary#dictionaries = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
-        \ }
-
-" Define keyword.
-if !exists('g:neocomplete#keyword_patterns')
-  let g:neocomplete#keyword_patterns = {}
+" Fix Cursor in TMUX
+if exists('$TMUX')
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
+" Don't copy the contents of an overwritten selection.
+vnoremap p "_dP
 
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  "return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-  " For no inserting <CR> key.
-  return pumvisible() ? "\<C-y>" : "\<CR>"
-  "return neocomplete#close_popup() . "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplete#close_popup()
-inoremap <expr><C-e>  neocomplete#cancel_popup()
-
-" Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-" Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
+" Go crazy!
+if filereadable(expand("~/.vimrc.local"))
+  " In your .vimrc.local, you might like:
+  "
+  " set autowrite
+  " set nocursorline
+  " set nowritebackup
+  " set whichwrap+=<,>,h,l,[,] " Wrap arrow keys between lines
+  "
+  " autocmd! bufwritepost .vimrc source ~/.vimrc
+  " noremap! jj <ESC>
+  source ~/.vimrc.local
 endif
-"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-
-" For perlomni.vim setting.
-" https://github.com/c9s/perlomni.vim
-let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-
- let g:neocomplete#sources#syntax#min_keyword_length = 3
