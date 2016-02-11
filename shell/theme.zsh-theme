@@ -3,7 +3,7 @@ local return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
 
 local ruby_version=''
 if which rbenv &> /dev/null; then
-  ruby_version="$(rbenv version | sed -e "s/ (set.*$//")"
+  ruby_version='$(rbenv version | sed -e "s/ (set.*$//")'
 fi
 local user_host='%{$terminfo[bold]$fg[green]%}%n@%m%{$reset_color%}'
 local current_dir='%{$terminfo[bold]$fg[blue]%} %~%{$reset_color%}'
