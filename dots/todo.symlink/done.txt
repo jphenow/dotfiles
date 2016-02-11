@@ -1,2 +1,0 @@
-x 2016-02-11 test +dotfiles 
-x 2016-02-11 get history-up working again +dotfiles
