@@ -5,7 +5,7 @@ export DOT=$HOME/git/dotfiles
 # your project folder that we can `c [tab]` to
 # export PROJECTS=~/workspace
 
-source $DOT/zsh/config.zsh
+source $DOT/shell/config.zsh
 
 for config_file ($DOT/dependencies/*.zsh) do
   source $config_file
@@ -16,7 +16,7 @@ for config_file ($DOT/lib/*.zsh) do
 done
 
 # source every .zsh file in this rep
-for config_file ($DOT/dots/*.zsh) do
+for config_file ($DOT/shell/*.zsh) do
   source $config_file
 done
 
@@ -32,7 +32,7 @@ autoload -U compinit
 compinit
 
 # load every completion after autocomplete loads
-for config_file ($DOT/**/completion.sh) source $config_file
+for config_file ($DOT/**/completion/*.sh) source $config_file
 
 # Add Homebrew the $PATH
 export PATH=/usr/local/bin:$PATH
@@ -121,4 +121,4 @@ precmd() {
 
 [ -s "/Users/jonphenow/.dnx/dnvm/dnvm.sh" ] && . "/Users/jonphenow/.dnx/dnvm/dnvm.sh" # Load dnvm
 
-source $DOT/zsh/theme.zsh-theme
+source $DOT/shell/theme.zsh-theme

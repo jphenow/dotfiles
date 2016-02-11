@@ -9,9 +9,9 @@ gdircolors $DOT/dependencies/dir_colors &> /dev/null
 export LSCOLORS="exfxcxdxbxegedabagacad"
 export CLICOLOR=true
 
-fpath=($DOT/zsh/functions $fpath)
+fpath=($DOT/shell/functions $fpath)
 
-autoload -U $DOT/zsh/functions/*(:t)
+autoload -U $DOT/shell/functions/*(:t)
 
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
