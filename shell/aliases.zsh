@@ -49,6 +49,8 @@ else
 fi
 alias vim="$vimcmd -v -o"
 alias v="$vimcmd -v ."
+alias vl='vim $(!$)'
+alias vs="$vimcmd -v -S ~/.vim/Session.vim"
 
 # SSH
 # Remove the hosts that I don't want to keep around- in this case, only
@@ -56,29 +58,15 @@ alias v="$vimcmd -v ."
 alias hosts="head -2 ~/.ssh/known_hosts | tail -1 > ~/.ssh/known_hosts"
 alias pubkey="more ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to pasteboard.'"
 
-# Git
-alias g="git"
-alias gl='git pull --prune'
-alias glog="git log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative"
-alias gp='git push -u origin HEAD'
-alias gd='git diff'
-alias gs='git status -sb' # upgrade your git if -sb breaks for you. it's fun.
-alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
-alias gv="git status | grep both\ modified | awk '{print \$3}' | xargs vim -o"
-alias prn="hub pull-request -b :production"
-alias pr='hub pull-request'
+# Todo.txt
+# todo.sh: https://github.com/ginatrapani/todo.txt-cli
+function to() {
+  if [ $# -eq 0 ]; then
+    todo.sh ls
+  else
+    todo.sh $*
+  fi
+}
 
-alias vgc='vim $(git cnf)'
+alias n="to ls +next"
 
-# Set terminal window name to current git repo or current directory
-#git_repo() {
-#  git remote -v | grep '(fetch)' | grep -o "\/[a-z,A-Z,\_,\-]*\." | cut -c 2- | grep -o ^[a-z,A-Z,\_,\-]*
-#}
-#
-#cd() {
-#  command cd "$@"
-#  git remote >/dev/null 2>&1
-#  if -n (($?)); then
-#    echo -n -e "\033]0;`git_repo`\007"
-#  fi
-#}
