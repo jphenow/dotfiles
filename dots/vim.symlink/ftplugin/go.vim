@@ -5,6 +5,7 @@
  au FileType go nmap <Leader>gb <Plug>(go-build)
  au FileType go nmap <Leader>gt <Plug>(go-test)
  au FileType go nmap gd <Plug>(go-def-tab)
+ au FileType go setlocal noet ts=4 sw=4 sts=4
 
 let g:tagbar_type_go = {
     \ 'ctagstype' : 'go',
