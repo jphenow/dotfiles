@@ -27,8 +27,8 @@ bind-key L clear-history
 bind-key space next-window
 bind-key bspace previous-window
 bind-key enter next-layout
-bind-key -r C-h next-window #select-window -t :-
-bind-key -r C-l previous-window #select-window -t :+
+bind-key -r C-l next-window #select-window -t :+
+bind-key -r C-h previous-window #select-window -t :-
 bind C-a last-window
 
 # use vim-like keys for splits and windows
@@ -96,7 +96,7 @@ setw -g monitor-activity on
 set -g visual-activity on
 set -g bell-action none
 set -g set-titles on
-set-option -g set-titles-string '#H:#S.#I.#P #W #T' # window number,program name, active(or not)
+set-option -g set-titles-string '#S.#I.#P #W #T' # window number,program name, active(or not)
 
 # Enable native Mac OS X copy/paste
 set-option -g default-command "/bin/bash -c 'which reattach-to-user-namespace >/dev/null && exec reattach-to-user-namespace $SHELL -l || exec $SHELL -l'"
