@@ -1,33 +1,23 @@
 " don't bother with vi compatibility
 set nocompatible
 
-" enable syntax highlighting
-syntax enable
-
 " configure Vundle
-filetype on " without this vim emits a zero exit status, later, because of :ft off
+filetype on
 filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
 
 " install Vundle bundles
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 if filereadable(expand("~/git/dotfiles/vim/bundles.vim"))
   source ~/git/dotfiles/vim/bundles.vim
-  "source ~/git/dotfiles/vim/bundles.local.vim
 endif
-let g:airline_theme='solarized'
-let g:airline_powerline_fonts = 1
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
-let g:airline_symbols.space = "\ua0"
-
 call vundle#end()
 
 " ensure ftdetect et al work by including this after the Vundle stuff
 filetype plugin indent on
+" enable syntax highlighting
+syntax enable
 
-set autoindent
 set autoread                                                 " reload files when changed on disk, i.e. via `git checkout`
 set backspace=2                                              " Fix broken backspace in some setups
 set backupcopy=yes                                           " see :help crontab
@@ -35,13 +25,16 @@ set clipboard=unnamed                                        " yank and paste wi
 set directory-=.                                             " don't store swapfiles in the current directory
 set encoding=utf-8
 set expandtab                                                " expand tabs to spaces
+set autoindent
+set copyindent
+set smartindent
+set shiftround
 set ignorecase                                               " case-insensitive search
-set incsearch                                                " search as you type
+set noincsearch                                                " search as you type
+set hlsearch
 set laststatus=2                                             " always show statusline
 set list                                                     " show trailing whitespace
-set listchars=tab:▸\ ,trail:▫
-"hi TabLine guibg=NONE guifg=NONE
-"hi SpecialKey guifg=NONE ctermfg=NONE ctermbg=NONE guibg=NONE
+set listchars=tab:·\ ,trail:▫
 set number                                                   " show line numbers
 set ruler                                                    " show where you are
 set scrolloff=3                                              " show context above/below cursorline
@@ -72,9 +65,6 @@ setlocal formatoptions=ctnqro
 "  %    :  saves and restores the buffer list
 "  n... :  where to save the viminfo files
 set viminfo='10,\"100,:20,%,n~/.viminfo
-" Epix to return the cursor to position of last open session
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-      \| exe "normal g'\"" | endif
 
 " Enable basic mouse behavior such as resizing buffers.
 set mouse=a
@@ -86,8 +76,9 @@ endif
 set cursorline
 set t_Co=256
 set background=dark
-colorscheme solarized
-let g:solarized_termcolors=256
+if !exists('g:colors_name') || g:colors_name !=# 'solarized'
+  colorscheme solarized
+endif
 let g:solarized_termcolors=256
 let g:solarized_termtrans=1
 let g:solarized_bold=1
@@ -102,17 +93,45 @@ noremap <C-h> <C-w>h
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
+
+nnoremap <CR> :nohlsearch<CR>
+
+let g:jkjk=0
+function! ToggleJKJK()
+  if g:jkjk == 0
+    let g:jkjk = 1
+    noremap <c-j> :only<cr>:bnext<cr>
+    noremap <c-k> :only<cr>:bprev<cr>
+  else
+    let g:jkjk = 0
+    noremap <C-j> <C-w>j
+    noremap <C-k> <C-w>k
+  endif
+endfunction
+noremap <leader>u :call ToggleJKJK()<CR>
+
 noremap <leader>l :Align
 nnoremap <leader>a :Ag<space>
 nnoremap <leader>b :CtrlPBuffer<CR>
 nnoremap <leader>d :NERDTreeToggle<CR>
 nnoremap <leader>f :NERDTreeFind<CR>
-nnoremap <leader>t :CtrlP<CR>
+nnoremap <leader>t :CtrlP .<CR>
 nnoremap <leader>T :CtrlPClearCache<CR>:CtrlP<CR>
 nnoremap <leader>] :TagbarToggle<CR>
 nnoremap <leader><space> :%s/\s*$//g \| :nohlsearch<CR>
 nnoremap <leader>g :GitGutterToggle<CR>
-noremap <silent> <leader>V :source ~/.vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
+function! RefreshUI()
+  filetype detect
+  if exists(':AirlineRefresh')
+    AirlineRefresh
+  else
+    " Clear & redraw the screen, then redraw all statuslines.
+    redraw!
+    redrawstatus!
+  endif
+  syntax sync fromstart
+endfunction
+noremap <silent> <leader>V :source ~/.vimrc \| :call RefreshUI() \|  :exe ":echo 'vimrc reloaded'"<CR>
 nmap <silent> <leader>ev :e $MYVIMRC<CR>
 set pastetoggle=<F2> " Fix large paste
 " use ';' rather than ':' for w or wq
@@ -122,6 +141,18 @@ map <up> <nop>
 map <down> <nop>
 map <left> <nop>
 map <right> <nop>
+" Buffers
+function DeleteHiddenBuffers()
+  let tpbl=[]
+  call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
+  for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
+    silent execute 'bwipeout' buf
+  endfor
+endfunction
+nmap <leader>k :call DeleteHiddenBuffers()<cr>
+nmap <c-c> :bd<cr>
+nmap <s-k> :ls<cr>
+
 " Finally can sudo after a file is openned
 cmap w!! w !sudo tee % >/dev/null
 " Be able to scroll wrapped lines of text
@@ -141,9 +172,11 @@ function! RenameFile()
 endfunction
 :command! RenameFile :call RenameFile()
 map <leader>q :RenameFile<cr>
+" Epix to return the cursor to position of last open session
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+      \| exe "normal g'\"" | endif
 
 " plugin settings
-let g:ctrlp_match_window = 'order:ttb,max:20'
 let g:NERDSpaceDelims=1
 let g:gitgutter_enabled = 0
 
@@ -155,8 +188,10 @@ if executable('ag')
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
   let g:ctrlp_switch_buffer = 0
   let g:ctrlp_working_path_mode = 'ra'
-  let g:ctrlp_use_caching = 0
-  let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:15,results:10'
+  let g:ctrlp_use_caching = 1
+  let g:ctrlp_custom_ignore = 'node_modules\|.DS_Store'
+  "let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:15,results:10'
+  let g:ctrlp_match_window = 'order:btt,max:10'
   let g:ctrlp_user_command = ['ag %s --files-with-matches -g ""']
   let g:ctrlp_user_command += ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
 endif
@@ -233,7 +268,6 @@ inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function()
   return pumvisible() ? "\<C-y>" : "\<CR>"
 endfunction
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y>  neocomplete#close_popup()
@@ -245,3 +279,32 @@ if !exists('g:neocomplete#sources#omni#input_patterns')
 endif
 
 let g:neocomplete#sources#syntax#min_keyword_length = 3
+
+" Airline
+let g:airline_theme='solarized'
+let g:airline_powerline_fonts = 1
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.space = "\ua0"
+
+" Ruby
+let g:ruby_indent_access_modifier_style="indent"
+
+" Splits
+set splitbelow
+set splitright
+
+"hi TabLine guibg=NONE guifg=NONE
+"hi SpecialKey guifg=NONE ctermfg=NONE ctermbg=NONE guibg=NONE
+hi SpecialKey guibg=NONE guifg=NONE ctermfg=NONE ctermbg=NONE
+hi TabLine guibg=NONE guifg=NONE ctermfg=NONE ctermbg=NONE
+
+let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': ['go'] }
+
+nnoremap [[ :tabprevious<CR>
+nnoremap ]] :tabnext<CR>
+nnoremap <S-T> :tabnew<CR>
+inoremap [[ <esc>:tabprevious<CR>i
+inoremap ]] <esc>:tabnext<CR>i

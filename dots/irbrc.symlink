@@ -1,46 +1,16 @@
-#!/usr/bin/ruby
-require 'irb/completion'
-require 'irb/ext/save-history'
-require 'rubygems'
-
-current_dir = File.expand_path(".")
-if current_dir != File.expand_path("~") && File.join(current_dir, ".irbrc")
-  load File.join(current_dir, ".irbrc")
-  puts "loading #{File.join(current_dir, ".irbrc")}"
-end
+# vim: set filetype=ruby:
+#
+# * Try and force pry execution if irb is called
+# * If it's not able to be used, execute irb with completions and pry's command history
 
 IRB.conf[:SAVE_HISTORY] = 1000
-IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb_history"
-
 IRB.conf[:PROMPT_MODE] = :SIMPLE
-
-IRB.conf[:AUTO_INDENT] = true
-
-class Object
-  # list methods which aren't in superclass
-  def local_methods(obj = self)
-    (obj.methods - obj.class.superclass.instance_methods).sort
-  end
-
-  # print documentation
-  #
-  #   ri 'Array#pop'
-  #   Array.ri
-  #   Array.ri :pop
-  #   arr.ri :pop
-  def ri(method = nil)
-    unless method && method =~ /^[A-Z]/ # if class isn't specified
-      klass = self.kind_of?(Class) ? name : self.class.name
-      method = [klass, method].compact.join('#')
-    end
-    puts `ri '#{method}'`
-  end
-end
-
-def me
-  User.find_by_email_or_username('jonphenow')
-end
-
-def r
-  reload!
+IRB.conf[:HISTORY_FILE] = File.expand_path "~/.pry_history"
+begin
+  require 'pry'
+  Pry.start
+  exit
+rescue LoadError
+  require 'irb/completion'
+  require 'irb/ext/save-history'
 end

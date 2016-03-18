@@ -16,6 +16,7 @@
         wtf     = !$ZSH/bin/git-wtf
         rank-contributers = !$ZSH/bin/git-rank-contributers
         count   = !git shortlog -sn
+        worddiff = !git diff --color | diff-highlight | less -r
 [color]
         diff = auto
         status = auto
@@ -23,6 +24,7 @@
 [core]
         excludesfile = ~/.gitignore
         editor = mate -w
+        pager = diff-highlight | less -r
 [apply]
         whitespace = nowarn
 [github]
