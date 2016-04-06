@@ -78,4 +78,11 @@ nmap <leader>m :make<CR><enter>
 set completeopt=longest,menuone
 set complete=.,w,b,u,t
 " imap <tab> <c-x><c-o>
+function! Relpath(filename)
+  let cwd = getcwd()
+  let s = substitute(a:filename, l:cwd . "/" , "", "")
+  echo s
+  return s
+endfunction
 
+nnoremap <leader>z :exe ":GoDeclsDir " . Relpath(expand('%:h'))<cr>

@@ -1,0 +1,9 @@
+#!/bin/bash
+# Usage: git thanks <range>
+#
+# From: https://github.com/chrisarcand/dotfiles/blob/master/bin/git-thanks
+# Show authorship info sorted by the number of commits during `<range>`.
+
+git log --format='%an' "$@" | \
+  sort | uniq -c | sort -rn | \
+  sed 's/ *\([0-9]\{1,\}\) \(.*\)/\2 (\1)/'

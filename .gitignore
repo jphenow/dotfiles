@@ -1,13 +1,13 @@
 # Ignore stuff
-vim/vim.symlink/view
-vim/vim.symlink/Session.vim
-ssh/ssh.symlink/*
-todo.txt/todo.symlink/*
-git/gitconfig.symlink
+dots/vim.symlink/view
+dots/vim.symlink/Session.vim
+dots/ssh.symlink/*
+dots/todo.symlink/*
+dots/gitconfig.symlink
 
 # But not these ones
-!ssh/ssh.symlink/config
-!todo.txt/todo.symlink/config
+!dots/ssh.symlink/config
+!dots/todo.symlink/config
 
 .DS_Store
 .netrwhist
