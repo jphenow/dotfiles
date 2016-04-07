@@ -6,7 +6,7 @@ dots/todo.symlink/*
 dots/gitconfig.symlink
 
 # But not these ones
-!dots/ssh.symlink/config
+!dots/ssh.symlink/config.example
 !dots/todo.symlink/config
 
 .DS_Store
