@@ -1,0 +1,65 @@
+Host *
+  User jonphenow
+  ForwardAgent yes
+  TCPKeepAlive yes
+  ServerAliveInterval 5
+  ServerAliveCountMax 12
+
+Host jp
+  HostName jphenow.com
+  User j_phenow
+  ServerAliveInterval 300
+
+Host sju
+  HostName ssh.csbsju.edu
+  User itsrsw1
+
+Host jsju
+  HostName ssh.csbsju.edu
+  User jrphenow
+
+Host bc
+  HostName direct.blendcloud.com
+  User snufflegus
+
+Host galway
+  HostName jphenow.dyndns-server.com
+  User phenow
+
+Host belfast
+  HostName belfast.jphenow.com
+  User belfast
+
+Host gh
+  User git
+  Port 22
+  Hostname github.com
+  TCPKeepAlive yes
+  IdentitiesOnly yes
+
+Host *.amazonaws.com
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+
+Host dc
+  User ubuntu
+  Hostname discourse.jphenow.com
+  IdentityFile ".ec2/discourse.pem"
+
+Host jpdo
+  User jonphenow
+  Hostname jphenow.com
+
+Host mnapi
+  User root
+  Hostname 159.203.79.141
+
+#Host stat_production
+#  Hostname ec2-107-20-240-157.compute-1.amazonaws.com
+#  User deploy
+#
+#Host tst_stage
+#  Hostname 72.46.233.210
+#  Port 7000
+#  HostKeyAlias tm21-s00016
+#  User tst
