@@ -24,18 +24,11 @@ for config_file ($DOT/shell/*.zsh) do
   source $config_file
 done
 
-# use .localrc for SUPER SECRET CRAP that you don't
-# want in your public, versioned repo.
-if [[ -a ~/.localrc ]]
-then
-  source ~/.localrc
-fi
-
 # load every completion after autocomplete loads
 for config_file ($DOT/**/completion/*.sh) source $config_file
 
 # Add Homebrew the $PATH
-export PATH=/usr/local/bin:$PATH
+export PATH="/usr/local/bin:$HOME/.fastlane/bin:$PATH"
 
 # solves issues with rake having mismatched versions with what Gemfile.lock expects
 rake() {
@@ -122,3 +115,15 @@ precmd() {
 [ -s "/Users/jonphenow/.dnx/dnvm/dnvm.sh" ] && . "/Users/jonphenow/.dnx/dnvm/dnvm.sh" # Load dnvm
 
 source $DOT/shell/theme.zsh-theme
+eval $(/usr/libexec/path_helper -s)
+
+# use .localrc for SUPER SECRET CRAP that you don't
+# want in your public, versioned repo.
+if [[ -a ~/.localrc ]]
+then
+  source ~/.localrc
+fi
+
+if hash hub 2>/dev/null; then
+  alias git='hub'
+fi

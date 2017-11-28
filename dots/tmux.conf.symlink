@@ -1,6 +1,8 @@
 # Use ZSH
 set-option -g default-shell /bin/zsh
 
+run-shell "tmux setenv -g TMUX_VERSION $(tmux -V | cut -c 6-)"
+
 # use C-a, since it's on the home row and easier to hit than C-b
 set-option -g prefix C-a
 unbind-key C-a
@@ -14,9 +16,13 @@ bind-key R source-file ~/.tmux.conf \; display-message "tmux.conf reloaded."
 # vi is good
 setw -g mode-keys vi
 
-# mouse behavior
-set -g mouse-utf8 on
-set -g mouse on
+# In version 2.1 "mouse" replaced the previous 4 mouse options
+if-shell -b '[ "$(echo "$TMUX_VERSION >= 2.1" | bc)" = 1 ]' \
+  "set -g mouse on"
+
+# UTF8 is autodetected in 2.2 onwards, but errors if explicitly set
+if-shell -b '[ "$(echo "$TMUX_VERSION < 2.2" | bc)" = 1 ]' \
+  "set -g utf8 on; set -g status-utf8 on; set -g mouse-utf8 on"
 
 set-option -g default-terminal screen-256color
 
@@ -64,13 +70,37 @@ bind-key T previous-window
 bind-key [ copy-mode
 bind-key ] paste-buffer
 
+# OLD
 # Setup 'v' to begin selection as in Vim
-bind-key -t vi-copy v begin-selection
-bind-key -t vi-copy y copy-pipe "reattach-to-user-namespace pbcopy"
-
+# bind-key -t vi-copy v begin-selection
+# bind-key -t vi-copy y copy-pipe "reattach-to-user-namespace pbcopy"
 # Update default binding of `Enter` to also use copy-pipe
-unbind -t vi-copy Enter
-bind-key -t vi-copy Enter copy-pipe "reattach-to-user-namespace pbcopy"
+# unbind -t vi-copy Enter
+# bind-key -t vi-copy Enter copy-pipe "reattach-to-user-namespace pbcopy"
+
+# New keybindings for vi-mode
+# https://github.com/tmux/tmux/issues/754
+if-shell -b '[ "$(echo "$TMUX_VERSION >= 2.4" | bc)" = 1 ]' \
+   'bind -T copy-mode-vi v send-keys -X begin-selection ; \
+   bind -T copy-mode-vi C-v send-keys -X rectangle-toggle ; \
+   bind -T copy-mode-vi y send-keys -X copy-pipe "reattach-to-user-namespace pbcopy" ; \
+   bind -T copy-mode-vi H send-keys -X start-of-line ; \
+   bind -T copy-mode-vi L send-keys -X end-of-line ; \
+   bind -T choice-mode-vi h send-keys -X tree-collapse ; \
+   bind -T choice-mode-vi l send-keys -X tree-expand ; \
+   bind -T choice-mode-vi H send-keys -X tree-collapse-all ; \
+   bind -T choice-mode-vi L send-keys -X tree-expand-all ; \
+   bind -T copy-mode-emacs MouseDragEnd1Pane send-keys -X copy-pipe "pbcopy"; \
+   bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe "reattach-to-user-namespace pbcopy"; ' \
+   'bind -t vi-copy v begin-selection; \
+   bind -t vi-copy C-v rectangle-toggle; \
+   bind -t vi-copy y copy-selection; \
+   bind -t vi-choice h tree-collapse; \
+   bind -t vi-choice l tree-expand; \
+   bind -t vi-choice H tree-collapse-all; \
+   bind -t vi-choice L tree-expand-all; \
+   bind -t emacs-copy MouseDragEnd1Pane copy-pipe "pbcopy"; \
+   bind -t vi-copy MouseDragEnd1Pane copy-pipe "pbcopy"; '
 
 set-window-option -g display-panes-time 1500
 

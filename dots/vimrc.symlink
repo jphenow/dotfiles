@@ -115,7 +115,7 @@ nnoremap <leader>a :Ag<space>
 nnoremap <leader>b :CtrlPBuffer<CR>
 nnoremap <leader>d :NERDTreeToggle<CR>
 nnoremap <leader>f :NERDTreeFind<CR>
-nnoremap <leader>t :CtrlP .<CR>
+nnoremap <leader>t :CtrlP<CR>
 nnoremap <leader>T :CtrlPClearCache<CR>:CtrlP<CR>
 nnoremap <leader>] :TagbarToggle<CR>
 nnoremap <leader><space> :%s/\s*$//g \| :nohlsearch<CR>
@@ -155,11 +155,15 @@ nmap <s-k> :ls<cr>
 
 " Finally can sudo after a file is openned
 cmap w!! w !sudo tee % >/dev/null
+" in case you forgot to sudo
+" cnoremap w!! %!sudo tee > /dev/null %
+
 " Be able to scroll wrapped lines of text
 nnoremap j gj
 nnoremap k gk
-" in case you forgot to sudo
-cnoremap w!! %!sudo tee > /dev/null %
+vnoremap j gj
+vnoremap k gk
+
 " Rename current file
 function! RenameFile()
   let old_name = expand('%')
@@ -183,18 +187,37 @@ let g:gitgutter_enabled = 0
 " Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
 if executable('ag')
   " Use Ag over Grep
-  set grepprg=ag\ --nogroup\ --nocolor
+  set grepprg=ag\ --nogroup\ --nocolor\ --column
 
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
   let g:ctrlp_switch_buffer = 0
   let g:ctrlp_working_path_mode = 'ra'
   let g:ctrlp_use_caching = 1
-  let g:ctrlp_custom_ignore = 'node_modules\|.DS_Store'
   "let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:15,results:10'
   let g:ctrlp_match_window = 'order:btt,max:10'
-  let g:ctrlp_user_command = ['ag %s --files-with-matches -g ""']
-  let g:ctrlp_user_command += ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
+  " let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden -g ""'
+  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
+          \ --smart-case
+          \ --ignore .git
+          \ --ignore .svn
+          \ --ignore .hg
+          \ --ignore .DS_Store
+          \ --ignore public/images
+          \ --ignore tmp
+          \ --ignore node_modules
+          \ --ignore log
+          \ --ignore "**/*.pyc"
+          \ --ignore "**/*.so"
+          \ --ignore "**/*.dll"
+          \ --ignore "**/*.exe"
+          \ -g ""'
+  " let g:ctrlp_user_command = ['ag %s -l --nocolor -g ""']
+  " let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
 endif
+let g:ctrlp_custom_ignore = {
+\ 'dir':  '\v[\/](\.git|\.hg|\.svn|\.yardoc|public\/images|public\/system|data|log|tmp|node_modules|.DS_Store|vendor)$',
+\ 'file': '\v\.(exe|so|dll)$',
+\ }
 
 " fdoc is yaml
 autocmd BufRead,BufNewFile *.fdoc set filetype=yaml
@@ -208,6 +231,7 @@ autocmd User Rails silent! Rnavcommand feature        features                  
 autocmd User Rails silent! Rnavcommand job            app/jobs                  -glob=**/* -suffix=_job.rb
 autocmd User Rails silent! Rnavcommand mediator       app/mediators             -glob=**/* -suffix=_mediator.rb
 autocmd User Rails silent! Rnavcommand stepdefinition features/step_definitions -glob=**/* -suffix=_steps.rb
+autocmd Filetype ruby set lazyredraw
 " automatically rebalance windows on vim resize
 autocmd VimResized * :wincmd =
 
@@ -302,9 +326,3 @@ hi TabLine guibg=NONE guifg=NONE ctermfg=NONE ctermbg=NONE
 
 let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': ['go'] }
-
-nnoremap [[ :tabprevious<CR>
-nnoremap ]] :tabnext<CR>
-nnoremap <S-T> :tabnew<CR>
-inoremap [[ <esc>:tabprevious<CR>i
-inoremap ]] <esc>:tabnext<CR>i

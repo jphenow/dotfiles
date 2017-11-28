@@ -3,6 +3,7 @@ alias gs='git status -sb' # upgrade your git if -sb breaks for you. it's fun.
 alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 alias gv="git status | grep both\ modified | awk '{print \$3}' | xargs vim -o"
 alias vgc='vim $(git cnf)'
+alias cgc='code $(git cnf)'
 
 # Set terminal window name to current git repo or current directory
 #git_repo() {
