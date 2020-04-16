@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-bname=${2-$1}
-if test -t 0; then
-  file=$1
-  aws put bucket.jphenow.com/$bname $file
-else
-  aws put bucket.jphenow.com/$bname
-fi

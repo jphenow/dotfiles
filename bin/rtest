@@ -1,4 +1,0 @@
-#!/usr/bin/env zsh
-
-test_loc="./test/**/$1_test.rb"
-eval "ruby -I'lib:test' $test_loc"

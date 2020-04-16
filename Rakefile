@@ -35,9 +35,7 @@ task :install do
 end
 
 task :uninstall do
-
   Dir.glob('**/*.symlink').each do |linkable|
-
     file = linkable.split('/').last.split('.symlink').last
     target = "#{ENV["HOME"]}/.#{file}"
 
@@ -48,9 +46,8 @@ task :uninstall do
 
     # Replace any backups made during installation
     if File.exists?("#{ENV["HOME"]}/.#{file}.backup")
-      `mv "$HOME/.#{file}.backup" "$HOME/.#{file}"` 
+      `mv "$HOME/.#{file}.backup" "$HOME/.#{file}"`
     end
-
   end
 end
 
