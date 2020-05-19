@@ -44,11 +44,11 @@ setup_color() {
 install_dependencies() {
 	if [[ "$OSTYPE" = darwin* ]] && git --version | grep -q msysgit; then
 		command_exists brew || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-		command_exists zsh || brew install zsh 
+		command_exists zsh || brew install zsh
 		command_exists git || brew install git
 	else
-		command_exists curl || sudo apt install -y curl 
-		command_exists zsh || sudo apt install -y zsh 
+		command_exists curl || sudo apt install -y curl
+		command_exists zsh || sudo apt install -y zsh
 		command_exists git || sudo apt install -y git
 	fi
 
