@@ -1,6 +1,7 @@
 # enable color support of ls and also add handy aliases
 if [ "$TERM" != "dumb" ]; then
-  export TERM="xterm-256color"
+  #export TERM="xterm-256color"
+  export TERM="screen-256color"
   export CLICOLOR=1
   gdircolors -b $DOT/colors/dir_colors &> /dev/null
 fi
