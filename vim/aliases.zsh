@@ -4,6 +4,9 @@ alias vl='vim $(!$)'
 if $(command -v mvmim >/dev/null 2>&1)
 then
   vimcmd="mvim" &> /dev/null
+else if $(command -v mvmim >/dev/null 2>&1)
+then
+  vimcmd="mvim" &> /dev/null
 else
   vimcmd="vim" &> /dev/null
 fi
