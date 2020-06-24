@@ -52,13 +52,19 @@ install_dependencies() {
 		command_exists git || sudo apt install -y git
 	fi
 
-	chsh -s $(which zsh)
-	if [ -d "$HOME/.dotfiles" ]; then
-		echo "${BOLD}~/.dotfiles${RESET} already exists, remove it or run update.sh"
-		exit 1
+	if [ "$(echo $SHELL)" != "$(which zsh)" ]; then
+		chsh -s $(which zsh)
 	fi
-	git clone https://github.com/jphenow/dotfiles.git $HOME/.dotfiles
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+	if [ -d "$HOME/.dotfiles" ]; then
+		echo "${BOLD}~/.dotfiles${RESET} already exists, attempting to pull updates..."
+		git pull
+		cd $HOME/.dotfiles
+	else
+		git clone https://github.com/jphenow/dotfiles.git $HOME/.dotfiles
+		cd $HOME/.dotfiles
+	fi
+	RUN_ZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
 
 install_modules() {
