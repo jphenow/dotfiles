@@ -68,7 +68,7 @@ install_dependencies() {
 
 	rm -rf "$HOME/.oh-my-zsh"
 	set +e
-	sh -c "$(RUN_ZSH=no curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	sh -c "$(RUNZSH=no curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	if [[ $? -ne 0 ]]; then
 			exit 1
 	fi
