@@ -1,17 +1,13 @@
-vimcmd="" &> /dev/null
-alias vl='vim $(!$)'
-
-if $(command -v mvim >/dev/null 2>&1)
-then
-  vimcmd="mvim" &> /dev/null
-else if $(command -v mvim >/dev/null 2>&1)
-then
-  vimcmd="mvim" &> /dev/null
+if $(command -v nvim >/dev/null 2>&1); then
+  vimcmd="nvim"
+elif $(command -v mvim >/dev/null 2>&1); then
+  vimcmd="mvim"
 else
-  vimcmd="vim" &> /dev/null
+  vimcmd="vim"
 fi
 
 alias vim="$vimcmd -v -o"
-alias vs="$vimcmd -v -S ~/.vim/Session.vim"
-alias v="$vimcmd -v ."
-alias va="$vimcmd -v -o *"
+alias vl='vim $(!$)'
+alias vs='vim -S ~/.vim/Session.vim'
+alias v='vim .'
+alias va='vim *'

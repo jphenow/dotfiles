@@ -5,13 +5,6 @@ Host *
   ServerAliveInterval 5
   ServerAliveCountMax 12
 
-Host gh
-  User git
-  Port 22
-  Hostname github.com
-  TCPKeepAlive yes
-  IdentitiesOnly yes
-
 Host *.amazonaws.com
   UserKnownHostsFile /dev/null
   StrictHostKeyChecking no
@@ -19,3 +12,26 @@ Host *.amazonaws.com
 Host jpdo
   User jonphenow
   Hostname jphenow.com
+
+Host *
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/ms_id_rsa
+
+# GITHUB
+
+Host gh
+  User git
+  Port 22
+  Hostname github.com
+  TCPKeepAlive yes
+  IdentitiesOnly yes
+Host bastion*.githubapp.com vault-bastion*.githubapp.com
+  ForwardAgent yes
+  User jphenow
+  IdentityFile /Users/jonphenow/github/ssh/id_rsa
+Host github.com *.github.net *.githubapp.com
+  ForwardAgent no
+  User jphenow
+  IdentityFile /Users/jonphenow/github/ssh/id_rsa

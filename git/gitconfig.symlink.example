@@ -1,31 +1,129 @@
-# Sample gitconfig
-#
-# This is a sample gitconfig. Usually we keep a lot of sensitive information
-# here (things like authentication tokens, email addresses, and so on), so this
-# file is ignored in this project's .gitignore.
-#
-# To set this up, rename this file to `gitconfig.symlink` and you'll be able to
-# install this to the correct location by running the project's main `rake`
-# task.
+# This is Git's per-user configuration file.
 [user]
-        name = Zach Holman
-        email = your@example.com
+# Please adapt and uncomment the following lines:
+        name = Jon Phenow
+        email = youremail@example.com
+
+[format]
+        pretty = "%H %ci %ce %ae %d %s"
+
 [alias]
-        co = checkout
-        promote = !$ZSH/bin/git-promote
-        wtf     = !$ZSH/bin/git-wtf
-        rank-contributers = !$ZSH/bin/git-rank-contributers
-        count   = !git shortlog -sn
-[color]
-        diff = auto
-        status = auto
-        branch = auto
-[core]
-        excludesfile = ~/.gitignore
-        editor = mate -w
+	aa = add --all
+	added = diff --cached --name-only
+	addremove = !git r && git add . --all
+	aliases = !git config --list | grep 'alias\\.' | sed 's/alias\\.\\([^=]*\\)=\\(.*\\)/\\1\\\t => \\2/' | sort
+	amend = commit --amend
+	ammend = commit --amend
+	angry = "!git log --pretty=format:'%an | %s' | grep -iE \"(fuck|shit|bitch|damn|piss)\""
+	ap = add --patch
+	br = branch
+	branches-gone = !git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}'
+	del-branches-gone = !git branches-gone | xargs git branch -d
+	force-del-branches-gone = !git branches-gone | xargs git branch -D
+	brname = !git branch | grep "^*" | awk '{ print $2 }'
+	branches-with = branch --all --contains
+	cam = commit -a -m
+	changes = "!f() { git log --pretty=format:'* %s' $1..$2; }; f"
+	cm = commit -m
+	cnf = !git ls-files -u | cut -f 2 | sort -u
+	co = checkout
+	d = diff
+	# give the complete details (diff, timestamps, author info) of a given commit
+	details = log -n1 -p --format=fuller
+	# pipe the diff to code
+	dc = !git diff | code -
+	dg = diff master...
+	# perform diff against the index (files that have been added but not committed)
+	ds = diff --staged
+	# also clean up branches deleted from the server
+	f = fetch --prune
+	# latest commit (emulate's mercurials 'hg head' command)
+	head = log -n1
+	ign = ls-files -o -i --exclude-standard
+	in = pull --dry-run
+	l = "!f() { git log $* | grep '^commit ' | cut -f 2 -d ' '; }; f"
+	log-graph = log --graph --all  --decorate --oneline
+	log-standup = !git log --since yesterday --author $(git config user.email) --pretty=short
+	ls = ls-files
+	nb = checkout -b
+	# Not yet added - doesn't include ignored files
+	new = ls-files --others --exclude-standard
+	old = for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short)\n%(committerdate)\t%(authorname)\n'
+	out = log --branches --not --remotes
+	p = push
+	pend = cherry -v origin/master
+	ra  = !git ls-files -z --deleted | xargs -0 git rm
+	rec = !"git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:red)%(objectname:short)%(color:reset);%(color:yellow)%(refname:short)%(color:reset);(%(color:green)%(committerdate:relative)%(color:reset));%(authorname);%(contents:subject)' | column -t -s ';'"
+	# rec = for-each-ref --sort=committerdate refs/heads/ --format='%(refname:short)\n%(committerdate)\t%(authorname)\n'
+	root = rev-parse --show-toplevel
+	# search through commit messages for the given word
+	searchlogs = !git log --oneline | grep
+	tags = tag -l
+	# show today's work
+	today = log --stat --since='1 Day Ago' --graph --pretty=oneline --abbrev-commit --date=relative
+
+[credential]
+	helper = osxkeychain
+
 [apply]
-        whitespace = nowarn
+	whitespace = nowarn
+
+[branch]
+	autosetuprebase = always
+
+[rerere]
+	enabled = true
+
+[log]
+	date = short
+	# date = relative
+[format]
+	pretty = '%C(yellow)%h%Creset %C(magenta)%cd%Creset %d %s'
+
+[core]
+	autocrlf = input
+	compression = 9
+	excludesfile = ~/.gitignore_global
+	filemode = false
+	editor = code --wait
+
+[push]
+	default = simple
+
+[url "git@github.com:"]
+	insteadOf = gh:
+
+[url "https://gist.github.com/"]
+	insteadOf = gist:
+
+# [url "https://github.com/"]
+# 	insteadOf = gh:
+
+[color]
+	ui = true
+	diff = auto
+	status = auto
+	showbranch = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = red
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
 [github]
-        user = holman
-[mergetool]
-        keepBackup = false
+	user = youruser

@@ -8,6 +8,9 @@ export ZSH="$HOME/.oh-my-zsh"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="avit"
+ZSH_THEME="af-magic"
+ZSH_THEME="robbyrussell"
+ZSH_THEME="candy"
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -91,10 +94,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Git
-alias g="git"
-alias gs="git status -sb"
-alias gp="git push --set-upstream origin HEAD"
+for FILE in $(ls ~/.dotfiles/*/*.zsh); do
+  source $FILE
+done
 
 # Microsoft.AppCenter.CoreServices
 export CODE_DIR="$HOME/Code"
@@ -173,7 +175,7 @@ alias docker-clean-all='docker-clean-containers; docker-clean-images; docker-cle
 # export GOPATH="$HOME/github/go"
 # export PATH=$PATH:$GOPATH/bin
 
-source /Users/jonphenow/Library/Preferences/org.dystroy.broot/launcher/bash/br
+# source $HOME/Library/Preferences/org.dystroy.broot/launcher/bash/br
 export PATH="/usr/local/opt/curl/bin:$PATH"
 
 eval "$(direnv hook zsh)"

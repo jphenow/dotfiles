@@ -12,5 +12,5 @@ if [ -f ~/.config/nvim/init.vim ]; then
 fi
 pip3 install --user neovim
 rm -rf ~/.config/nvim/init.vim
-ln -s "$(pwd)/init.vim" ~/.config/nvim/init.vim
+ln -s "$HOME/.dotfiles/vim/init.vim" ~/.config/nvim/init.vim
 echo "open vim and run: PlugInstall and UpdateRemotePlugins"

@@ -133,7 +133,10 @@ main() {
 	setup_dotfiles
 
 	printf "$GREEN"
-	reload!
+	echo "TODO"
+	echo "  * cp ~/.dotfiles/git/gitconfig.symlink.example ~/.gitconfig"
+	echo "  * vim ~/.gitconfig"
+	echo "Please open a new terminal!"
 }
 
 main "$@"
