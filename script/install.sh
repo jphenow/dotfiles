@@ -75,7 +75,17 @@ setup_dotfiles() {
 		target_name="$HOME/$(echo $DOTFILE | sed 's/\.symlink//g' | sed 's/\//\/./')"
 		source_name="$dir/$DOTFILE"
 		echo "Linking $source_name to $target_name..."
+		unset -e
+
 		ln -s $source_name $target_name
+		if [ $? -eq 1 ]; then
+			echo "Backing up existing $target_name to $target_name.bak..."
+			mv $target_name $target_name.bak
+			set -e
+			ln -s $source_name $target_name
+		fi
+
+		set -e
 	done
 }
 
