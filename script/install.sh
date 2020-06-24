@@ -46,6 +46,8 @@ install_dependencies() {
 		command_exists brew || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 		command_exists zsh || brew install zsh
 		command_exists git || brew install git
+		command_exists git || brew install
+		command_exists ag || brew install the_silver_searcher
 	else
 		command_exists curl || sudo apt install -y curl
 		command_exists zsh || sudo apt install -y zsh
