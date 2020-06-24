@@ -1,4 +1,3 @@
-# Important to some of us
 set -o vi
 export EDITOR=/usr/bin/vim
 
