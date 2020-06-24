@@ -91,7 +91,7 @@ setup_dotfiles() {
 	dir=$(pwd)
 	for DOTFILE in $(ls -lrt -d -1 */*.symlink)
 	do
-		target_name="$HOME/$(echo $DOTFILE | sed 's/\.symlink//' | sed 's/\//\/./')" | sed 's/.*\///'
+		target_name="$HOME/$(echo $DOTFILE | sed 's/\.symlink//' | sed 's/\//\/./' | sed 's/.*\///')"
 		source_name="$dir/$DOTFILE"
 		echo "Linking $source_name to $target_name..."
 		set +e
