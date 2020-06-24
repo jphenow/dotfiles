@@ -9,5 +9,6 @@ if [ -f ~/.config/nvim/init.vim ]; then
   echo "Found ~/.config/nvim/init.vim already exists. creating ~/.config/nvim/init.vim.bak so you can double check contents"
 fi
 pip3 install --user neovim
+rm -rf ~/.config/nvim/init.vim
 ln -s "$(pwd)/init.vim" ~/.config/nvim/init.vim
 echo "open vim and run: PlugInstall and UpdateRemotePlugins"
