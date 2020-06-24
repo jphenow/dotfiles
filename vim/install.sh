@@ -2,6 +2,8 @@
 
 set -e
 
+brew install nvim
+
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 mkdir -p ~/.config/nvim/
 if [ -f ~/.config/nvim/init.vim ]; then
