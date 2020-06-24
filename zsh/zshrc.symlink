@@ -1,122 +1,184 @@
-# Did the same in bash
-# TODO sync these two so we don't have unnecessary vars laying about
-export DOT=$HOME/git/dotfiles
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-#########################
-###### OH MY ZSH ########
-#########################
+# Path to your oh-my-zsh installation.
+export ZSH="/Users/jonphenow/.oh-my-zsh"
+
+# Set name of the theme to load. Optionally, if you set this to "random"
+# it'll load a random theme each time that oh-my-zsh is loaded.
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+ZSH_THEME="avit"
+
+# Set list of themes to load
+# Setting this variable when ZSH_THEME=random
+# cause zsh load theme from this variable instead of
+# looking in ~/.oh-my-zsh/themes/
+# An empty array have no effect
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
+
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(gitfast)
+
+source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# ssh
+# export SSH_KEY_PATH="~/.ssh/rsa_id"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
 #
-# The only .zsh called outside the loop below, needs to load first
-. $DOT/oh-my-zsh/oh-my-zsh.zsh
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# your project folder that we can `c [tab]` to
-# export PROJECTS=~/workspace
+# Git
+alias g="git"
+alias gs="git status -sb"
+alias gp="git push --set-upstream origin HEAD"
 
-# source every .zsh file in this rep
-for config_file ($DOT/**/*.zsh) do
-  [[ ! "$config_file" =~ "oh-my-zsh" ]] && source $config_file
-done
+# Microsoft.AppCenter.CoreServices
+export CODE_DIR="$HOME/Code"
+export APP_CENTER_CODE_DIR="$CODE_DIR/appcenter"
+export APP_CENTER_DOCKER_COMPOSE_DIR="$APP_CENTER_CODE_DIR/dockercompose"
+export CORE_SERVICeS_CODE_DIR="$APP_CENTER_CODE_DIR/core-services"
 
-# use .localrc for SUPER SECRET CRAP that you don't
-# want in your public, versioned repo.
-if [[ -a ~/.localrc ]]
-then
-  source ~/.localrc
+if [ -d $APP_CENTER_DOCKER_COMPOSE_DIR ]; then
+  for filename in $APP_CENTER_DOCKER_COMPOSE_DIR/*.ps1
+  do
+    cmd=$(basename $filename .ps1)
+
+    eval "a${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 diagnostics/docker \$*; }"
+    eval "c${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 crashes-docker \$*; }"
+    eval "cs${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 core-services/docker \$*; }"
+    eval "d${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 distribution/docker \$*; }"
+    eval "ui${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 ux/docker \$*; }"
+  done
 fi
 
-# initialize autocomplete here, otherwise functions won't be loaded
-autoload -U compinit
-compinit
+function cssql() {
+  docker run --rm -it mcr.microsoft.com/mssql-tools /opt/mssql-tools/bin/sqlcmd -U sa -P Your^StrongP3ssw0rd -S 172.17.0.1,8000 $*
+}
 
-# load every completion after autocomplete loads
-for config_file ($DOT/**/completion.sh) source $config_file
+function reload!() {
+  source ~/.zshrc
+}
 
-# Add Homebrew the $PATH
-export PATH=/usr/local/bin:$PATH
+autoload bashcompinit
+bashcompinit
+source ~/.bash_profile
 
-# solves issues with rake having mismatched versions with what Gemfile.lock expects
-rake() {
-  if [[ -e ./Gemfile ]] && which bundle; then
-    bundle exec rake "$@"
-  else
-    command rake "$@"
+export FLEXFLOW_CODE_PATH="$CODE_DIR/flexflow"
+export FLEXFLOW_BIN_PATH="$FLEXFLOW_CODE_PATH/bin"
+export PATH=$FLEXFLOW_BIN_PATH:$PATH
+export PATH="$HOME/bin:$PATH"
+
+function core() {
+  BASE_BRANCH_NAME="jophenow/core-services"
+  if [[ "$1" -eq "co" ]]; then
+    git checkout "$BASE_BRANCH_NAME/$2"
+    return
+  elif [[ "$1" -eq "cob" ]]; then
+    git checkout -b "$BASE_BRANCH_NAME/$2"
+    return
   fi
+
+  echo "Subcommand not found!"
+  return 1
 }
 
-# `work foo` to navigate to SHARED_WORKSPACE/foo.
-work() {
-  dir=$(workspace)
-  cd "$dir/${1}"
-}
+eval "$(rbenv init -)"
 
-# Used by work() and _work() to determine workspace your projects live in. Set
-# the SHARED_WORKSPACE environment variable if this is not ~/workspace/.
-workspace() {
-  result=$([ -s "$SHARED_WORKSPACE" ] && echo $SHARED_WORKSPACE || echo "$HOME/workspace")
-  echo "$result"
-}
+# Get qmake in PATH for capybara
+# export PATH="$(brew --prefix qt@5.5)/bin:$PATH"
+# export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
+# export PATH="/usr/local/opt/mysql-client/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 
-# bash completion function for work(). Allows you to type `work f` to
-# auto-complete to `work foo`, following standard Bash directory-completion
-# rules.
-_work() {
-  local cur
-  local trim
-  local dir=$(workspace)
-  cur=${COMP_WORDS[COMP_CWORD]}
-  # length of expanded path, used to trim off first portion of matched paths below
-  trim=`echo $dir/ | wc -c`
-  # perform completion, returning all directories in workspace, trimming off the path to the workspace
-  COMPREPLY=( $( compgen -S/ -d $dir/$cur | cut -b $trim- ) )
-}
+alias k='kubectl'
+export EDITOR="code"
+export VAGRANT_DISABLE_VBOXSYMLINKCREATE=1
 
-# enable completion for work() function using _work(), but only if `complete` exists
-command -v complete > /dev/null && complete -o nospace -F _work work
+# Docker
+alias dp='docker ps'
 
+## Cleanup
+alias docker-clean-containers='docker rm $(docker ps -a -q)'
+alias docker-clean-images='docker rmi $(docker images -q)'
+alias docker-clean-volumes='docker volume rm $(docker volume ls -qf dangling=true)'
+alias dcps='docker rm $(docker ps --filter=status=exited --filter=status=created -q)'
+alias dcimg='docker rmi $(docker images -a --filter=dangling=true -q)'
+alias docker-clean-all='docker-clean-containers; docker-clean-images; docker-clean-volumes'
 
-# necessary for mysql gem when using mysql 5.5 on mac os x
-export DYLD_LIBRARY_PATH="/usr/local/mysql/lib/:$DYLD_LIBRARY_PATH"
+# export GOPATH="$HOME/go"
+# export GOPATH="$HOME/github/go"
+# export PATH=$PATH:$GOPATH/bin
 
-#########################
-### TST Media install ###
-####### THE END #########
-#########################
+source /Users/jonphenow/Library/Preferences/org.dystroy.broot/launcher/bash/br
+export PATH="/usr/local/opt/curl/bin:$PATH"
 
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
+eval "$(direnv hook zsh)"
+# eval "$(gh completion -s zsh)"
 
-# Set terminal window name to current git repo (and branch) or current directory
-git-repo() {
-  git remote -v | grep '(fetch)' | awk '{ print $2 }' | awk -F/ '{print $NF }' | sed "s,\.git,,"
-}
+alias vim=nvim
 
-git-branch() {
-  git branch | grep \* | cut -c 3-
-}
-
-git-term() {
-  title "`git-repo`: `git-branch`"
-}
-
-mpwd () {
-  pwd | sed "s,$HOME,~,"
-}
-
-term_tab_name() {
-  git remote >/dev/null 2>&1
-  if (($?)); then
-    title "`mpwd`"
-  else
-    git-term
-  fi
-}
-
-# Use a bash hook rather than aliasing 'cd'
-#export PROMPT_COMMAND="term-tab-name; $PROMPT_COMMAND"
-precmd() {
-  term_tab_name
-}
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM
-
-[ -s "/Users/jonphenow/.dnx/dnvm/dnvm.sh" ] && . "/Users/jonphenow/.dnx/dnvm/dnvm.sh" # Load dnvm
+# export TERM="screen-256color"

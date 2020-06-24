@@ -61,7 +61,22 @@ install_dependencies() {
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
 
+install_modules() {
+	for INSTALL_SCRIPT in $(ls */install.sh)
+	do
+		bash $INSTALL_SCRIPT
+	done
+}
+
 setup_dotfiles() {
+	dir=$(pwd)
+	for DOTFILE in $(ls -lrt -d -1 */*.symlink)
+	do
+		target_name="$HOME/$(echo $DOTFILE | sed 's/\.symlink//g' | sed 's/\//\/./')"
+		source_name="$dir/$DOTFILE"
+		echo "Linking $source_name to $target_name..."
+		ln -s $source_name $target_name
+	done
 }
 
 main() {
@@ -83,6 +98,7 @@ main() {
 
 	setup_color
 	install_dependencies
+	install_modules
 	setup_dotfiles
 
 	printf "$GREEN"

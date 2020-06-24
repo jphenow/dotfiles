@@ -1,10 +1,10 @@
 vimcmd="" &> /dev/null
 alias vl='vim $(!$)'
 
-if $(command -v mvmim >/dev/null 2>&1)
+if $(command -v mvim >/dev/null 2>&1)
 then
   vimcmd="mvim" &> /dev/null
-else if $(command -v mvmim >/dev/null 2>&1)
+else if $(command -v mvim >/dev/null 2>&1)
 then
   vimcmd="mvim" &> /dev/null
 else
