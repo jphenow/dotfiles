@@ -53,6 +53,7 @@ install_dependencies() {
 	fi
 
 	if [ "$(echo $SHELL)" != "$(which zsh)" ]; then
+		echo "Switch shell from $SHELL to $(which zsh)..."
 		chsh -s $(which zsh)
 	fi
 
