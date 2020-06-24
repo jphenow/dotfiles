@@ -80,7 +80,9 @@ install_modules() {
 	cd ~/.dotfiles
 	for INSTALL_SCRIPT in $(ls */install.sh)
 	do
-		bash $INSTALL_SCRIPT
+		if [ "$INSTALL_SCRIPT" != "script/install.sh" ]; then
+			bash $INSTALL_SCRIPT
+		fi
 	done
 }
 
