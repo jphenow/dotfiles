@@ -58,8 +58,8 @@ install_dependencies() {
 
 	if [ -d "$HOME/.dotfiles" ]; then
 		echo "${BOLD}~/.dotfiles${RESET} already exists, attempting to pull updates..."
-		git pull
 		cd $HOME/.dotfiles
+		git pull
 	else
 		git clone https://github.com/jphenow/dotfiles.git $HOME/.dotfiles
 		cd $HOME/.dotfiles
