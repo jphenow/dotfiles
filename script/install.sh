@@ -65,6 +65,8 @@ install_dependencies() {
 		git clone https://github.com/jphenow/dotfiles.git $HOME/.dotfiles
 		cd $HOME/.dotfiles
 	fi
+
+	rm -rf "$HOME/.oh-my-zsh"
 	RUN_ZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
 
