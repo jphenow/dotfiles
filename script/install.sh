@@ -71,6 +71,7 @@ install_dependencies() {
 }
 
 install_modules() {
+	cd ~/.dotfiles
 	for INSTALL_SCRIPT in $(ls */install.sh)
 	do
 		bash $INSTALL_SCRIPT
@@ -78,6 +79,7 @@ install_modules() {
 }
 
 setup_dotfiles() {
+	cd ~/.dotfiles
 	dir=$(pwd)
 	for DOTFILE in $(ls -lrt -d -1 */*.symlink)
 	do
