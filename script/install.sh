@@ -67,7 +67,7 @@ install_dependencies() {
 	fi
 
 	rm -rf "$HOME/.oh-my-zsh"
-	unset -e
+	set +e
 	RUN_ZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	if [[ $? -ne 0 ]]; then
 			exit 1
@@ -91,7 +91,7 @@ setup_dotfiles() {
 		target_name="$HOME/$(echo $DOTFILE | sed 's/\.symlink//g' | sed 's/\//\/./')"
 		source_name="$dir/$DOTFILE"
 		echo "Linking $source_name to $target_name..."
-		unset -e
+		set +e
 
 		ln -s $source_name $target_name
 		if [ $? -eq 1 ]; then
