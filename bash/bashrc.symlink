@@ -4,48 +4,11 @@
  #If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-#!/usr/bin/env bash
-
-###-begin-cf-completions-###
-#
-# AKA CloudFicks
-# yargs command completion script
-#
-# Installation: cf completion >> ~/.bashrc
-#    or cf completion >> ~/.bash_profile on OSX.
-#
-_yargs_completions()
-{
-    local cur_word args type_list
-
-    cur_word="${COMP_WORDS[COMP_CWORD]}"
-    args=("${COMP_WORDS[@]}")
-
-    # ask yargs to generate completions.
-    type_list=$(cf --get-yargs-completions "${args[@]}")
-
-    COMPREPLY=( $(compgen -W "${type_list}" -- ${cur_word}) )
-
-    # if no match was found, fall back to filename completion
-    if [ ${#COMPREPLY[@]} -eq 0 ]; then
-      COMPREPLY=( $(compgen -f -- "${cur_word}" ) )
-    fi
-
-    return 0
-}
-complete -F _yargs_completions cf
-###-end-cf-completions-###
-
-export PATH="$HOME/.cargo/bin:$PATH"
-
-source $HOME/Library/Preferences/org.dystroy.broot/launcher/bash/br
-
-
 # Set var for auto-sourcing fun things with *.bash
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
-export DOT=$( cd -P "$( dirname "$SOURCE" )"; cd .. && pwd )
-export ZSH=$DOT
+# export DOT=$( cd -P "$( dirname "$SOURCE" )"; cd .. && pwd )
+export DOT="$HOME/.dotfiles"
 
 # For now these are using bashified versions of completion
 # TODO we should check that files are agnosticized ending in .sh
