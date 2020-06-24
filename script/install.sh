@@ -67,7 +67,12 @@ install_dependencies() {
 	fi
 
 	rm -rf "$HOME/.oh-my-zsh"
+	unset -e
 	RUN_ZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	if [[ $? -ne 0 ]]; then
+			exit 1
+	fi
+	set -e
 }
 
 install_modules() {
