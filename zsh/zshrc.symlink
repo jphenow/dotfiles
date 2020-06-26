@@ -94,6 +94,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+unsetopt correct_all
+
 for FILE in $(ls ~/.dotfiles/*/*.zsh); do
   source $FILE
 done
