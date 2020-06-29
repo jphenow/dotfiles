@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-brew install rbenv
+if brew ls --versions rbenv > /dev/null; then
+  brew upgrade rbenv
+else
+  brew install rbenv
+fi
