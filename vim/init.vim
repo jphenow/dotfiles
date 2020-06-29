@@ -42,7 +42,7 @@ nmap <silent> [h :<C-U>execute v:count1 . "GitGutterPrevHunk"<CR>
 set nocompatible
 setlocal formatoptions=ctnqro
 setlocal comments+=n:*,n:#
-if $TMUX == ''
+if $TMUX != ''
   set clipboard=unnamed
 endif
 
