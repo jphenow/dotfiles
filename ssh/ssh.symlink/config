@@ -1,5 +1,5 @@
 Host *
-  User jonphenow
+  User jphenow
   ForwardAgent yes
   TCPKeepAlive yes
   ServerAliveInterval 5
@@ -17,7 +17,7 @@ Host *
   AddKeysToAgent yes
   UseKeychain yes
   IdentityFile ~/.ssh/id_rsa
-  IdentityFile ~/.ssh/ms_id_rsa
+  # IdentityFile ~/.ssh/ms_id_rsa
 
 # GITHUB
 
@@ -30,8 +30,11 @@ Host gh
 Host bastion*.githubapp.com vault-bastion*.githubapp.com
   ForwardAgent yes
   User jphenow
-  IdentityFile /Users/jonphenow/github/ssh/id_rsa
+  IdentityFile ~/github/ssh/id_rsa
+  ControlMaster auto
+  ControlPath ~/.ssh/sockets/%C
+  ControlPersist 600
 Host github.com *.github.net *.githubapp.com
   ForwardAgent no
   User jphenow
-  IdentityFile /Users/jonphenow/github/ssh/id_rsa
+  IdentityFile ~/github/ssh/id_rsa

@@ -2,7 +2,7 @@
 set -g base-index 1
 
 # Automatically set window title
-set-window-option -g automatic-rename on
+set-window-option -g automatic-rename off
 set-option -g set-titles on
 
 
