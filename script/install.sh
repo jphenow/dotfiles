@@ -48,6 +48,8 @@ install_dependencies() {
 		command_exists git || brew install git
 		command_exists reattach-to-user-namespace || brew install reattach-to-user-namespace
 		command_exists ag || brew install the_silver_searcher
+		command_exists fpp || brew install fpp # https://facebook.github.io/PathPicker/
+		command_exists urlview || brew install urlview # https://packages.debian.org/stable/misc/urlview
 	else
 		command_exists curl || sudo apt install -y curl
 		command_exists zsh || sudo apt install -y zsh

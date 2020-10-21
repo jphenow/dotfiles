@@ -34,6 +34,8 @@ set termguicolors     " enable true colors support
 let ayucolor="dark"   " for dark version of theme
 colorscheme ayu
 " ENDPLUG:ayu-vim
+hi! Normal ctermbg=NONE guibg=NONE
+hi! NonText ctermbg=NONE guibg=NONE
 
 nmap <silent> ]h :<C-U>execute v:count1 . "GitGutterNextHunk"<CR>
 nmap <silent> [h :<C-U>execute v:count1 . "GitGutterPrevHunk"<CR>
