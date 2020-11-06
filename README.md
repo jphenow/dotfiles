@@ -11,3 +11,6 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/jphenow/dotfiles/master/sc
 * Load profile from this folder
 * Load KeyMap from this folder
 
+## Other useful day-to-day tools
+
+* [k9s](https://k9scli.io/)
