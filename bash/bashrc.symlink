@@ -20,3 +20,8 @@ do
 done
 
 unset compfiles
+
+complete -C /usr/local/bin/terraform terraform
+
+# [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+. "$HOME/.cargo/env"

@@ -37,4 +37,4 @@ _yargs_completions()
 complete -F _yargs_completions cf
 ###-end-cf-completions-###
 
-export PATH="$HOME/.cargo/bin:$PATH"
+. "$HOME/.cargo/env"
