@@ -1,5 +1,4 @@
 Host *
-  User jphenow
   ForwardAgent yes
   TCPKeepAlive yes
   ServerAliveInterval 5
@@ -11,7 +10,7 @@ Host *.amazonaws.com
 
 Host jpdo
   User jonphenow
-  Hostname jphenow.com
+  Hostname do.jphenow.com
 
 Host *
   AddKeysToAgent yes

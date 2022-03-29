@@ -178,8 +178,7 @@ alias docker-clean-all='docker-clean-containers; docker-clean-images; docker-cle
 
 # source $HOME/Library/Preferences/org.dystroy.broot/launcher/bash/br
 export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="$PATH:/Users/jon.phenow/.dotnet/tools"
-export PATH="/usr/local/opt/awscli@1/bin:$PATH"
+export PATH="~/.dotnet/tools:$PATH"
 
 eval "$(direnv hook zsh)"
 # eval "$(gh completion -s zsh)"
@@ -199,3 +198,7 @@ alias tf="terraform"
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 source $HOME/.cargo/env
+
+eval "$(rbenv init -)"
+
+ export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
