@@ -61,7 +61,7 @@ ZSH_THEME="candy"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(gitfast macos)
+plugins=(git macos)
 #plugins=(git osx)
 
 source $ZSH/oh-my-zsh.sh
@@ -149,7 +149,7 @@ function core() {
   return 1
 }
 
-eval "$(rbenv init -)"
+# eval "$(rbenv init -)" # Switched to asdf
 
 # Get qmake in PATH for capybara
 # export PATH="$(brew --prefix qt@5.5)/bin:$PATH"
@@ -158,7 +158,7 @@ eval "$(rbenv init -)"
 export PATH="$HOME/.cargo/bin:$PATH"
 
 alias k='kubectl'
-export EDITOR="code"
+export EDITOR="code --wait"
 export VAGRANT_DISABLE_VBOXSYMLINKCREATE=1
 
 # Docker
@@ -178,7 +178,8 @@ alias docker-clean-all='docker-clean-containers; docker-clean-images; docker-cle
 
 # source $HOME/Library/Preferences/org.dystroy.broot/launcher/bash/br
 export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="~/.dotnet/tools:$PATH"
+export PATH="$HOME/.dotnet/tools:$PATH"
+export PATH="$HOME/.fly/bin:$PATH"
 
 eval "$(direnv hook zsh)"
 # eval "$(gh completion -s zsh)"
@@ -199,6 +200,11 @@ alias tf="terraform"
 
 source $HOME/.cargo/env
 
-eval "$(rbenv init -)"
+# export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
- export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+. /usr/local/opt/asdf/libexec/asdf.sh
+
+# For pkg-config to find postgresql@12 you may need to set:
+# export PKG_CONFIG_PATH="/usr/local/opt/postgresql@12/lib/pkgconfig"
+
+export ERL_AFLAGS="-kernel shell_history enabled"
