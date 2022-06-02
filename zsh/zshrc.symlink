@@ -202,9 +202,11 @@ source $HOME/.cargo/env
 
 # export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
-. /usr/local/opt/asdf/libexec/asdf.sh
 
 # For pkg-config to find postgresql@12 you may need to set:
 # export PKG_CONFIG_PATH="/usr/local/opt/postgresql@12/lib/pkgconfig"
 
 export ERL_AFLAGS="-kernel shell_history enabled"
+# export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
