@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+filename="$1"
+shift
+tablename="$1"
+shift
+
+sqlite3 :memory: -cmd '.mode csv' -cmd ".import $filename $tablename" "$@"
