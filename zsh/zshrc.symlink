@@ -209,4 +209,8 @@ source $HOME/.cargo/env
 export ERL_AFLAGS="-kernel shell_history enabled"
 # export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
+if [ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ]; then
+  . /opt/homebrew/opt/asdf/libexec/asdf.sh
+elif [ -f ~/.asdf/asdf.sh ]; then
+  . ~/.asdf/asdf.sh
+fi
