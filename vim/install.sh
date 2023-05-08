@@ -2,10 +2,14 @@
 
 set -e
 
-if brew ls --versions nvim > /dev/null; then
-  brew upgrade nvim
+if command brew 2> /dev/null; then
+  if brew ls --versions nvim > /dev/null; then
+    brew upgrade nvim
+  else
+    brew install nvim
+  fi
 else
-  brew install nvim
+  echo "TODO: Install nvim"
 fi
 
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim

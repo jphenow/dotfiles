@@ -7,5 +7,5 @@ if command brew 2>/dev/null; then
     brew install direnv
   fi
 else
-  echo "TODO: INSTALL direnv"
+  echo "TODO: Install direnv"
 fi
