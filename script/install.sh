@@ -93,7 +93,7 @@ install_modules() {
 setup_dotfiles() {
 	cd ~/.dotfiles
 	dir=$(pwd)
-	for DOTFILE in $(ls -lrt -d -1 */*.symlink)
+	for DOTFILE in $(ls -rt -d -1 */*.symlink)
 	do
 		target_name="$HOME/$(echo $DOTFILE | sed 's/\.symlink//' | sed 's/\//\/./' | sed 's/.*\///')"
 		source_name="$dir/$DOTFILE"
