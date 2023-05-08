@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-if brew ls --versions direnv > /dev/null; then
-  brew upgrade direnv
+if command brew 2>/dev/null; then
+  if brew ls --versions direnv > /dev/null; then
+    brew upgrade direnv
+  else
+    brew install direnv
+  fi
 else
-  brew install direnv
+  echo "TODO: INSTALL direnv"
 fi
