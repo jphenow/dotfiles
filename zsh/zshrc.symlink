@@ -1,36 +1,41 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-# Path to your oh-my-zsh installation.
+# Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# Set name of the theme to load. Optionally, if you set this to "random"
-# it'll load a random theme each time that oh-my-zsh is loaded.
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time Oh My Zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="avit"
 ZSH_THEME="af-magic"
 ZSH_THEME="robbyrussell"
 ZSH_THEME="candy"
 
-# Set list of themes to load
-# Setting this variable when ZSH_THEME=random
-# cause zsh load theme from this variable instead of
-# looking in ~/.oh-my-zsh/themes/
-# An empty array have no effect
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
-# Uncomment the following line to use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+# zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+# zstyle ':omz:update' frequency 13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -42,6 +47,9 @@ ZSH_THEME="candy"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
@@ -51,18 +59,22 @@ ZSH_THEME="candy"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
 # HIST_STAMPS="mm/dd/yyyy"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
+export ZSH_CUSTOM="$HOME/.dotfiles/zsh"
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git macos)
-#plugins=(git osx)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -77,140 +89,50 @@ source $ZSH/oh-my-zsh.sh
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
-#   export EDITOR='mvim'
+#   export EDITOR='nvim'
 # fi
 
 # Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+# export ARCHFLAGS="-arch $(uname -m)"
 
-# ssh
-# export SSH_KEY_PATH="~/.ssh/rsa_id"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# Set personal aliases, overriding those provided by Oh My Zsh libs,
+# plugins, and themes. Aliases can be placed here, though Oh My Zsh
+# users are encouraged to define aliases within a top-level file in
+# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
+# - $ZSH_CUSTOM/aliases.zsh
+# - $ZSH_CUSTOM/macos.zsh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-for FILE in $(ls ~/.dotfiles/*/*.zsh); do
-  source $FILE
-done
+export EDITOR="vim"
+export EDITOR="nvim"
+export EDITOR="code --wait"
+
+# GRC colorizes nifty unix tools all over the place
+# `brew install grc`
+if $(grc &>/dev/null); then
+  source `brew --prefix`/etc/grc.zsh
+fi
 
 # Microsoft.AppCenter.CoreServices
 export CODE_DIR="$HOME/Code"
-export APP_CENTER_CODE_DIR="$CODE_DIR/appcenter"
-export APP_CENTER_DOCKER_COMPOSE_DIR="$APP_CENTER_CODE_DIR/dockercompose"
-export CORE_SERVICeS_CODE_DIR="$APP_CENTER_CODE_DIR/core-services"
-
-if [ -d $APP_CENTER_DOCKER_COMPOSE_DIR ]; then
-  for filename in $APP_CENTER_DOCKER_COMPOSE_DIR/*.ps1
-  do
-    cmd=$(basename $filename .ps1)
-
-    eval "a${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 diagnostics/docker \$*; }"
-    eval "c${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 crashes-docker \$*; }"
-    eval "cs${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 core-services/docker \$*; }"
-    eval "d${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 distribution/docker \$*; }"
-    eval "ui${cmd}() { $APP_CENTER_DOCKER_COMPOSE_DIR/${cmd}.ps1 ux/docker \$*; }"
-  done
-fi
-
-function cssql() {
-  docker run --rm -it mcr.microsoft.com/mssql-tools /opt/mssql-tools/bin/sqlcmd -U sa -P Your^StrongP3ssw0rd -S 172.17.0.1,8000 $*
-}
+export CODE_DIR="$HOME/.dotfiles"
 
 function reload!() {
   source ~/.zshrc
 }
 
-autoload bashcompinit
-bashcompinit
-source ~/.bash_profile
-
-export FLEXFLOW_CODE_PATH="$CODE_DIR/flexflow"
-export FLEXFLOW_BIN_PATH="$FLEXFLOW_CODE_PATH/bin"
-export PATH=$FLEXFLOW_BIN_PATH:$PATH
-export PATH="$HOME/bin:$PATH"
-
-function core() {
-  BASE_BRANCH_NAME="jophenow/core-services"
-  if [[ "$1" -eq "co" ]]; then
-    git checkout "$BASE_BRANCH_NAME/$2"
-    return
-  elif [[ "$1" -eq "cob" ]]; then
-    git checkout -b "$BASE_BRANCH_NAME/$2"
-    return
-  fi
-
-  echo "Subcommand not found!"
-  return 1
-}
-
-# eval "$(rbenv init -)" # Switched to asdf
-
-# Get qmake in PATH for capybara
-# export PATH="$(brew --prefix qt@5.5)/bin:$PATH"
-# export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
-# export PATH="/usr/local/opt/mysql-client/bin:$PATH"
+export PATH="$DOT/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 
-alias k='kubectl'
-export EDITOR="code --wait"
-export VAGRANT_DISABLE_VBOXSYMLINKCREATE=1
-
-# Docker
-alias dp='docker ps'
-
-## Cleanup
-alias docker-clean-containers='docker rm $(docker ps -a -q)'
-alias docker-clean-images='docker rmi $(docker images -q)'
-alias docker-clean-volumes='docker volume rm $(docker volume ls -qf dangling=true)'
-alias dcps='docker rm $(docker ps --filter=status=exited --filter=status=created -q)'
-alias dcimg='docker rmi $(docker images -a --filter=dangling=true -q)'
-alias docker-clean-all='docker-clean-containers; docker-clean-images; docker-clean-volumes'
-
-# export GOPATH="$HOME/go"
-# export GOPATH="$HOME/github/go"
-# export PATH=$PATH:$GOPATH/bin
-
-# source $HOME/Library/Preferences/org.dystroy.broot/launcher/bash/br
-export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="$HOME/.dotnet/tools:$PATH"
-export PATH="$HOME/.fly/bin:$PATH"
-
 eval "$(direnv hook zsh)"
-# eval "$(gh completion -s zsh)"
-
-alias vim=nvim
-
-# export TERM="screen-256color"
 
 export GPG_TTY=$(tty)
 
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/local/bin/terraform terraform
-
-alias tf="terraform"
-
-# which fzf > /dev/null && $(brew --prefix)/opt/fzf/install
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-source $HOME/.cargo/env
-
+# export ERL_AFLAGS="-kernel shell_history enabled"
 # export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
-
-# For pkg-config to find postgresql@12 you may need to set:
-# export PKG_CONFIG_PATH="/usr/local/opt/postgresql@12/lib/pkgconfig"
-
-export ERL_AFLAGS="-kernel shell_history enabled"
-# export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
-
-if [ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ]; then
-  . /opt/homebrew/opt/asdf/libexec/asdf.sh
-elif [ -f ~/.asdf/asdf.sh ]; then
-  . ~/.asdf/asdf.sh
-fi
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
