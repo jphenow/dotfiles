@@ -8,13 +8,16 @@
 # fi
 
 # Enable colors for ls, etc.  Prefer $DOT/colors/dir_colors #64489
-if whence dircolors > /dev/null ; then
-  if [[ -f $DOT/colors/dir_colors ]] ; then
-    eval $(dircolors -b $DOT/colors/dir_colors) &> /dev/null
-  elif [[ -f /etc/DIR_COLORS ]] ; then
-    eval $(dircolors -b /etc/DIR_COLORS) &> /dev/null
-  fi
-else
-  export CLICOLOR=1
-  zstyle ':completion:*:default' list-colors '' &> /dev/null
-fi
+# if whence dircolors > /dev/null ; then
+#   if [[ -f $DOT/colors/dir_colors ]] ; then
+#     eval $(dircolors -b $DOT/colors/dir_colors) &> /dev/null
+#   elif [[ -f /etc/DIR_COLORS ]] ; then
+#     eval $(dircolors -b /etc/DIR_COLORS) &> /dev/null
+#   fi
+# else
+#   export CLICOLOR=1
+#   zstyle ':completion:*:default' list-colors '' &> /dev/null
+# fi
+
+# needs brew install coreutils
+alias ls='gls -F --group-directories-first --color=auto'

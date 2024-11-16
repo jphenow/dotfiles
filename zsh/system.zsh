@@ -2,8 +2,6 @@
 #   Made possible through contributions from generous benefactors like
 #   `brew install coreutils`
 
-alias vim=nvim
-
 alias l='ls -CF'
 alias ll='ls -lh'
 alias la='ls -A'
