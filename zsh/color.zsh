@@ -16,6 +16,8 @@
 #   fi
 # else
 #   export CLICOLOR=1
+#   export LS_COLORS='no=00;37:fi=00:di=00;33:ln=04;36:pi=40;33:so=01;35:bd=40;33;01:'
+#   zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 #   zstyle ':completion:*:default' list-colors '' &> /dev/null
 # fi
 
@@ -74,6 +76,6 @@
 # :*.md=0;37:
 # to your LS_COLORS. The scope for customisation is colossal, and the key here is to experiment and find the colours you prefer and which are clear against whatever window-background colour (and opacity) you’ve set Terminal to display.
 # needs brew install coreutils
-export LS_COLORS="$LS_COLORS:di=0;36:ln=0;93:ex=0;35:"
+# export LS_COLORS="$LS_COLORS:di=0;36:ln=0;93:ex=0;35:"
 
-alias ls='gls -F --group-directories-first --color=auto'
+# alias ls='gls -F --group-directories-first --color=auto'

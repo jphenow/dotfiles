@@ -2,6 +2,8 @@
 #   Made possible through contributions from generous benefactors like
 #   `brew install coreutils`
 
+# alias ls='ls -CF --color'
+alias ls='gls -F --group-directories-first --color=auto'
 alias l='ls -CF'
 alias ll='ls -lh'
 alias la='ls -A'
