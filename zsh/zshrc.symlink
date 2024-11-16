@@ -128,11 +128,11 @@ function reload!() {
 export PATH="$DOT/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 
-eval "$(direnv hook zsh)"
-
 export GPG_TTY=$(tty)
 
 # export ERL_AFLAGS="-kernel shell_history enabled"
 # export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+eval "$(direnv hook zsh)"
