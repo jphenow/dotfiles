@@ -11,3 +11,5 @@ git/gitconfig.symlink
 
 .DS_Store
 .netrwhist
+
+zsh/plugins
