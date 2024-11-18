@@ -10,7 +10,7 @@ Host *.amazonaws.com
 
 Host jpdo
   User jonphenow
-  Hostname do.jphenow.com
+  HostName do.jphenow.com
 
 Host *
   AddKeysToAgent yes
@@ -18,12 +18,22 @@ Host *
   IdentityFile ~/.ssh/id_rsa
   # IdentityFile ~/.ssh/ms_id_rsa
 
+Host synology-local
+  HostName synology.local
+  Port 1122
+  User jphenow
+
+Host synology-local-root
+  HostName synology.local
+  Port 1122
+  User root
+
 # GITHUB
 
 Host gh
   User git
   Port 22
-  Hostname github.com
+  HostName github.com
   TCPKeepAlive yes
   IdentitiesOnly yes
 Host bastion*.githubapp.com vault-bastion*.githubapp.com
