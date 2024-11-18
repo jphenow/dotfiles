@@ -172,9 +172,13 @@ alias dcps='docker rm $(docker ps --filter=status=exited --filter=status=created
 alias dcimg='docker rmi $(docker images -a --filter=dangling=true -q)'
 alias docker-clean-all='docker-clean-containers; docker-clean-images; docker-clean-volumes'
 
+alias ag="rg"
+alias grep="rg"
+
 # export GOPATH="$HOME/go"
 # export GOPATH="$HOME/github/go"
-# export PATH=$PATH:$GOPATH/bin
+export HOMEGO="$HOME/go"
+export PATH=$PATH:$HOMEGO/bin
 
 # source $HOME/Library/Preferences/org.dystroy.broot/launcher/bash/br
 export PATH="/usr/local/opt/curl/bin:$PATH"
@@ -209,4 +213,61 @@ source $HOME/.cargo/env
 export ERL_AFLAGS="-kernel shell_history enabled"
 # export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
+muslxgo() {
+  env CC=x86_64-linux-musl-gcc CXX=x86_64-linux-musl-g++ GOARCH=amd64 GOOS=linux CGO_ENABLED=1 \
+  go build -ldflags "-linkmode external -extldflags -static" $*
+}
+
+devbuild() {
+  baseEexe=$(basename $(pwd))
+  if [ "$POSTFIX" != "" ]; then
+    exe=$baseEexe-$POSTFIX
+  else
+    echo "Set a postfix damnit"
+    exit 1
+  fi
+  # muslxgo && trsync -aP $exe root@dev-ovh-hil1-1337:$exe
+
+  echo "Building and rsyncing $exe to dev-ovh-hil1-1337:$exe"
+  muslxgo -o $exe && trsync $exe root@dev-ovh-hil1-1337:$exe
+}
+
+trsync() {
+  RSYNC_RSH='tsh ssh' rsync $*
+}
+
+localflyctlbuild() {
+  cd ~/workspace/superfly/flyctl
+  go build -o $HOME/bin/flocal .
+  cd -
+}
+
+aws() {
+  docker run --rm -it -v ~/.aws:/root/.aws -v $PWD:/app -w /app amazon/aws-cli $*
+}
+
+function webtks() {
+  cd ~/workspace/superfly/nomad-firecracker
+
+  echo "build tksidecar..."
+  make bin/tksidecar
+
+  echo "copy tksidecar to web..."
+  chmod +x bin/tksidecar
+  mv bin/tksidecar ~/workspace/superfly/web/tksidecar/tksidecar
+  cd -
+
+  SOCKET_PATH=./sidecar.sock ANIMAL_STYLE=1 tksidecar/tksidecar
+}
+
+alias cat=bat
+
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+
+export ASCIINEMA_API_URL=https://fly-asciinema.fly.dev
+
+# MacOS Sonoma fucked up the erlang runtime https://elixirforum.com/t/bus-error-after-upgrading-to-sonoma-beta/56354/41?page=3
+# KERL_CONFIGURE_OPTIONS="--disable-jit"
+export KERL_CONFIGURE_OPTIONS="--without-wx --without-javac"
