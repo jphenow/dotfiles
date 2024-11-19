@@ -8,16 +8,26 @@ TODO
 brew install tmux
 brew install visual-studio-code
 brew install slack
-brew install --cask tailscale
+brew install tailscale
 brew install 1password-cli
 brew install reattach-to-user-namespace
 brew install nvim
+brew install karabiner-elements
+brew install spotify
+brew install discord
+brew install notion
+brew install iterm2
+brew install signal
+brew install alfred
+brew install nordvpn
+brew install numi
+brew install postman
+
 brew install zsh
 brew install direnv
 brew install coreutils # gnu tools
 brew install grc # colorize commands
 brew install asdf
-
 brew install fd # find replacement
 brew install ripgrep # grep replacement
 brew install bat # cat replacement
