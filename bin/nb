@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+git stash
+main=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')
+git checkout $main
+git checkout -b $1
+git stash pop
