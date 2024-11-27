@@ -4,7 +4,7 @@ require 'irb/ext/save-history'
 require 'rubygems'
 
 current_dir = File.expand_path(".")
-if current_dir != File.expand_path("~") && File.join(current_dir, ".irbrc")
+if current_dir != File.expand_path("~") && File.exists?(File.join(current_dir, ".irbrc"))
   load File.join(current_dir, ".irbrc")
   puts "loading #{File.join(current_dir, ".irbrc")}"
 end
