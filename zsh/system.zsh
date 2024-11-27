@@ -4,7 +4,7 @@
 
 # alias ls='ls -CF --color'
 if command -v eza &> /dev/null; then
-  alias ls='eza -F --group-directories-first --icons'
+  alias ls='eza -F --group-directories-first --icons auto'
 elif command -v gls &> /dev/null; then
   alias ls='gls -F --group-directories-first --color=auto'
   alias l='ls -CF'

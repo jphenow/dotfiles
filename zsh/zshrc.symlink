@@ -75,7 +75,7 @@ export ZSH_CUSTOM="$HOME/.dotfiles/zsh"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git macos zsh-autosuggestions)
+plugins=(git macos ssh-agent zsh-autosuggestions asdf)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -198,3 +198,10 @@ export ASCIINEMA_API_URL=https://fly-asciinema.fly.dev
 # MacOS Sonoma fucked up the erlang runtime https://elixirforum.com/t/bus-error-after-upgrading-to-sonoma-beta/56354/41?page=3
 # KERL_CONFIGURE_OPTIONS="--disable-jit"
 # export KERL_CONFIGURE_OPTIONS="--without-wx --without-javac"
+# export KERL_CONFIGURE_OPTIONS="--without-javac --without-wx --disable-jit --with-ssl=$(brew --prefix openssl@3)"
+export KERL_CONFIGURE_OPTIONS="--disable-jit"
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+function w() {
+  cd $HOME/workspace/superfly/$1
+}
