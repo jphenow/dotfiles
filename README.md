@@ -22,7 +22,9 @@ brew install alfred
 brew install nordvpn
 brew install numi
 brew install postman
+brew install jordanbaird-ice
 
+brew install autoconf automake openssl wxwidgets libxslt fop libpq overmind stripe lib-sodium flyctl
 brew install zsh
 brew install direnv
 brew install coreutils # gnu tools
