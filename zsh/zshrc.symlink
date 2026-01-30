@@ -225,4 +225,5 @@ alias t="tailscale"
 alias code="cursor"
 ulimit -n 4096
 
+export PATH="$HOME/.dotfiles/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"

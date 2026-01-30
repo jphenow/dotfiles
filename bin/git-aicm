@@ -1,0 +1,501 @@
+#!/usr/bin/env bash
+#
+# git-aicm: AI-powered commit message generator
+#
+# Usage: git aicm [-b]
+#
+# Options:
+#   -b    Break up staged changes into multiple purposeful commits
+#
+# This script generates a commit message for staged changes using an AI tool.
+# Edit the configuration below to customize which LLM tool to use and how commit messages are generated.
+
+set -e
+
+# ============================================================================
+# LLM TOOL CONFIGURATION
+# ============================================================================
+# Configure which AI tool to use for generating commit messages
+# Options: "claude", "copilot", "custom"
+#
+# These can be overridden by environment variables:
+#   - LLM_TOOL: Which LLM to use
+#   - LLM_MODEL: Which model to use (for Claude: "opus", "sonnet", "haiku")
+# ============================================================================
+
+LLM_TOOL="${LLM_TOOL:-claude}"  # Default: claude
+LLM_MODEL="${LLM_MODEL:-haiku}" # Default: haiku (for claude)
+
+# Command templates for each tool
+case "$LLM_TOOL" in
+    claude)
+        # Claude CLI command (assumes 'claude' is available in PATH)
+        LLM_COMMAND="claude"
+        LLM_CHECK_COMMAND="claude"
+        ;;
+    copilot)
+        # GitHub Copilot CLI command
+        LLM_COMMAND="copilot --prompt"
+        LLM_CHECK_COMMAND="copilot"
+        ;;
+    custom)
+        # Define your custom LLM tool command here
+        # Example: LLM_COMMAND="my-ai-tool --generate"
+        LLM_COMMAND="your-custom-command-here"
+        LLM_CHECK_COMMAND="your-custom-command-here"
+        ;;
+esac
+
+# Parse command line options
+BREAK_UP_COMMITS=false
+while getopts "b" opt; do
+    case $opt in
+        b)
+            BREAK_UP_COMMITS=true
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            echo "Usage: git aicm [-b]"
+            exit 1
+            ;;
+    esac
+done
+
+# ============================================================================
+# CUSTOMIZE YOUR COMMIT MESSAGE PROMPT HERE
+# ============================================================================
+# This is the prompt sent to GitHub Copilot to generate your commit message.
+# Edit this to match your preferred commit message style and conventions.
+# ============================================================================
+
+read -r -d '' COMMIT_PROMPT <<'EOF' || true
+You are an expert at writing detailed, meaningful Git commit messages following conventional commit format.
+
+Analyze the git diff provided and generate a commit message with BOTH a subject line and a detailed body.
+
+Format:
+<type>: <subject>
+[BLANK LINE - REQUIRED]
+<body paragraphs explaining WHY>
+[BLANK LINE between each paragraph]
+
+Where type is one of:
+- feat: A new feature
+- fix: A bug fix
+- docs: Documentation changes
+- style: Code style changes (formatting, missing semicolons, etc)
+- refactor: Code refactoring without changing functionality
+- test: Adding or updating tests
+- chore: Maintenance tasks, dependency updates, etc
+
+REQUIRED Guidelines:
+- Subject should be imperative mood (e.g., "add" not "added" or "adds")
+- Keep subject under 50 characters
+- Do not end subject with a period
+- Subject should be lowercase after the type
+- CRITICAL: You MUST include a completely blank line after the subject line before the body
+- CRITICAL: You MUST include a completely blank line between each paragraph in the body
+- ALWAYS include a detailed body section after the blank line
+- Body should be written in prose format (full sentences and paragraphs)
+- Body should explain WHY the changes are being made, not just WHAT was changed
+- Body should provide context: What problem does this solve? Why this approach? What are the implications?
+- If this change has broader impacts beyond the immediate feature (e.g., changes to shared config, performance implications, breaking changes), call those out explicitly
+- Write for your future self: What will you wish you had documented when you're looking at this commit six months from now?
+- Consider if this change is "making the change easy" (refactoring/prep work) or "making the easy change" (the actual feature), and explain accordingly
+- Body lines should wrap at 72 characters
+- Most changes should be no more than a paragraph or two. Don't be verbose just for the sake of
+  being verbose. Only the most complex situations should call for several paragraphs of explanation.
+
+Example of good commit with WHY (note the blank lines):
+feat: add caching layer to user API endpoints
+[← BLANK LINE HERE]
+This change introduces Redis caching with a 5-minute TTL for user profile
+data. We chose Redis because it's already part of our infrastructure and
+handles our expected load. The 5-minute TTL balances freshness with
+performance - user profiles don't change frequently enough to warrant
+more aggressive cache invalidation.
+[← BLANK LINE HERE]
+This should reduce average response time from 200ms to ~20ms for cached
+requests and significantly reduce database load during peak hours.
+
+You may use markdown formatting like bulleted or numbered lists where appropriate
+to supplement the prose description, but the majority of the body should be
+written in paragraph form. Lists should only be used to clarify specific points,
+not replace explanatory prose entirely.
+
+Only respond with the commit message itself, nothing else. No additional
+explanations or commentary outside the commit message. Do not wrap the output
+in markdown code blocks.
+EOF
+
+# ============================================================================
+# PROMPT FOR BREAKING UP COMMITS
+# ============================================================================
+
+read -r -d '' BREAKUP_PROMPT <<'EOF' || true
+You are an expert at organizing Git commits following the "purposeful commits" philosophy.
+
+Analyze the git diff provided and break it down into multiple logical, purposeful commits.
+Each commit should represent a single logical step that builds toward the overall goal.
+
+Follow these principles:
+- "Make the change easy, then make the easy change" - Kent Beck
+- Refactoring/preparation work should be separate commits from feature additions
+- Configuration changes that have broader impact should be isolated
+- Each commit should have tests passing (if applicable)
+- Typically 2-4 commits for most changes, rarely more than 5
+
+For each commit, provide:
+1. The files/hunks that belong in that commit
+2. A commit message following the same format as the single commit prompt
+
+Output format:
+=== COMMIT 1 ===
+Files: path/to/file1.go (lines 10-50), path/to/file2.go (entire file)
+
+<type>: <subject>
+
+<body explaining WHY>
+
+=== COMMIT 2 ===
+Files: path/to/file3.go (lines 100-150)
+
+<type>: <subject>
+
+<body explaining WHY>
+
+Guidelines:
+- Be strategic about commit boundaries - group related changes together
+- Think about the story you're telling through the commit sequence
+- Consider what would make code review easier
+- Each commit should be independently understandable
+- Use the same commit message guidelines as the single commit prompt
+
+Output each commit with clear delimiters so they can be parsed and applied automatically.
+
+Example output format:
+=== COMMIT 1 ===
+FILES:
+path/to/file1.go:10-50
+path/to/file2.go:1-EOF
+
+MESSAGE:
+refactor: extract authentication into pluggable interface
+
+The existing authentication logic was tightly coupled to password-based
+auth, making it difficult to add new authentication methods...
+
+=== COMMIT 2 ===
+FILES:
+path/to/file3.go:100-150
+
+MESSAGE:
+feat: add Google OAuth authentication backend
+
+With the pluggable interface in place, we can now easily add...
+
+Only respond with the commit breakdown in this exact format. No additional explanations.
+EOF
+
+# ============================================================================
+# Main script - no need to edit below this line
+# ============================================================================
+
+# Check if the configured LLM tool is available
+if ! command -v $LLM_CHECK_COMMAND &> /dev/null; then
+    echo "Error: $LLM_TOOL CLI not found."
+    case "$LLM_TOOL" in
+        claude)
+            echo "Install it with: pip install anthropic-cli"
+            echo "Or visit: https://github.com/anthropics/anthropic-cli"
+            ;;
+        copilot)
+            echo "Install it with: npm install -g @github/copilot"
+            ;;
+        custom)
+            echo "Please install your custom LLM tool: $LLM_CHECK_COMMAND"
+            ;;
+    esac
+    exit 1
+fi
+
+# Check if there are staged changes
+if git diff --cached --quiet; then
+    echo "No staged changes to commit."
+    echo "Use 'git add' to stage changes first."
+    exit 1
+fi
+
+# Function to show spinner animation
+show_spinner() {
+    local pid=$1
+    local message=$2
+    local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+    local i=0
+
+    while kill -0 $pid 2>/dev/null; do
+        i=$(( (i+1) % ${#spin} ))
+        printf "\r${spin:$i:1} %s" "$message"
+        sleep 0.1
+    done
+    printf "\r"
+}
+
+# Get the staged diff
+DIFF=$(git diff --cached)
+
+# Build the full prompt based on mode
+if [ "$BREAK_UP_COMMITS" = true ]; then
+    FULL_PROMPT="$BREAKUP_PROMPT
+
+Git diff:
+$DIFF"
+else
+    FULL_PROMPT="$COMMIT_PROMPT
+
+Git diff:
+$DIFF"
+fi
+
+# Call the configured LLM CLI and extract the message with spinner
+# Capture all lines, not just the first one, to get the full commit message with body
+case "$LLM_TOOL" in
+    claude)
+        # Claude CLI accepts prompt as argument and --model for model selection
+        (claude --model "$LLM_MODEL" "$FULL_PROMPT" > /tmp/git-aicm-output.$$ 2>&1) &
+        ;;
+    copilot)
+        # Copilot CLI uses --prompt flag (model selection not typically supported)
+        (copilot --prompt "$FULL_PROMPT" > /tmp/git-aicm-output.$$ 2>&1) &
+        ;;
+    custom)
+        # Custom command - adjust as needed for your tool
+        ($LLM_COMMAND "$FULL_PROMPT" > /tmp/git-aicm-output.$$ 2>&1) &
+        ;;
+esac
+
+LLM_PID=$!
+
+show_spinner $LLM_PID "Generating commit with $LLM_TOOL..."
+
+wait $LLM_PID
+LLM_OUTPUT=$(cat /tmp/git-aicm-output.$$)
+rm -f /tmp/git-aicm-output.$$
+
+echo ""
+
+# Filter out metadata lines but keep the actual commit message INCLUDING blank lines
+# We need to preserve blank lines between paragraphs, so we can't use grep -v with empty line patterns
+# Instead, we'll filter line by line and keep everything that's not metadata
+MSG=""
+IN_MESSAGE=false
+while IFS= read -r line; do
+    # Skip metadata lines (from various LLM tools)
+    if echo "$line" | grep -q "^Total\|^Usage\|claude-sonnet\|gpt-\|Premium request\|duration\|code changes\|^API time spent\|^Breakdown by AI model"; then
+        continue
+    fi
+
+    # If we hit a non-metadata, non-empty line, we're in the message
+    if [ -n "$line" ]; then
+        IN_MESSAGE=true
+    fi
+
+    # Once we're in the message, capture everything (including blank lines)
+    if [ "$IN_MESSAGE" = true ]; then
+        if [ -z "$MSG" ]; then
+            MSG="$line"
+        else
+            MSG="$MSG"$'\n'"$line"
+        fi
+    fi
+done <<< "$LLM_OUTPUT"
+
+# Trim any trailing blank lines
+MSG=$(echo "$MSG" | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}')
+
+# Check if we got a message
+if [ -z "$MSG" ]; then
+    echo "Failed to generate commit message."
+    echo "Please try again or write the commit message manually."
+    exit 1
+fi
+
+# Handle break up commits mode differently
+if [ "$BREAK_UP_COMMITS" = true ]; then
+    echo "Generated commit breakdown:"
+    echo "═════════════════════════════════════════════════════════════════"
+    echo "$MSG"
+    echo "═════════════════════════════════════════════════════════════════"
+    echo ""
+
+    # Ask for confirmation
+    printf "Create all these commits? [Y/n] "
+    read -r REPLY
+
+    if [[ "$REPLY" =~ ^[Nn]$ ]]; then
+        echo "Commits cancelled."
+        exit 1
+    fi
+
+    echo ""
+    echo "Creating commits..."
+
+    # Parse the output and create commits
+    COMMIT_COUNT=0
+    CURRENT_FILES=""
+    CURRENT_MESSAGE=""
+    IN_FILES=false
+    IN_MESSAGE=false
+
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^===\ COMMIT\ [0-9]+\ ===$ ]]; then
+            # If we have a previous commit, apply it
+            if [ -n "$CURRENT_MESSAGE" ]; then
+                COMMIT_COUNT=$((COMMIT_COUNT + 1))
+                echo "Creating commit $COMMIT_COUNT..."
+
+                # Reset staging
+                git reset > /dev/null 2>&1
+
+                # Stage the files for this commit
+                while IFS= read -r file_spec; do
+                    if [ -n "$file_spec" ]; then
+                        # Parse file:line-range format
+                        FILE_PATH=$(echo "$file_spec" | cut -d: -f1)
+                        LINE_RANGE=$(echo "$file_spec" | cut -d: -f2-)
+
+                        if [[ "$LINE_RANGE" == "1-EOF" ]] || [[ "$LINE_RANGE" == "$FILE_PATH" ]]; then
+                            # Stage entire file
+                            git add "$FILE_PATH" 2>/dev/null || echo "  Warning: Could not add $FILE_PATH"
+                        else
+                            # For line ranges, we'll have to stage the whole file
+                            # (proper line-range staging would require git add -p automation)
+                            git add "$FILE_PATH" 2>/dev/null || echo "  Warning: Could not add $FILE_PATH"
+                        fi
+                    fi
+                done <<< "$CURRENT_FILES"
+
+                # Create the commit
+                TEMP_FILE=$(mktemp)
+                echo "$CURRENT_MESSAGE" > "$TEMP_FILE"
+                git commit -F "$TEMP_FILE" > /dev/null 2>&1
+                rm "$TEMP_FILE"
+
+                echo "  ✓ Committed"
+            fi
+
+            # Reset for next commit
+            CURRENT_FILES=""
+            CURRENT_MESSAGE=""
+            IN_FILES=false
+            IN_MESSAGE=false
+
+        elif [[ "$line" == "FILES:" ]]; then
+            IN_FILES=true
+            IN_MESSAGE=false
+
+        elif [[ "$line" == "MESSAGE:" ]]; then
+            IN_FILES=false
+            IN_MESSAGE=true
+
+        elif [ "$IN_FILES" = true ] && [ -n "$line" ]; then
+            CURRENT_FILES="$CURRENT_FILES$line"$'\n'
+
+        elif [ "$IN_MESSAGE" = true ]; then
+            if [ -z "$CURRENT_MESSAGE" ]; then
+                CURRENT_MESSAGE="$line"
+            else
+                CURRENT_MESSAGE="$CURRENT_MESSAGE"$'\n'"$line"
+            fi
+        fi
+    done <<< "$MSG"
+
+    # Don't forget the last commit
+    if [ -n "$CURRENT_MESSAGE" ]; then
+        COMMIT_COUNT=$((COMMIT_COUNT + 1))
+        echo "Creating commit $COMMIT_COUNT..."
+
+        # Reset staging
+        git reset > /dev/null 2>&1
+
+        # Stage the files for this commit
+        while IFS= read -r file_spec; do
+            if [ -n "$file_spec" ]; then
+                FILE_PATH=$(echo "$file_spec" | cut -d: -f1)
+                LINE_RANGE=$(echo "$file_spec" | cut -d: -f2-)
+
+                if [[ "$LINE_RANGE" == "1-EOF" ]] || [[ "$LINE_RANGE" == "$FILE_PATH" ]]; then
+                    git add "$FILE_PATH" 2>/dev/null || echo "  Warning: Could not add $FILE_PATH"
+                else
+                    git add "$FILE_PATH" 2>/dev/null || echo "  Warning: Could not add $FILE_PATH"
+                fi
+            fi
+        done <<< "$CURRENT_FILES"
+
+        # Create the commit
+        TEMP_FILE=$(mktemp)
+        echo "$CURRENT_MESSAGE" > "$TEMP_FILE"
+        git commit -F "$TEMP_FILE" > /dev/null 2>&1
+        rm "$TEMP_FILE"
+
+        echo "  ✓ Committed"
+    fi
+
+    echo ""
+    echo "✓ Created $COMMIT_COUNT commits successfully!"
+    exit 0
+fi
+
+# Show the generated message (single commit mode)
+echo "Generated commit message:"
+echo "─────────────────────────────────────────────────────────────────"
+echo "$MSG"
+echo "─────────────────────────────────────────────────────────────────"
+echo ""
+
+# Ask for confirmation
+printf "Commit with this message? [Y/n/e] "
+read -r REPLY
+
+case "$REPLY" in
+    [eE])
+        # Edit the message
+        TEMP_FILE=$(mktemp)
+        echo "$MSG" > "$TEMP_FILE"
+
+        # Use git's configured editor
+        GIT_EDITOR=$(git config core.editor || echo "${EDITOR:-vim}")
+        $GIT_EDITOR "$TEMP_FILE"
+
+        # Check if file has content after editing
+        if [ -s "$TEMP_FILE" ]; then
+            # Debug: Show what we're about to commit
+            echo ""
+            echo "Committing with edited message:"
+            echo "─────────────────────────────────────────────────────────────────"
+            cat "$TEMP_FILE"
+            echo "─────────────────────────────────────────────────────────────────"
+            echo ""
+            git commit -F "$TEMP_FILE"
+            rm "$TEMP_FILE"
+            echo "Committed with edited message."
+        else
+            rm "$TEMP_FILE"
+            echo "Commit cancelled (empty message)."
+            exit 1
+        fi
+        ;;
+    [nN])
+        echo "Commit cancelled."
+        exit 1
+        ;;
+    *)
+        # Default: yes
+        # Write message to temp file to preserve multi-line formatting
+        TEMP_FILE=$(mktemp)
+        echo "$MSG" > "$TEMP_FILE"
+        git commit -F "$TEMP_FILE"
+        rm "$TEMP_FILE"
+        echo "Committed successfully!"
+        ;;
+esac

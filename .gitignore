@@ -13,3 +13,5 @@ git/gitconfig.symlink
 .netrwhist
 
 zsh/plugins
+
+.claude/settings.local.json
