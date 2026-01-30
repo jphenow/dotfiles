@@ -110,7 +110,9 @@ source $ZSH/oh-my-zsh.sh
 
 export EDITOR="vim"
 export EDITOR="nvim"
-export EDITOR="code --wait"
+# export EDITOR="code --wait"
+# export EDITOR="cursor --wait"
+# export EDITOR="zed --wait"
 
 # GRC colorizes nifty unix tools all over the place
 # `brew install grc`
@@ -134,7 +136,8 @@ export GPG_TTY=$(tty)
 # export ERL_AFLAGS="-kernel shell_history enabled"
 # export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
+#. /opt/homebrew/opt/asdf/libexec/asdf.sh
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 eval "$(direnv hook zsh)"
 
@@ -200,8 +203,26 @@ export ASCIINEMA_API_URL=https://fly-asciinema.fly.dev
 # export KERL_CONFIGURE_OPTIONS="--without-wx --without-javac"
 # export KERL_CONFIGURE_OPTIONS="--without-javac --without-wx --disable-jit --with-ssl=$(brew --prefix openssl@3)"
 export KERL_CONFIGURE_OPTIONS="--disable-jit"
-export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+export PATH="/opt/homebrew/opt/libpq/bin:/opt/homebrew/bin:$PATH"
 
 function w() {
   cd $HOME/workspace/superfly/$1
 }
+
+export FLYCTL_INSTALL="/Users/jon/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+# bun completions
+[ -s "/Users/jon/.bun/_bun" ] && source "/Users/jon/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+export PATH="$HOME/bin:$PATH"
+
+alias t="tailscale"
+alias code="cursor"
+ulimit -n 4096
+
+export PATH="$HOME/.local/bin:$PATH"

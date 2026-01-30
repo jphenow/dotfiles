@@ -495,3 +495,5 @@ bind -n C-S-Right swap-window -t +1 \; next-window
 
 # No delay for escape key press
 set -sg escape-time 0
+
+set -as terminal-features 'tmux*:hyperlinks'

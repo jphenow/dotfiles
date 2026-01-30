@@ -133,6 +133,7 @@ if -b 'command -v pbcopy > /dev/null 2>&1' 'bind y run -b "\"\$TMUX_PROGRAM\" \$
 if -b 'command -v clip.exe > /dev/null 2>&1' 'bind y run -b "\"\$TMUX_PROGRAM\" \${TMUX_SOCKET:+-S \"\$TMUX_SOCKET\"} save-buffer - | clip.exe"'
 if -b '[ -c /dev/clipboard ]' 'bind y run -b "\"\$TMUX_PROGRAM\" \${TMUX_SOCKET:+-S \"\$TMUX_SOCKET\"} save-buffer - > /dev/clipboard"'
 
+bind -n C-v run-shell -b "clip2path | tmux load-buffer -; tmux paste-buffer"
 
 # -- buffers -------------------------------------------------------------------
 
@@ -158,6 +159,9 @@ bind P choose-buffer    # choose which buffer to paste from
 
 run '"$TMUX_PROGRAM" -S #{socket_path} source "$TMUX_CONF_LOCAL"'
 run 'cut -c3- "$TMUX_CONF" | sh -s _apply_configuration'
+
+bind-key -n MouseDown1Pane select-pane -t=
+bind-key -n C-l refresh-client
 
 # EOF
 #

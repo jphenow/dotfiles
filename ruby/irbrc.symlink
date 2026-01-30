@@ -1,10 +1,14 @@
 #!/usr/bin/ruby
 require 'irb/completion'
-require 'irb/ext/save-history'
+begin
+  require 'irb/ext/save-history'
+rescue LoadError
+  # no-op
+end
 require 'rubygems'
 
 current_dir = File.expand_path(".")
-if current_dir != File.expand_path("~") && File.exists?(File.join(current_dir, ".irbrc"))
+if current_dir != File.expand_path("~") && File.exist?(File.join(current_dir, ".irbrc"))
   load File.join(current_dir, ".irbrc")
   puts "loading #{File.join(current_dir, ".irbrc")}"
 end
@@ -21,7 +25,7 @@ class Object
   def local_methods(obj = self)
     (obj.methods - obj.class.superclass.instance_methods).sort
   end
-  
+
   # print documentation
   #
   #   ri 'Array#pop'
