@@ -345,13 +345,23 @@ create_single_commit() {
     # Reset staging area to start fresh
     git reset > /dev/null 2>&1 || true
 
-    # Stage the files for this commit
+    # Stage each file spec — either the entire file or specific hunks
     while IFS= read -r file_spec; do
         if [ -n "$file_spec" ]; then
-            # Line ranges are informational only — git add stages the entire file
-            local file_path
+            local file_path line_range
             file_path=$(echo "$file_spec" | cut -d: -f1)
-            git add "$file_path" 2>/dev/null || echo "  Warning: Could not add $file_path"
+            line_range=$(echo "$file_spec" | cut -d: -f2-)
+
+            if [ "$line_range" = "$file_path" ] || [ "$line_range" = "1-EOF" ] || [ -z "$line_range" ]; then
+                # No line range — stage the entire file
+                git add "$file_path" 2>/dev/null || echo "  Warning: Could not add $file_path"
+            else
+                # Try partial staging; fall back to whole-file if it fails
+                # (covers new/untracked files where git diff returns nothing)
+                if ! stage_partial "$file_path" "$line_range"; then
+                    git add "$file_path" 2>/dev/null || echo "  Warning: Could not add $file_path"
+                fi
+            fi
         fi
     done <<< "$files"
 
