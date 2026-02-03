@@ -241,10 +241,103 @@ show_spinner() {
     printf "\r"
 }
 
-# Function to create a single commit from a list of files and a message.
-# Handles the case where files have already been committed by a previous
-# commit (stages entire files, so line-range splitting isn't supported).
-# Returns 0 on success, 1 on skip (no changes to commit).
+# Filter a unified diff to only include hunks overlapping a target line range.
+# The range refers to the new-file (+) side, i.e., the working directory.
+# Outputs a valid unified diff with only matching hunks, or nothing if no match.
+filter_diff_hunks() {
+    local diff="$1"
+    local target_start="$2"
+    local target_end="$3"
+
+    local header=""
+    local current_hunk=""
+    local in_header=true
+    local keep_hunk=false
+    local has_hunks=false
+    local result=""
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        if [[ "$line" =~ ^@@\ -([0-9]+)(,([0-9]+))?\ \+([0-9]+)(,([0-9]+))?\ @@ ]]; then
+            in_header=false
+
+            # Emit previous hunk if kept
+            if [ "$keep_hunk" = true ] && [ -n "$current_hunk" ]; then
+                result="$result$current_hunk"
+                has_hunks=true
+            fi
+
+            # Parse new-file line range from hunk header
+            local hunk_start="${BASH_REMATCH[4]}"
+            local hunk_count="${BASH_REMATCH[6]:-1}"
+            local hunk_end=$((hunk_start + hunk_count - 1))
+
+            # Overlap check: two ranges overlap iff start1 <= end2 && start2 <= end1
+            if [ "$hunk_start" -le "$target_end" ] && [ "$target_start" -le "$hunk_end" ]; then
+                keep_hunk=true
+            else
+                keep_hunk=false
+            fi
+
+            current_hunk="$line"$'\n'
+        elif [ "$in_header" = true ]; then
+            header="$header$line"$'\n'
+        else
+            current_hunk="$current_hunk$line"$'\n'
+        fi
+    done <<< "$diff"
+
+    # Don't forget the last hunk
+    if [ "$keep_hunk" = true ] && [ -n "$current_hunk" ]; then
+        result="$result$current_hunk"
+        has_hunks=true
+    fi
+
+    if [ "$has_hunks" = true ]; then
+        printf '%s' "$header$result"
+    fi
+}
+
+# Stage only the diff hunks of a file that overlap with the given line range.
+# Uses git diff + filter + git apply --cached for non-interactive partial staging.
+# Returns 0 on success, 1 if no matching hunks or staging failed.
+stage_partial() {
+    local file_path="$1"
+    local line_range="$2"
+
+    # Parse start and end lines from range spec
+    local start_line end_line
+    if [[ "$line_range" =~ ^([0-9]+)-([0-9]+)$ ]]; then
+        start_line="${BASH_REMATCH[1]}"
+        end_line="${BASH_REMATCH[2]}"
+    elif [[ "$line_range" =~ ^([0-9]+)$ ]]; then
+        start_line="${BASH_REMATCH[1]}"
+        end_line="${BASH_REMATCH[1]}"
+    else
+        return 1
+    fi
+
+    # Get the unstaged diff for this specific file
+    local full_diff
+    full_diff=$(git diff -- "$file_path")
+    if [ -z "$full_diff" ]; then
+        return 1
+    fi
+
+    # Filter to only hunks overlapping our target range
+    local filtered
+    filtered=$(filter_diff_hunks "$full_diff" "$start_line" "$end_line")
+    if [ -z "$filtered" ]; then
+        return 1
+    fi
+
+    # Apply the filtered diff to the index (staging area)
+    printf '%s\n' "$filtered" | git apply --cached 2>/dev/null
+}
+
+# Create a single commit from a list of file specs and a commit message.
+# Supports partial-file staging via diff filtering when line ranges are specified.
+# Falls back to whole-file staging for new/untracked files or when filtering fails.
+# Returns 0 on success, 1 on skip (nothing to commit), 2 on commit failure.
 create_single_commit() {
     local files="$1"
     local message="$2"
