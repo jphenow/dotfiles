@@ -241,6 +241,48 @@ show_spinner() {
     printf "\r"
 }
 
+# Function to create a single commit from a list of files and a message.
+# Handles the case where files have already been committed by a previous
+# commit (stages entire files, so line-range splitting isn't supported).
+# Returns 0 on success, 1 on skip (no changes to commit).
+create_single_commit() {
+    local files="$1"
+    local message="$2"
+
+    # Reset staging area to start fresh
+    git reset > /dev/null 2>&1 || true
+
+    # Stage the files for this commit
+    while IFS= read -r file_spec; do
+        if [ -n "$file_spec" ]; then
+            # Line ranges are informational only — git add stages the entire file
+            local file_path
+            file_path=$(echo "$file_spec" | cut -d: -f1)
+            git add "$file_path" 2>/dev/null || echo "  Warning: Could not add $file_path"
+        fi
+    done <<< "$files"
+
+    # Check if there are actually staged changes to commit
+    if git diff --cached --quiet; then
+        echo "  ⚠ Skipped — no uncommitted changes for these files (likely already included in a previous commit)"
+        return 1
+    fi
+
+    # Create the commit using a temp file to preserve multi-line formatting
+    local temp_file
+    temp_file=$(mktemp)
+    echo "$message" > "$temp_file"
+    if git commit -F "$temp_file" > /dev/null 2>&1; then
+        rm -f "$temp_file"
+        echo "  ✓ Committed"
+        return 0
+    else
+        rm -f "$temp_file"
+        echo "  ✗ Failed to create commit"
+        return 2
+    fi
+}
+
 # Get the staged diff
 DIFF=$(git diff --cached)
 
@@ -342,6 +384,7 @@ if [ "$BREAK_UP_COMMITS" = true ]; then
 
     # Parse the output and create commits
     COMMIT_COUNT=0
+    COMMITTED_COUNT=0
     CURRENT_FILES=""
     CURRENT_MESSAGE=""
     IN_FILES=false
@@ -353,35 +396,9 @@ if [ "$BREAK_UP_COMMITS" = true ]; then
             if [ -n "$CURRENT_MESSAGE" ]; then
                 COMMIT_COUNT=$((COMMIT_COUNT + 1))
                 echo "Creating commit $COMMIT_COUNT..."
-
-                # Reset staging
-                git reset > /dev/null 2>&1
-
-                # Stage the files for this commit
-                while IFS= read -r file_spec; do
-                    if [ -n "$file_spec" ]; then
-                        # Parse file:line-range format
-                        FILE_PATH=$(echo "$file_spec" | cut -d: -f1)
-                        LINE_RANGE=$(echo "$file_spec" | cut -d: -f2-)
-
-                        if [[ "$LINE_RANGE" == "1-EOF" ]] || [[ "$LINE_RANGE" == "$FILE_PATH" ]]; then
-                            # Stage entire file
-                            git add "$FILE_PATH" 2>/dev/null || echo "  Warning: Could not add $FILE_PATH"
-                        else
-                            # For line ranges, we'll have to stage the whole file
-                            # (proper line-range staging would require git add -p automation)
-                            git add "$FILE_PATH" 2>/dev/null || echo "  Warning: Could not add $FILE_PATH"
-                        fi
-                    fi
-                done <<< "$CURRENT_FILES"
-
-                # Create the commit
-                TEMP_FILE=$(mktemp)
-                echo "$CURRENT_MESSAGE" > "$TEMP_FILE"
-                git commit -F "$TEMP_FILE" > /dev/null 2>&1
-                rm "$TEMP_FILE"
-
-                echo "  ✓ Committed"
+                if create_single_commit "$CURRENT_FILES" "$CURRENT_MESSAGE"; then
+                    COMMITTED_COUNT=$((COMMITTED_COUNT + 1))
+                fi
             fi
 
             # Reset for next commit
@@ -414,35 +431,17 @@ if [ "$BREAK_UP_COMMITS" = true ]; then
     if [ -n "$CURRENT_MESSAGE" ]; then
         COMMIT_COUNT=$((COMMIT_COUNT + 1))
         echo "Creating commit $COMMIT_COUNT..."
-
-        # Reset staging
-        git reset > /dev/null 2>&1
-
-        # Stage the files for this commit
-        while IFS= read -r file_spec; do
-            if [ -n "$file_spec" ]; then
-                FILE_PATH=$(echo "$file_spec" | cut -d: -f1)
-                LINE_RANGE=$(echo "$file_spec" | cut -d: -f2-)
-
-                if [[ "$LINE_RANGE" == "1-EOF" ]] || [[ "$LINE_RANGE" == "$FILE_PATH" ]]; then
-                    git add "$FILE_PATH" 2>/dev/null || echo "  Warning: Could not add $FILE_PATH"
-                else
-                    git add "$FILE_PATH" 2>/dev/null || echo "  Warning: Could not add $FILE_PATH"
-                fi
-            fi
-        done <<< "$CURRENT_FILES"
-
-        # Create the commit
-        TEMP_FILE=$(mktemp)
-        echo "$CURRENT_MESSAGE" > "$TEMP_FILE"
-        git commit -F "$TEMP_FILE" > /dev/null 2>&1
-        rm "$TEMP_FILE"
-
-        echo "  ✓ Committed"
+        if create_single_commit "$CURRENT_FILES" "$CURRENT_MESSAGE"; then
+            COMMITTED_COUNT=$((COMMITTED_COUNT + 1))
+        fi
     fi
 
     echo ""
-    echo "✓ Created $COMMIT_COUNT commits successfully!"
+    if [ "$COMMITTED_COUNT" -eq "$COMMIT_COUNT" ]; then
+        echo "✓ Created $COMMITTED_COUNT commits successfully!"
+    else
+        echo "✓ Created $COMMITTED_COUNT of $COMMIT_COUNT commits ($((COMMIT_COUNT - COMMITTED_COUNT)) skipped — overlapping files were included in earlier commits)"
+    fi
     exit 0
 fi
 
