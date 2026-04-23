@@ -6,8 +6,9 @@ Include ~/.orbstack/ssh/config
 Host *
   ForwardAgent yes
   TCPKeepAlive yes
-  ServerAliveInterval 5
   ServerAliveCountMax 12
+  ServerAliveInterval 5
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 
 Host *.amazonaws.com
   UserKnownHostsFile /dev/null
@@ -46,3 +47,6 @@ Host github.com *.github.net *.githubapp.com
   User jphenow
   IdentityFile ~/github/ssh/id_rsa
 
+    IdentityFile ~/.ssh/id_ed25519
+
+    IdentityFile ~/.ssh/id_ed25519

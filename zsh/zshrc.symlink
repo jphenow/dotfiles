@@ -196,7 +196,7 @@ function webtks() {
   SOCKET_PATH=./sidecar.sock ANIMAL_STYLE=1 tksidecar/tksidecar
 }
 
-export ASCIINEMA_API_URL=https://fly-asciinema.fly.dev
+# export ASCIINEMA_API_URL=https://fly-asciinema.fly.dev
 
 # MacOS Sonoma fucked up the erlang runtime https://elixirforum.com/t/bus-error-after-upgrading-to-sonoma-beta/56354/41?page=3
 # KERL_CONFIGURE_OPTIONS="--disable-jit"
@@ -227,3 +227,16 @@ ulimit -n 4096
 
 export PATH="$HOME/.dotfiles/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+alias sp1="$HOME/workspace/superfly/sprite-repo/sp"
+alias sp="$HOME/workspace/superfly/sprite-repo/sp-bin"
+alias sp2="$HOME/workspace/superfly/sprite-repo/sp-bin"
+
+# opencode
+export PATH=/Users/jon/.opencode/bin:$PATH
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/jon/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/jon/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/jon/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/jon/google-cloud-sdk/completion.zsh.inc'; fi

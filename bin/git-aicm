@@ -347,6 +347,8 @@ create_single_commit() {
 
     # Stage each file spec — either the entire file or specific hunks
     while IFS= read -r file_spec; do
+        # Trim leading/trailing whitespace and list markers (e.g., "- ")
+        file_spec=$(echo "$file_spec" | sed 's/^[[:space:]]*-[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
         if [ -n "$file_spec" ]; then
             local file_path line_range
             file_path=$(echo "$file_spec" | cut -d: -f1)
@@ -485,6 +487,9 @@ if [ "$BREAK_UP_COMMITS" = true ]; then
     echo ""
     echo "Creating commits..."
 
+    # Save the list of originally staged files so we can detect missed ones later
+    ORIGINAL_STAGED_FILES=$(git diff --cached --name-only)
+
     # Parse the output and create commits
     COMMIT_COUNT=0
     COMMITTED_COUNT=0
@@ -510,11 +515,11 @@ if [ "$BREAK_UP_COMMITS" = true ]; then
             IN_FILES=false
             IN_MESSAGE=false
 
-        elif [[ "$line" == "FILES:" ]]; then
+        elif [[ "${line^^}" == "FILES:" ]]; then
             IN_FILES=true
             IN_MESSAGE=false
 
-        elif [[ "$line" == "MESSAGE:" ]]; then
+        elif [[ "${line^^}" == "MESSAGE:" ]]; then
             IN_FILES=false
             IN_MESSAGE=true
 
@@ -536,6 +541,28 @@ if [ "$BREAK_UP_COMMITS" = true ]; then
         echo "Creating commit $COMMIT_COUNT..."
         if create_single_commit "$CURRENT_FILES" "$CURRENT_MESSAGE"; then
             COMMITTED_COUNT=$((COMMITTED_COUNT + 1))
+        fi
+    fi
+
+    # Safety net: check if any originally-staged changes were missed by the AI/parser.
+    # git reset in create_single_commit unstages everything, so missed files end up
+    # as unstaged working tree changes. Re-stage them and create a catchall commit.
+    REMAINING_CHANGES=false
+    while IFS= read -r orig_file; do
+        if [ -n "$orig_file" ] && ! git diff --quiet -- "$orig_file" 2>/dev/null; then
+            REMAINING_CHANGES=true
+            git add "$orig_file" 2>/dev/null || true
+        fi
+    done <<< "$ORIGINAL_STAGED_FILES"
+
+    if [ "$REMAINING_CHANGES" = true ] && ! git diff --cached --quiet; then
+        COMMIT_COUNT=$((COMMIT_COUNT + 1))
+        echo "Creating commit $COMMIT_COUNT (remaining changes)..."
+        if git commit -m "chore: remaining changes" > /dev/null 2>&1; then
+            COMMITTED_COUNT=$((COMMITTED_COUNT + 1))
+            echo "  ✓ Committed (files missed by AI breakdown)"
+        else
+            echo "  ✗ Failed to commit remaining changes"
         fi
     fi
 
