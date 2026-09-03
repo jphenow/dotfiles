@@ -29,13 +29,6 @@
 (( ${+ZSH_COPILOT_DEBUG} )) && ZSH_CLAUDE_DEBUG="$ZSH_COPILOT_DEBUG"
 (( ${+ZSH_COPILOT_LLM_MODEL} )) && ZSH_CLAUDE_MODEL="$ZSH_COPILOT_LLM_MODEL"
 
-# Check if Claude CLI is available
-if ! command -v claude &> /dev/null; then
-    echo "Claude CLI not found."
-    echo "Install it with: pip install claude-cli"
-    echo "Or visit: https://github.com/anthropics/claude-cli"
-    return 1
-fi
 
 # ============================================================================
 # SYSTEM PROMPT
@@ -190,6 +183,12 @@ function _show_loading_animation() {
 
 # Main function that handles the suggestion workflow
 function _suggest_claude_ai() {
+    # Check for the Claude CLI lazily, at keypress time, so PATH is fully set up
+    if ! command -v claude &> /dev/null; then
+        zle -M "Claude CLI not found on PATH. Install Claude Code: https://claude.com/claude-code"
+        return 1
+    fi
+
     ##### Get input
     rm -f /tmp/zsh_claude_suggestion /tmp/.zsh_claude_error
     local input=$(echo "${BUFFER:0:$CURSOR}" | tr '\n' ';')

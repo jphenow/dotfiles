@@ -77,6 +77,8 @@ export ZSH_CUSTOM="$HOME/.dotfiles/zsh"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git macos ssh-agent zsh-autosuggestions asdf)
 
+# Must precede oh-my-zsh: $ZSH_CUSTOM/*.zsh files (e.g. copilot.zsh) look for binaries here
+export PATH="$HOME/.local/bin:$PATH"
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -226,7 +228,6 @@ alias code="cursor"
 ulimit -n 4096
 
 export PATH="$HOME/.dotfiles/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
 
 alias sp1="$HOME/workspace/superfly/sprite-repo/sp"
 alias sp="$HOME/workspace/superfly/sprite-repo/sp-bin"
