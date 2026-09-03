@@ -11,3 +11,7 @@ git/gitconfig.symlink
 
 .DS_Store
 .netrwhist
+
+zsh/plugins
+
+.claude/settings.local.json

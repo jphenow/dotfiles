@@ -1,8 +1,14 @@
+# Added by OrbStack: 'orb' SSH host for Linux machines
+# This only works if it's at the top of ssh_config (before any Host blocks).
+# This won't be added again if you remove it.
+Include ~/.orbstack/ssh/config
+
 Host *
   ForwardAgent yes
   TCPKeepAlive yes
-  ServerAliveInterval 5
   ServerAliveCountMax 12
+  ServerAliveInterval 5
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 
 Host *.amazonaws.com
   UserKnownHostsFile /dev/null
@@ -10,30 +16,37 @@ Host *.amazonaws.com
 
 Host jpdo
   User jonphenow
-  Hostname do.jphenow.com
+  HostName do.jphenow.com
 
 Host *
   AddKeysToAgent yes
   UseKeychain yes
-  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/id_ed25519
   # IdentityFile ~/.ssh/ms_id_rsa
+
+Host synology-local
+  HostName synology.local
+  Port 1122
+  User jphenow
+
+Host synology-local-root
+  HostName synology.local
+  Port 1122
+  User root
 
 # GITHUB
 
 Host gh
   User git
   Port 22
-  Hostname github.com
+  HostName github.com
   TCPKeepAlive yes
   IdentitiesOnly yes
-Host bastion*.githubapp.com vault-bastion*.githubapp.com
-  ForwardAgent yes
-  User jphenow
-  IdentityFile ~/github/ssh/id_rsa
-  ControlMaster auto
-  ControlPath ~/.ssh/sockets/%C
-  ControlPersist 600
 Host github.com *.github.net *.githubapp.com
   ForwardAgent no
   User jphenow
   IdentityFile ~/github/ssh/id_rsa
+
+    IdentityFile ~/.ssh/id_ed25519
+
+    IdentityFile ~/.ssh/id_ed25519
