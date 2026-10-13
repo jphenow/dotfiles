@@ -6,6 +6,9 @@ Include ~/.orbstack/ssh/config
 # Machine-specific hosts kept out of this public repo. Missing file is ignored.
 Include ~/.ssh/config.local
 
+# UseKeychain is macOS-only; without this, Linux OpenSSH refuses the whole file.
+IgnoreUnknown UseKeychain
+
 Host *
   ForwardAgent yes
   TCPKeepAlive yes

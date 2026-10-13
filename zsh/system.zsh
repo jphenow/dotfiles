@@ -20,9 +20,11 @@ fi
 # alias v="vim -v ."
 # alias va="vim -v -o *"
 
-alias ack='rg'
-alias ag='rg'
-alias grep='rg'
+if command -v rg >/dev/null 2>&1; then
+  alias ack='rg'
+  alias ag='rg'
+  alias grep='rg'
+fi
 alias s='ls'
 alias a='cd ..'
 alias 'cd..'='cd ..'

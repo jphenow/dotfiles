@@ -75,11 +75,21 @@ export ZSH_CUSTOM="$HOME/.dotfiles/zsh"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git macos ssh-agent zsh-autosuggestions asdf)
+plugins=(git macos ssh-agent asdf)
+# Cloned by hand into $ZSH_CUSTOM/plugins (gitignored); skip it if missing.
+[[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]] && plugins+=(zsh-autosuggestions)
 
 # Must precede oh-my-zsh: $ZSH_CUSTOM/*.zsh files (e.g. copilot.zsh) look for binaries here
 export PATH="$HOME/.local/bin:$PATH"
-source $ZSH/oh-my-zsh.sh
+if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
+  source "$ZSH/oh-my-zsh.sh"
+else
+  # No oh-my-zsh: still get completion and our $ZSH_CUSTOM/*.zsh files.
+  echo "oh-my-zsh not found at $ZSH; see ~/.dotfiles/README.md" >&2
+  autoload -Uz compinit && compinit
+  for _f in "$ZSH_CUSTOM"/*.zsh(N); do source "$_f"; done
+  unset _f
+fi
 
 # User configuration
 
@@ -118,7 +128,7 @@ export EDITOR="nvim"
 
 # GRC colorizes nifty unix tools all over the place
 # `brew install grc`
-if $(grc &>/dev/null); then
+if command -v grc >/dev/null 2>&1 && command -v brew >/dev/null 2>&1; then
   source `brew --prefix`/etc/grc.zsh
 fi
 
@@ -130,7 +140,6 @@ function reload!() {
   source ~/.zshrc
 }
 
-export PATH="$DOT/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 
 export GPG_TTY=$(tty)
@@ -143,9 +152,9 @@ export RUBY_CFLAGS="-Wno-default-const-init-field-unsafe"
 # export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 export PATH="$HOME/.local/share/mise/shims:$PATH"
 
-eval "$(direnv hook zsh)"
+command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
 
-eval "$(starship init zsh)"
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
 # export GOPATH="$HOME/go"
 # export GOPATH="$HOME/github/go"
@@ -171,11 +180,11 @@ aws() {
 export KERL_CONFIGURE_OPTIONS="--disable-jit"
 export PATH="/opt/homebrew/opt/libpq/bin:/opt/homebrew/bin:$PATH"
 
-export FLYCTL_INSTALL="/Users/jon/.fly"
+export FLYCTL_INSTALL="$HOME/.fly"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 # bun completions
-[ -s "/Users/jon/.bun/_bun" ] && source "/Users/jon/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -184,19 +193,19 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 
 alias t="tailscale"
-alias code="cursor"
-ulimit -n 4096
+command -v cursor >/dev/null 2>&1 && alias code="cursor"
+ulimit -n 4096 2>/dev/null
 
 export PATH="$HOME/.dotfiles/bin:$PATH"
 
 # opencode
-export PATH=/Users/jon/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/jon/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/jon/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/jon/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/jon/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
 # carapace completions. Must come after oh-my-zsh, which runs compinit, so
 # carapace wins for the commands it knows. Guarded so this file still works on
