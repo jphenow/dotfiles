@@ -108,7 +108,8 @@ link_file() {
 	ln -s "$source_name" "$target_name"
 }
 
-# setup_dotfiles: links each <topic>/<name>.symlink file to ~/.<name>. A
+# setup_dotfiles: links each <topic>/<name>.symlink file to ~/.<name>, and
+# each <topic>/<name>.config directory to ~/.config/<name>. A
 # .symlink directory (e.g. ssh.symlink) becomes a real ~/.<name> directory
 # with only its git-tracked files linked in, so private keys and other local
 # files stay out of the repo's working tree. An older whole-directory link
@@ -130,6 +131,14 @@ setup_dotfiles() {
 				link_file "$DOTFILES/$tracked" "$target_name/$(basename "$tracked")"
 			done
 		fi
+	done
+
+	# <topic>/<name>.config directories link whole to ~/.config/<name> (nvim,
+	# karabiner); those apps write back into them, so check `git status` after.
+	mkdir -p "$HOME/.config"
+	for dotfile in "$DOTFILES"/*/*.config; do
+		[ -d "$dotfile" ] || continue
+		link_file "$dotfile" "$HOME/.config/$(basename "$dotfile" .config)"
 	done
 }
 
