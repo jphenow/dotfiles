@@ -36,6 +36,11 @@ Each step checks first and only acts when something is missing:
 
 It doesn't `git pull` this repo; do that yourself before re-running.
 
+On Ubuntu/Debian, apt covers most of the core tools (packages a release lacks, like `eza`
+on 22.04, are skipped with a warning). Not covered there yet: apt's neovim is too old for
+the LazyVim config (it needs 0.10+), and starship, mise and carapace aren't in apt.
+Karabiner and the iTerm files are macOS-only and aren't linked elsewhere.
+
 ## Optional tools
 
 The shell checks for each of these and skips it when missing:

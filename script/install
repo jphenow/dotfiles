@@ -19,7 +19,10 @@ set -eu
 DOTFILES=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 ZSH_DIR=${ZSH:-$HOME/.oh-my-zsh}
 BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)-$$"
-APT_PACKAGES="zsh git curl tmux direnv ripgrep fd-find bat jq shellcheck neovim"
+# Names that a release doesn't have (e.g. eza, git-delta on 22.04) are skipped
+APT_PACKAGES="zsh git curl tmux direnv ripgrep fd-find bat jq shellcheck neovim eza grc gh git-delta"
+# <topic>/<name>.config dirs only linked on macOS
+MACOS_ONLY_CONFIGS="karabiner"
 DRY_RUN=no
 EXTRAS=no
 PACKAGES=yes
@@ -103,14 +106,27 @@ install_packages() {
 			fi
 		done
 	elif has apt-get; then
-		local pkg missing=""
+		local pkg missing="" available="" unavailable=""
 		for pkg in $APT_PACKAGES; do
 			dpkg -s "$pkg" >/dev/null 2>&1 || missing="$missing $pkg"
 		done
-		if [ -n "$missing" ]; then
-			# shellcheck disable=SC2086 # one package per word
-			act "apt-get install$missing" sudo apt-get install -y $missing
+		[ -n "$missing" ] || return 0
+		# Fresh images ship without package lists, so nothing looks installable
+		if ! ls /var/lib/apt/lists/*_Packages* >/dev/null 2>&1; then
+			act "apt-get update" sudo apt-get update -qq
 		fi
+		for pkg in $missing; do
+			if apt-cache show "$pkg" >/dev/null 2>&1; then
+				available="$available $pkg"
+			else
+				unavailable="$unavailable $pkg"
+			fi
+		done
+		if [ -n "$available" ]; then
+			# shellcheck disable=SC2086 # one package per word
+			act "apt-get install$available" sudo apt-get install -y $available
+		fi
+		[ -z "$unavailable" ] || warn "not in this release's apt repos, skipped:$unavailable"
 		[ "$EXTRAS" = yes ] && warn "--extras is macOS-only (Brewfile.extras)"
 	else
 		warn "no Homebrew or apt-get; install what you want from Brewfile by hand"
@@ -185,9 +201,14 @@ setup_links() {
 	done
 
 	[ -d "$HOME/.config" ] || act "create ~/.config" mkdir -p "$HOME/.config"
+	local name
 	for dotfile in "$DOTFILES"/*/*.config; do
 		[ -d "$dotfile" ] || continue
-		link_file "$dotfile" "$HOME/.config/$(basename "$dotfile" .config)"
+		name=$(basename "$dotfile" .config)
+		case " $MACOS_ONLY_CONFIGS " in
+			*" $name "*) [ "$(uname -s)" = Darwin ] || continue ;;
+		esac
+		link_file "$dotfile" "$HOME/.config/$name"
 	done
 }
 
