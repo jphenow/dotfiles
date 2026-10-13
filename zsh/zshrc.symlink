@@ -137,9 +137,11 @@ export GPG_TTY=$(tty)
 
 # export ERL_AFLAGS="-kernel shell_history enabled"
 # export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+export RUBY_CFLAGS="-Wno-default-const-init-field-unsafe"
 
 #. /opt/homebrew/opt/asdf/libexec/asdf.sh
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+# export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+export PATH="$HOME/.local/share/mise/shims:$PATH"
 
 eval "$(direnv hook zsh)"
 
@@ -241,3 +243,25 @@ if [ -f '/Users/jon/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/jon/google-
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/jon/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/jon/google-cloud-sdk/completion.zsh.inc'; fi
+
+# carapace completions. Must come after oh-my-zsh, which runs compinit, so
+# carapace wins for the commands it knows. Guarded so this file still works on
+# a machine without carapace.
+#
+# Preference is already per-command: carapace claims what it has specs for and
+# everything else keeps its zsh/oh-my-zsh completion. carapace is Tab-driven;
+# the inline grey suggestion as you type is zsh-autosuggestions, separately.
+if command -v carapace >/dev/null 2>&1; then
+  export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
+  zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+  source <(carapace _carapace zsh)
+
+  # Commands to hand back to zsh's own completion, for the few where it is
+  # better than carapace's spec. zsh's _git, for one, knows your local
+  # branches and remotes. Add names here; empty means carapace for everything.
+  local -a carapace_keep_native=()
+  for _cmd in $carapace_keep_native; do
+    compdef "_$_cmd" "$_cmd" 2>/dev/null
+  done
+  unset _cmd
+fi
