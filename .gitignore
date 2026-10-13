@@ -15,3 +15,6 @@ git/gitconfig.symlink
 zsh/plugins
 
 .claude/settings.local.json
+
+# Work-specific session layout; kept local, out of the public repo
+tmux.boot.sh

@@ -158,46 +158,8 @@ muslxgo() {
   go build -ldflags "-linkmode external -extldflags -static" $*
 }
 
-devbuild() {
-  baseEexe=$(basename $(pwd))
-  if [ "$POSTFIX" != "" ]; then
-    exe=$baseEexe-$POSTFIX
-  else
-    echo "Set a postfix damnit"
-    exit 1
-  fi
-  # muslxgo && trsync -aP $exe root@dev-ovh-hil1-1337:$exe
-
-  echo "Building and rsyncing $exe to dev-ovh-hil1-1337:$exe"
-  muslxgo -o $exe && trsync $exe root@dev-ovh-hil1-1337:$exe
-}
-
-trsync() {
-  RSYNC_RSH='tsh ssh' rsync $*
-}
-
-localflyctlbuild() {
-  cd ~/workspace/superfly/flyctl
-  go build -o $HOME/bin/flocal .
-  cd -
-}
-
 aws() {
   docker run --rm -it -v ~/.aws:/root/.aws -v $PWD:/app -w /app amazon/aws-cli $*
-}
-
-function webtks() {
-  cd ~/workspace/superfly/nomad-firecracker
-
-  echo "build tksidecar..."
-  make bin/tksidecar
-
-  echo "copy tksidecar to web..."
-  chmod +x bin/tksidecar
-  mv bin/tksidecar ~/workspace/superfly/web/tksidecar/tksidecar
-  cd -
-
-  SOCKET_PATH=./sidecar.sock ANIMAL_STYLE=1 tksidecar/tksidecar
 }
 
 # export ASCIINEMA_API_URL=https://fly-asciinema.fly.dev
@@ -208,10 +170,6 @@ function webtks() {
 # export KERL_CONFIGURE_OPTIONS="--without-javac --without-wx --disable-jit --with-ssl=$(brew --prefix openssl@3)"
 export KERL_CONFIGURE_OPTIONS="--disable-jit"
 export PATH="/opt/homebrew/opt/libpq/bin:/opt/homebrew/bin:$PATH"
-
-function w() {
-  cd $HOME/workspace/superfly/$1
-}
 
 export FLYCTL_INSTALL="/Users/jon/.fly"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
@@ -230,10 +188,6 @@ alias code="cursor"
 ulimit -n 4096
 
 export PATH="$HOME/.dotfiles/bin:$PATH"
-
-alias sp1="$HOME/workspace/superfly/sprite-repo/sp"
-alias sp="$HOME/workspace/superfly/sprite-repo/sp-bin"
-alias sp2="$HOME/workspace/superfly/sprite-repo/sp-bin"
 
 # opencode
 export PATH=/Users/jon/.opencode/bin:$PATH
@@ -265,3 +219,6 @@ if command -v carapace >/dev/null 2>&1; then
   done
   unset _cmd
 fi
+
+# Machine- or work-specific config that shouldn't live in this public repo.
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

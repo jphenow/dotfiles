@@ -3,6 +3,9 @@
 # This won't be added again if you remove it.
 Include ~/.orbstack/ssh/config
 
+# Machine-specific hosts kept out of this public repo. Missing file is ignored.
+Include ~/.ssh/config.local
+
 Host *
   ForwardAgent yes
   TCPKeepAlive yes
@@ -23,16 +26,6 @@ Host *
   UseKeychain yes
   IdentityFile ~/.ssh/id_ed25519
   # IdentityFile ~/.ssh/ms_id_rsa
-
-Host synology-local
-  HostName synology.local
-  Port 1122
-  User jphenow
-
-Host synology-local-root
-  HostName synology.local
-  Port 1122
-  User root
 
 # GITHUB
 
