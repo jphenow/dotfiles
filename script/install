@@ -196,10 +196,11 @@ setup_links() {
 prune_links() {
 	local link
 	for link in "$HOME"/.* "$HOME"/.ssh/* "$HOME"/.config/*; do
-		[ -L "$link" ] && [ ! -e "$link" ] || continue
-		case $(readlink "$link") in
-			"$DOTFILES"/*) act "remove stale link $(pretty "$link")" rm "$link" ;;
-		esac
+		if [ -L "$link" ] && [ ! -e "$link" ]; then
+			case $(readlink "$link") in
+				"$DOTFILES"/*) act "remove stale link $(pretty "$link")" rm "$link" ;;
+			esac
+		fi
 	done
 }
 
