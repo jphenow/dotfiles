@@ -6,32 +6,35 @@ cleanly on a Linux box that has none of the extras installed.
 
 ## Install
 
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/jphenow/dotfiles/main/script/install.sh)"
-```
-
-or, from a checkout at `~/.dotfiles`:
+New machine:
 
 ```bash
-~/.dotfiles/script/install.sh            # add --skip-chsh to keep your login shell
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/jphenow/dotfiles/main/script/bootstrap)"
 ```
 
-It's safe to re-run. It:
-
-- installs Homebrew (macOS) and zsh/git if missing, plus `reattach-to-user-namespace`,
-  `the_silver_searcher`, `fpp` and `urlview` on macOS; on Linux only curl/zsh/git via apt
-- clones this repo to `~/.dotfiles` (or `git pull`s it), installs oh-my-zsh if missing,
-  and clones zsh-autosuggestions into `zsh/plugins/`
-- symlinks every `<topic>/<name>.symlink` to `~/.<name>` and every `<topic>/<name>.config`
-  directory to `~/.config/<name>`, moving anything in the way to `<name>.bak`. `ssh/ssh.symlink` is a directory: `~/.ssh` stays a real directory and
-  only the tracked `config` is linked into it.
-
-Then by hand:
+That clones this repo to `~/.dotfiles` and runs `script/install`. Run it again any time
+to bring a machine up to date:
 
 ```bash
-cp ~/.dotfiles/git/gitconfig.symlink.example ~/.gitconfig   # and fill in name/email
-brew install starship && starship preset pure-preset -o ~/.config/starship.toml
+~/.dotfiles/script/install --dry-run   # show what would change
+~/.dotfiles/script/install             # apply; a second run says "Nothing to change"
+~/.dotfiles/script/install --extras    # also the apps and dev libs in Brewfile.extras
 ```
+
+Each step checks first and only acts when something is missing:
+
+- **packages**: `brew bundle` with `Brewfile` on macOS (installs Homebrew if needed),
+  or a short apt list on Debian/Ubuntu. Never upgrades.
+- **shell**: zsh as login shell (skip with `--skip-chsh`), oh-my-zsh, and
+  zsh-autosuggestions (cloned, then kept up to date).
+- **links**: every `<topic>/<name>.symlink` to `~/.<name>`, every `<topic>/<name>.config`
+  directory to `~/.config/<name>`. Anything in the way moves to
+  `~/.dotfiles-backup/<timestamp>/`. `~/.ssh` stays a real directory with only the tracked
+  `config` linked in. Broken links into this repo are removed.
+- **config**: `~/.gitconfig` from `git/gitconfig.symlink.example` and the starship preset,
+  only when missing. Fill in your name and email in `~/.gitconfig`.
+
+It doesn't `git pull` this repo; do that yourself before re-running.
 
 ## Optional tools
 
@@ -50,20 +53,13 @@ The shell checks for each of these and skips it when missing:
 | [Claude Code](https://claude.com/claude-code) | Ctrl-Z command suggestion (`zsh/copilot.zsh`), `git aicm` commit messages |
 | gh | `gpo` (push and open the PR) |
 
-The rest of what I usually install:
+Delta as git's pager (not in the example gitconfig):
 
 ```bash
-brew install coreutils fd jq git procs sd dust tokei hyperfine bottom bandwhich grex delta
-brew install autoconf automake openssl wxwidgets libxslt fop libpq overmind stripe libsodium flyctl
-
 git config --global core.pager delta
 git config --global interactive.diffFilter 'delta --color-only'
 git config --global delta.navigate true
 git config --global merge.conflictStyle zdiff3
-
-brew install tmux nvim
-brew install --cask visual-studio-code slack tailscale 1password-cli karabiner-elements \
-  spotify discord notion iterm2 signal alfred nordvpn numi postman jordanbaird-ice
 ```
 
 Docker comes from docker.com.

@@ -6,9 +6,13 @@ Personal dotfiles, cloned to `~/.dotfiles`. **The GitHub repo is public.** See R
 
 ## Layout and load order
 
-- `script/install.sh` symlinks every `<topic>/<name>.symlink` to `~/.<name>`. Directory
-  `.symlink`s (only `ssh/ssh.symlink`) become a real `~/.<name>` dir with just their
-  git-tracked files linked in. Any other `<topic>/install.sh` is run too (none exist now).
+- `script/bootstrap` (curl entry) clones to `~/.dotfiles` and runs `script/install`, which
+  converges the machine: `Brewfile` (+ `Brewfile.extras` with `--extras`) or apt, oh-my-zsh,
+  links, one-time config. Every step must check before acting and go through `act` so
+  `--dry-run` and the "Nothing to change" idempotency check stay true. Conflicts move
+  to `~/.dotfiles-backup/<timestamp>/`. Links: `<topic>/<name>.symlink` -> `~/.<name>`;
+  directory `.symlink`s (only `ssh/ssh.symlink`) become a real dir with just their
+  git-tracked files linked in.
 - `zsh/zshrc.symlink` is `~/.zshrc`. It sets `ZSH_CUSTOM=~/.dotfiles/zsh`, so oh-my-zsh
   auto-sources every `zsh/*.zsh` (alphabetically, so `system.zsh` overrides `aliases.zsh`).
   If oh-my-zsh is missing, zshrc sources those files itself. `zsh/plugins/` is gitignored
