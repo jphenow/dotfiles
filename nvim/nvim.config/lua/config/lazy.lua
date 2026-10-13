@@ -18,6 +18,11 @@ require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    -- neotest: <leader>tt run file, <leader>tr run nearest, <leader>ts summary
+    { import = "lazyvim.plugins.extras.test.core" },
+    -- gopls, gofumpt/goimports, neotest-golang. Needs a go toolchain (mason
+    -- builds the tools with it), so skip it on machines without one.
+    { import = "lazyvim.plugins.extras.lang.go", enabled = vim.fn.executable("go") == 1 },
     -- import/override with your plugins
     { import = "plugins" },
   },
