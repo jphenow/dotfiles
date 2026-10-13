@@ -1,130 +1,148 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # This script should be run via curl:
-#   sh -c "$(curl -fsSL https://raw.githubusercontent.com/jphenow/dotfiles/master/script/install.sh)"
-# or wget:
-#   sh -c "$(wget -qO- https://raw.githubusercontent.com/jphenow/dotfiles/master/script/install.sh)"
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/jphenow/dotfiles/main/script/install.sh)"
+# or from a checkout:
+#   ~/.dotfiles/script/install.sh
 #
-# As an alternative, you can first download the install script and run it afterwards:
-#   wget https://raw.githubusercontent.com/jphenow/dotfiles/master/script/install.sh
-#   sh install.sh
+# Safe to re-run: installs only what's missing and backs up (never deletes)
+# anything it would replace.
+#
+# Flags:
+#   --skip-chsh   don't change the login shell to zsh
+#   --unattended  same as --skip-chsh (also implied when stdin isn't a terminal)
 
 set -e
 
-# Default settings
-ZSH=${ZSH:-~/.oh-my-zsh}
+DOTFILES="$HOME/.dotfiles"
+ZSH=${ZSH:-$HOME/.oh-my-zsh}
 
+# command_exists NAME: true when NAME is on PATH.
 command_exists() {
 	command -v "$@" >/dev/null 2>&1
 }
 
-error() {
-	echo ${RED}"Error: $@"${RESET} >&2
-}
-
+# setup_color: sets color variables when stdout is a terminal, blanks otherwise.
 setup_color() {
-	# Only use colors if connected to a terminal
 	if [ -t 1 ]; then
-		RED=$(printf '\033[31m')
 		GREEN=$(printf '\033[32m')
-		YELLOW=$(printf '\033[33m')
-		BLUE=$(printf '\033[34m')
 		BOLD=$(printf '\033[1m')
 		RESET=$(printf '\033[m')
 	else
-		RED=""
 		GREEN=""
-		YELLOW=""
-		BLUE=""
 		BOLD=""
 		RESET=""
 	fi
 }
 
+# install_dependencies: installs the few tools the dotfiles need to bootstrap
+# (Homebrew on macOS, apt on Debian/Ubuntu; other systems are skipped),
+# clones or updates ~/.dotfiles, oh-my-zsh and zsh-autosuggestions.
 install_dependencies() {
-	if [[ "$OSTYPE" = darwin* ]] && git --version | grep -q msysgit; then
-		command_exists brew || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+	if [ "$(uname -s)" = "Darwin" ]; then
+		if ! command_exists brew; then
+			/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+		fi
+		# A fresh Homebrew isn't on PATH yet in this shell
+		for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+			[ -x "$brew_bin" ] && eval "$("$brew_bin" shellenv)" && break
+		done
 		command_exists zsh || brew install zsh
 		command_exists git || brew install git
 		command_exists reattach-to-user-namespace || brew install reattach-to-user-namespace
 		command_exists ag || brew install the_silver_searcher
 		command_exists fpp || brew install fpp # https://facebook.github.io/PathPicker/
 		command_exists urlview || brew install urlview # https://packages.debian.org/stable/misc/urlview
+	elif command_exists apt-get; then
+		command_exists curl || sudo apt-get install -y curl
+		command_exists zsh || sudo apt-get install -y zsh
+		command_exists git || sudo apt-get install -y git
 	else
-		command_exists curl || sudo apt install -y curl
-		command_exists zsh || sudo apt install -y zsh
-		command_exists git || sudo apt install -y git
+		echo "No brew or apt-get; make sure curl, git and zsh are installed."
 	fi
 
-	if [ "$(echo $SHELL)" != "$(which zsh)" ]; then
-		echo "Switch shell from $SHELL to $(which zsh)..."
-		chsh -s $(which zsh)
+	if [ "$CHSH" != "no" ] && [ "$SHELL" != "$(command -v zsh)" ]; then
+		echo "Switch shell from $SHELL to $(command -v zsh)..."
+		chsh -s "$(command -v zsh)"
 	fi
 
-	if [ -d "$HOME/.dotfiles" ]; then
+	if [ -d "$DOTFILES" ]; then
 		echo "${BOLD}~/.dotfiles${RESET} already exists, attempting to pull updates..."
-		cd $HOME/.dotfiles
-		git pull
+		git -C "$DOTFILES" pull --ff-only || echo "Couldn't fast-forward ~/.dotfiles; leaving it as is."
 	else
-		git clone https://github.com/jphenow/dotfiles.git $HOME/.dotfiles
-		cd $HOME/.dotfiles
+		git clone https://github.com/jphenow/dotfiles.git "$DOTFILES"
 	fi
 
-	rm -rf "$HOME/.oh-my-zsh"
-	set +e
-	export RUNZSH=no
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-	if [[ $? -ne 0 ]]; then
-			exit 1
+	if [ ! -d "$ZSH" ]; then
+		# Our zshrc gets symlinked below, and chsh is handled above
+		RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+			sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	fi
-	set -e
+
+	if [ ! -d "$DOTFILES/zsh/plugins/zsh-autosuggestions" ]; then
+		git clone https://github.com/zsh-users/zsh-autosuggestions "$DOTFILES/zsh/plugins/zsh-autosuggestions"
+	fi
 }
 
+# install_modules: runs any <topic>/install.sh other than this script.
 install_modules() {
-	cd ~/.dotfiles
-	for INSTALL_SCRIPT in $(ls */install.sh)
-	do
-		if [ "$INSTALL_SCRIPT" != "script/install.sh" ]; then
-			bash $INSTALL_SCRIPT
-		fi
+	for INSTALL_SCRIPT in "$DOTFILES"/*/install.sh; do
+		[ -f "$INSTALL_SCRIPT" ] || continue
+		[ "$INSTALL_SCRIPT" = "$DOTFILES/script/install.sh" ] && continue
+		bash "$INSTALL_SCRIPT"
 	done
 }
 
+# link_file SOURCE TARGET: symlinks TARGET to SOURCE, moving anything already
+# at TARGET to TARGET.bak first. No-op if the link is already in place.
+link_file() {
+	local source_name=$1 target_name=$2
+	if [ -L "$target_name" ] && [ "$(readlink "$target_name")" = "$source_name" ]; then
+		return
+	fi
+	if [ -e "$target_name" ] || [ -L "$target_name" ]; then
+		echo "Backing up existing $target_name to $target_name.bak..."
+		mv "$target_name" "$target_name.bak"
+	fi
+	echo "Linking $source_name to $target_name..."
+	ln -s "$source_name" "$target_name"
+}
+
+# setup_dotfiles: links each <topic>/<name>.symlink file to ~/.<name>. A
+# .symlink directory (e.g. ssh.symlink) becomes a real ~/.<name> directory
+# with only its git-tracked files linked in, so private keys and other local
+# files stay out of the repo's working tree. An older whole-directory link
+# is left alone.
 setup_dotfiles() {
-	cd ~/.dotfiles
-	dir=$(pwd)
-	for DOTFILE in $(ls -rt -d -1 */*.symlink)
-	do
-		target_name="$HOME/$(echo $DOTFILE | sed 's/\.symlink//' | sed 's/\//\/./' | sed 's/.*\///')"
-		source_name="$dir/$DOTFILE"
-		echo "Linking $source_name to $target_name..."
-		set +e
-
-		ln -s $source_name $target_name
-		if [ $? -eq 1 ]; then
-			echo "Backing up existing $target_name to $target_name.bak..."
-			mv $target_name $target_name.bak
-			set -e
-			ln -s $source_name $target_name
+	local dotfile target_name tracked
+	for dotfile in "$DOTFILES"/*/*.symlink; do
+		target_name="$HOME/.$(basename "$dotfile" .symlink)"
+		if [ ! -d "$dotfile" ]; then
+			link_file "$dotfile" "$target_name"
+		elif [ -L "$target_name" ] && [ "$(readlink "$target_name")" = "$dotfile" ]; then
+			echo "$target_name links to the whole $dotfile directory; leaving it as is."
+		else
+			if [ -L "$target_name" ] || { [ -e "$target_name" ] && [ ! -d "$target_name" ]; }; then
+				mv "$target_name" "$target_name.bak"
+			fi
+			[ -d "$target_name" ] || mkdir -m 700 "$target_name"
+			git -C "$DOTFILES" ls-files -- "${dotfile#"$DOTFILES"/}" | while read -r tracked; do
+				link_file "$DOTFILES/$tracked" "$target_name/$(basename "$tracked")"
+			done
 		fi
-
-		set -e
 	done
 }
 
+# main [flags]: parses flags (see top of file) and runs each install step.
 main() {
 	# Run as unattended if stdin is closed
 	if [ ! -t 0 ]; then
-		RUNZSH=no
 		CHSH=no
 	fi
 
-	# Parse arguments
 	while [ $# -gt 0 ]; do
 		case $1 in
-			--unattended) RUNZSH=no; CHSH=no ;;
-			--skip-chsh) CHSH=no ;;
-			--keep-zshrc) KEEP_ZSHRC=yes ;;
+			--unattended|--skip-chsh) CHSH=no ;;
 		esac
 		shift
 	done
@@ -134,11 +152,13 @@ main() {
 	install_modules
 	setup_dotfiles
 
-	printf "$GREEN"
+	printf "%s" "$GREEN"
 	echo "TODO"
 	echo "  * cp ~/.dotfiles/git/gitconfig.symlink.example ~/.gitconfig"
 	echo "  * vim ~/.gitconfig"
+	echo "  * optional tools: see ~/.dotfiles/README.md"
 	echo "Please open a new terminal!"
+	printf "%s" "$RESET"
 }
 
 main "$@"
