@@ -63,8 +63,10 @@ new_home() {
 }
 
 # install_links HOME: runs install.sh's setup_dotfiles (not main) against HOME.
+# Loads it from a file: bash 3.2 (macOS /bin/bash) can't source <(...).
 install_links() {
-	HOME="$1" bash -c 'source <(sed "\$d" "$HOME/.dotfiles/script/install.sh"); setup_dotfiles'
+	sed '$d' "$DOTFILES/script/install.sh" > "$TMP/install-lib.sh"
+	HOME="$1" bash -c 'source "$0" && setup_dotfiles' "$TMP/install-lib.sh"
 }
 
 # test_syntax: zsh -n / bash -n / ruby -c on the config files.
@@ -136,7 +138,7 @@ test_install() {
 	mkdir -p "$home/.ssh"
 	ln -s "$DOTFILES" "$home/.dotfiles"
 	echo key > "$home/.ssh/id_test"
-	install_links "$home" >/dev/null
+	if install_links "$home" >/dev/null; then pass "setup_dotfiles runs"; else fail "setup_dotfiles runs"; fi
 
 	check ".zshrc linked" [ "$(readlink "$home/.zshrc")" = "$home/.dotfiles/zsh/zshrc.symlink" ]
 	check ".ssh is a dir" [ -d "$home/.ssh" ]
@@ -144,7 +146,7 @@ test_install() {
 	check ".ssh/config linked" [ -L "$home/.ssh/config" ]
 	check "existing key kept" [ -f "$home/.ssh/id_test" ]
 	check "existing key not replaced by a link" [ ! -L "$home/.ssh/id_test" ]
-	out=$(install_links "$home")
+	out=$(install_links "$home" 2>&1) || out+=" (exit $?)"
 	check_output "second run is a no-op" "$out"
 }
 
