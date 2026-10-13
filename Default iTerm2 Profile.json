@@ -152,7 +152,7 @@
   "Description" : "Default",
   "Unlimited Scrollback" : false,
   "Use Italic Font" : true,
-  "Working Directory" : "\/Users\/jonphenow",
+  "Working Directory" : "",
   "Selected Text Color (Dark)" : {
     "Green Component" : "0",
     "Red Component" : "0",

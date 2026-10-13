@@ -171,8 +171,6 @@ aws() {
   docker run --rm -it -v ~/.aws:/root/.aws -v $PWD:/app -w /app amazon/aws-cli $*
 }
 
-# export ASCIINEMA_API_URL=https://fly-asciinema.fly.dev
-
 # MacOS Sonoma fucked up the erlang runtime https://elixirforum.com/t/bus-error-after-upgrading-to-sonoma-beta/56354/41?page=3
 # KERL_CONFIGURE_OPTIONS="--disable-jit"
 # export KERL_CONFIGURE_OPTIONS="--without-wx --without-javac"

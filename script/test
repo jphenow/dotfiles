@@ -97,6 +97,26 @@ test_syntax() {
 	else
 		skip "ruby -c (no ruby)"
 	fi
+
+	if has nvim; then
+		out=""
+		while IFS= read -r f; do
+			out+=$(nvim --clean --headless -c "lua local ok, err = loadfile('$DOTFILES/$f'); if not ok then io.stderr:write(err .. '\\n') end" -c qa 2>&1)
+		done < <(git -C "$DOTFILES" ls-files 'nvim/*.lua')
+		check_output "nvim lua loads" "$out"
+	else
+		skip "nvim lua (no nvim)"
+	fi
+
+	if has jq; then
+		out=""
+		while IFS= read -r f; do
+			out+=$(jq empty "$DOTFILES/$f" 2>&1)
+		done < <(git -C "$DOTFILES" ls-files '*.json')
+		check_output "json parses" "$out"
+	else
+		skip "json (no jq)"
+	fi
 }
 
 # test_shellcheck: errors-only for bin/ (much of it is vendored), full for script/.
@@ -120,7 +140,7 @@ test_privacy() {
 	check_output "only ssh/ssh.symlink/config is tracked under ssh/" \
 		"$(git ls-files ssh | grep -vx 'ssh/ssh.symlink/config')"
 	check_output "no hardcoded /Users/ paths" \
-		"$(git grep -nI '/Users/' -- . ':!CLAUDE.md' ':!script/test')"
+		"$(git grep -nIE '/Users/|\\/Users\\/' -- . ':!CLAUDE.md' ':!script/test')"
 	if has trufflehog; then
 		check_output "trufflehog (history)" \
 			"$(trufflehog git "file://$DOTFILES" --no-update --results=verified,unknown --json 2>/dev/null)"
@@ -144,6 +164,7 @@ test_install() {
 	check ".ssh is a dir" [ -d "$home/.ssh" ]
 	check ".ssh is not a symlink" [ ! -L "$home/.ssh" ]
 	check ".ssh/config linked" [ -L "$home/.ssh/config" ]
+	check ".config/nvim linked" [ "$(readlink "$home/.config/nvim")" = "$home/.dotfiles/nvim/nvim.config" ]
 	check "existing key kept" [ -f "$home/.ssh/id_test" ]
 	check "existing key not replaced by a link" [ ! -L "$home/.ssh/id_test" ]
 	out=$(install_links "$home" 2>&1) || out+=" (exit $?)"
