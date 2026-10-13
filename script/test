@@ -53,20 +53,26 @@ shell_scripts() {
 }
 
 # new_home NAME: creates a fake $HOME with ~/.dotfiles linked to this checkout
-# and runs the installer's setup_dotfiles in it. Prints the path.
+# and runs the installer's file steps in it. Prints the path.
 new_home() {
 	local home="$TMP/$1"
 	mkdir -p "$home"
 	ln -s "$DOTFILES" "$home/.dotfiles"
-	install_links "$home" >/dev/null
+	install_files "$home" >/dev/null
 	echo "$home"
 }
 
-# install_links HOME: runs install.sh's setup_dotfiles (not main) against HOME.
-# Loads it from a file: bash 3.2 (macOS /bin/bash) can't source <(...).
-install_links() {
-	sed '$d' "$DOTFILES/script/install.sh" > "$TMP/install-lib.sh"
-	HOME="$1" bash -c 'source "$0" && setup_dotfiles' "$TMP/install-lib.sh"
+# install_files HOME: sources script/install and runs its file-only steps
+# (links, stale-link pruning, config; no packages or network) against HOME.
+# Prints the step output and a final CHANGES=<n> line.
+install_files() {
+	HOME="$1" bash -c 'source "$0/script/install" && converge_files && echo "CHANGES=$CHANGES"' "$1/.dotfiles"
+}
+
+# snapshot DIR: lists every path under DIR with its type and link target, so
+# two snapshots differ when anything was created, removed or relinked.
+snapshot() {
+	find "$1" -mindepth 1 \( -type l -exec sh -c 'echo "L $1 -> $(readlink "$1")"' _ {} \; \) -o -print | sort
 }
 
 # test_syntax: zsh -n / bash -n / ruby -c on the config files.
@@ -130,7 +136,7 @@ test_shellcheck() {
 	bin_scripts=$(shell_scripts | grep '/bin/')
 	# shellcheck disable=SC2086 # one path per word is intended
 	check_output "bin/ (errors)" "$(shellcheck -S error $bin_scripts 2>&1)"
-	check_output "script/" "$(shellcheck "$DOTFILES"/script/install.sh "$DOTFILES"/script/test 2>&1)"
+	check_output "script/" "$(shellcheck "$DOTFILES"/script/install "$DOTFILES"/script/bootstrap "$DOTFILES"/script/test 2>&1)"
 }
 
 # test_privacy: nothing private tracked in this public repo.
@@ -150,16 +156,21 @@ test_privacy() {
 	cd - >/dev/null || return
 }
 
-# test_install: setup_dotfiles links files, keeps ~/.ssh a real dir with only
-# config linked, preserves existing keys, and is a no-op on a second run.
+# test_install: script/install links files, keeps ~/.ssh a real dir with only
+# config linked, backs up what's in the way without losing earlier backups,
+# prunes stale links, changes nothing on a second run or with --dry-run.
 test_install() {
-	echo "install.sh"
-	local home="$TMP/install" out
+	echo "script/install"
+	local home="$TMP/install" out backups
 	mkdir -p "$home/.ssh"
 	ln -s "$DOTFILES" "$home/.dotfiles"
 	echo key > "$home/.ssh/id_test"
-	if install_links "$home" >/dev/null; then pass "setup_dotfiles runs"; else fail "setup_dotfiles runs"; fi
+	echo original > "$home/.zshrc"
+	ln -s "$home/.dotfiles/gone.symlink" "$home/.gone"     # stale: points into the repo
+	ln -s /nonexistent/elsewhere "$home/.not-ours"          # broken, but not ours
 
+	out=$(install_files "$home" 2>&1) || out+=" (exit $?)"
+	check "first run succeeds" grep -q '^CHANGES=[0-9]*$' <<<"$out"
 	check ".zshrc linked" [ "$(readlink "$home/.zshrc")" = "$home/.dotfiles/zsh/zshrc.symlink" ]
 	check ".ssh is a dir" [ -d "$home/.ssh" ]
 	check ".ssh is not a symlink" [ ! -L "$home/.ssh" ]
@@ -167,8 +178,29 @@ test_install() {
 	check ".config/nvim linked" [ "$(readlink "$home/.config/nvim")" = "$home/.dotfiles/nvim/nvim.config" ]
 	check "existing key kept" [ -f "$home/.ssh/id_test" ]
 	check "existing key not replaced by a link" [ ! -L "$home/.ssh/id_test" ]
-	out=$(install_links "$home" 2>&1) || out+=" (exit $?)"
-	check_output "second run is a no-op" "$out"
+	check ".gitconfig created from the example" [ -f "$home/.gitconfig" ]
+	check "stale repo link removed" [ ! -L "$home/.gone" ]
+	check "unrelated broken link kept" [ -L "$home/.not-ours" ]
+
+	out=$(install_files "$home" 2>&1)
+	check "second run changes nothing" grep -qx 'CHANGES=0' <<<"$out"
+
+	# A second conflict must not overwrite the first backup
+	rm "$home/.zshrc" && echo second > "$home/.zshrc"
+	install_files "$home" >/dev/null 2>&1
+	backups=$(cat "$home"/.dotfiles-backup/*/.zshrc 2>/dev/null | sort | tr '\n' ' ')
+	check "both replaced .zshrc versions backed up" [ "$backups" = "original second " ]
+
+	home="$TMP/dry-run"
+	mkdir -p "$home"
+	ln -s "$DOTFILES" "$home/.dotfiles"
+	echo original > "$home/.zshrc"
+	local before after
+	before=$(snapshot "$home")
+	out=$(HOME="$home" "$home/.dotfiles/script/install" --dry-run --skip-packages --skip-chsh 2>&1)
+	after=$(snapshot "$home")
+	check "--dry-run reports changes" grep -q 'would link ~/.zshrc' <<<"$out"
+	check_output "--dry-run changes nothing" "$(diff <(echo "$before") <(echo "$after"))"
 }
 
 # run_zsh HOME: starts an interactive zsh in HOME with a bare PATH; prints its

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#
+# Usage, on a new machine:
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/jphenow/dotfiles/main/script/bootstrap)"
+#
+# Makes sure git exists, clones the dotfiles to ~/.dotfiles if they aren't
+# there, then runs script/install with the same arguments.
+
+set -eu
+
+DOTFILES="$HOME/.dotfiles"
+
+if [ ! -d "$DOTFILES/.git" ]; then
+	if [ "$(uname -s)" = Darwin ] && ! xcode-select -p >/dev/null 2>&1; then
+		# /usr/bin/git is only a stub until the Command Line Tools are installed
+		xcode-select --install
+		echo "Re-run this once the Command Line Tools finish installing."
+		exit 1
+	elif ! command -v git >/dev/null 2>&1; then
+		if command -v apt-get >/dev/null 2>&1; then
+			sudo apt-get update && sudo apt-get install -y git
+		else
+			echo "Install git, then re-run this." >&2
+			exit 1
+		fi
+	fi
+	git clone https://github.com/jphenow/dotfiles.git "$DOTFILES"
+fi
+
+exec "$DOTFILES/script/install" "$@"

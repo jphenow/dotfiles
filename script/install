@@ -1,0 +1,264 @@
+#!/usr/bin/env bash
+#
+# Usage: script/install [--dry-run] [--extras] [--skip-packages] [--skip-chsh]
+#
+# Brings this machine in line with the dotfiles. Safe to run any time: every
+# step checks first and only acts when something is missing or wrong, so a
+# second run reports "Nothing to change".
+#
+#   --dry-run        print what would change; change nothing
+#   --extras         also install Brewfile.extras (apps, dev libraries; macOS)
+#   --skip-packages  skip Homebrew/apt
+#   --skip-chsh      leave the login shell alone (implied when stdin isn't a terminal)
+#
+# Files in the way are moved to ~/.dotfiles-backup/<timestamp>/, never deleted.
+# New machine? Use script/bootstrap, which clones the repo and then runs this.
+
+set -eu
+
+DOTFILES=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+ZSH_DIR=${ZSH:-$HOME/.oh-my-zsh}
+BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)-$$"
+APT_PACKAGES="zsh git curl tmux direnv ripgrep fd-find bat jq shellcheck neovim"
+DRY_RUN=no
+EXTRAS=no
+PACKAGES=yes
+CHSH=yes
+CHANGES=0
+NOTES=""
+
+# has NAME: true when NAME is on PATH.
+has() {
+	command -v "$1" >/dev/null 2>&1
+}
+
+# pretty PATH: PATH with $HOME shown as ~, for messages.
+pretty() {
+	# shellcheck disable=SC2088 # a literal ~ is the point: this is for display
+	case $1 in
+		"$HOME"/*) printf '~/%s\n' "${1#"$HOME"/}" ;;
+		*) echo "$1" ;;
+	esac
+}
+
+# act DESCRIPTION COMMAND...: counts a change and runs COMMAND, or with
+# --dry-run only prints what it would do.
+act() {
+	CHANGES=$((CHANGES + 1))
+	if [ "$DRY_RUN" = yes ]; then
+		echo "  would $1"
+		return 0
+	fi
+	echo "  $1"
+	shift
+	"$@"
+}
+
+# warn MESSAGE: prints a problem the run can't fix by itself.
+warn() {
+	echo "  warning: $1" >&2
+}
+
+# backup PATH: moves PATH under $BACKUP_DIR, keeping its path relative to ~.
+backup() {
+	local dest="$BACKUP_DIR/${1#"$HOME"/}"
+	mkdir -p "$(dirname "$dest")"
+	mv "$1" "$dest"
+}
+
+# link_file SOURCE TARGET: makes TARGET a symlink to SOURCE, backing up
+# whatever was there. No-op when the link is already right.
+link_file() {
+	local src=$1 target=$2
+	if [ -L "$target" ] && [ "$(readlink "$target")" = "$src" ]; then
+		return 0
+	fi
+	if [ -e "$target" ] || [ -L "$target" ]; then
+		act "back up $(pretty "$target") to $(pretty "$BACKUP_DIR")" backup "$target"
+	fi
+	act "link $(pretty "$target")" ln -s "$src" "$target"
+}
+
+# install_packages: Brewfile (plus Brewfile.extras with --extras) on macOS,
+# $APT_PACKAGES on Debian/Ubuntu. Installs only what's missing; never upgrades.
+install_packages() {
+	echo "packages"
+	[ "$PACKAGES" = yes ] || { echo "  skipped"; return 0; }
+
+	if [ "$(uname -s)" = Darwin ]; then
+		local brew_bin brewfile
+		for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+			[ -x "$brew_bin" ] && eval "$("$brew_bin" shellenv)" && break
+		done
+		if ! has brew; then
+			act "install Homebrew" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+			[ "$DRY_RUN" = yes ] && return 0
+			for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+				[ -x "$brew_bin" ] && eval "$("$brew_bin" shellenv)" && break
+			done
+		fi
+		for brewfile in "$DOTFILES/Brewfile" $([ "$EXTRAS" = yes ] && echo "$DOTFILES/Brewfile.extras"); do
+			if ! brew bundle check --no-upgrade --file="$brewfile" >/dev/null 2>&1; then
+				act "brew bundle $(basename "$brewfile")" brew bundle install --no-upgrade --file="$brewfile"
+			fi
+		done
+	elif has apt-get; then
+		local pkg missing=""
+		for pkg in $APT_PACKAGES; do
+			dpkg -s "$pkg" >/dev/null 2>&1 || missing="$missing $pkg"
+		done
+		if [ -n "$missing" ]; then
+			# shellcheck disable=SC2086 # one package per word
+			act "apt-get install$missing" sudo apt-get install -y $missing
+		fi
+		[ "$EXTRAS" = yes ] && warn "--extras is macOS-only (Brewfile.extras)"
+	else
+		warn "no Homebrew or apt-get; install what you want from Brewfile by hand"
+	fi
+	return 0
+}
+
+# install_shell: zsh as login shell, oh-my-zsh, and zsh-autosuggestions
+# (cloned when missing, fast-forwarded otherwise).
+install_shell() {
+	echo "shell"
+	local plugin="$DOTFILES/zsh/plugins/zsh-autosuggestions" before
+
+	if ! has zsh; then
+		warn "zsh isn't installed"
+	elif [ "$CHSH" = yes ]; then
+		case ${SHELL:-} in
+			*/zsh) ;;
+			*)
+				# chsh only accepts shells listed in /etc/shells
+				local zsh_path
+				zsh_path=$(command -v zsh)
+				grep -qx "$zsh_path" /etc/shells || zsh_path=$(grep -m1 '/zsh$' /etc/shells || true)
+				if [ -n "$zsh_path" ]; then
+					act "change login shell to $zsh_path" chsh -s "$zsh_path"
+				else
+					warn "no zsh in /etc/shells; add one, then run: chsh -s \$(command -v zsh)"
+				fi
+				;;
+		esac
+	fi
+
+	if [ ! -d "$ZSH_DIR" ]; then
+		act "clone oh-my-zsh to $(pretty "$ZSH_DIR")" git clone -q --depth 1 https://github.com/ohmyzsh/ohmyzsh.git "$ZSH_DIR"
+	fi
+
+	if [ ! -d "$plugin" ]; then
+		act "clone zsh-autosuggestions" git clone -q --depth 1 https://github.com/zsh-users/zsh-autosuggestions "$plugin"
+	elif [ "$DRY_RUN" = no ]; then
+		before=$(git -C "$plugin" rev-parse HEAD)
+		git -C "$plugin" pull -q --ff-only 2>/dev/null || warn "couldn't update zsh-autosuggestions"
+		if [ "$(git -C "$plugin" rev-parse HEAD)" != "$before" ]; then
+			CHANGES=$((CHANGES + 1))
+			echo "  updated zsh-autosuggestions"
+		fi
+	fi
+	return 0
+}
+
+# setup_links: <topic>/<name>.symlink -> ~/.<name>, <topic>/<name>.config ->
+# ~/.config/<name>. A .symlink directory (ssh.symlink) becomes a real
+# ~/.<name> directory with only its git-tracked files linked in, so private
+# keys stay out of the repo. An older whole-directory link is left alone.
+setup_links() {
+	echo "links"
+	local dotfile target tracked
+	for dotfile in "$DOTFILES"/*/*.symlink; do
+		target="$HOME/.$(basename "$dotfile" .symlink)"
+		if [ ! -d "$dotfile" ]; then
+			link_file "$dotfile" "$target"
+		elif [ -L "$target" ] && [ "$(readlink "$target")" = "$dotfile" ]; then
+			warn "$(pretty "$target") links to the whole repo directory; move it to a real directory (see README)"
+		else
+			if [ -L "$target" ] || { [ -e "$target" ] && [ ! -d "$target" ]; }; then
+				act "back up $(pretty "$target") to $(pretty "$BACKUP_DIR")" backup "$target"
+			fi
+			[ -d "$target" ] || act "create $(pretty "$target")" mkdir -m 700 "$target"
+			while IFS= read -r tracked; do
+				link_file "$DOTFILES/$tracked" "$target/$(basename "$tracked")"
+			done < <(git -C "$DOTFILES" ls-files -- "${dotfile#"$DOTFILES"/}")
+		fi
+	done
+
+	[ -d "$HOME/.config" ] || act "create ~/.config" mkdir -p "$HOME/.config"
+	for dotfile in "$DOTFILES"/*/*.config; do
+		[ -d "$dotfile" ] || continue
+		link_file "$dotfile" "$HOME/.config/$(basename "$dotfile" .config)"
+	done
+}
+
+# prune_links: removes broken symlinks in ~, ~/.ssh and ~/.config that point
+# into this repo (left behind when a file is removed from the dotfiles).
+prune_links() {
+	local link
+	for link in "$HOME"/.* "$HOME"/.ssh/* "$HOME"/.config/*; do
+		[ -L "$link" ] && [ ! -e "$link" ] || continue
+		case $(readlink "$link") in
+			"$DOTFILES"/*) act "remove stale link $(pretty "$link")" rm "$link" ;;
+		esac
+	done
+}
+
+# setup_config: one-time files that are personal, so copied rather than linked.
+setup_config() {
+	echo "config"
+	if [ ! -e "$HOME/.gitconfig" ] && [ ! -L "$HOME/.gitconfig" ]; then
+		act "create ~/.gitconfig from git/gitconfig.symlink.example" \
+			cp "$DOTFILES/git/gitconfig.symlink.example" "$HOME/.gitconfig"
+		NOTES="$NOTES  * fill in your name and email in ~/.gitconfig\n"
+	fi
+	if has starship && [ ! -e "$HOME/.config/starship.toml" ]; then
+		act "write the starship pure preset to ~/.config/starship.toml" \
+			starship preset pure-preset -o "$HOME/.config/starship.toml"
+	fi
+}
+
+# converge_files: every step that only touches files under ~ (no network).
+converge_files() {
+	setup_links
+	prune_links
+	setup_config
+}
+
+# main [flags]: parses flags (see top of file), runs each step, then summarizes.
+main() {
+	[ -t 0 ] || CHSH=no
+	while [ $# -gt 0 ]; do
+		case $1 in
+			--dry-run) DRY_RUN=yes ;;
+			--extras) EXTRAS=yes ;;
+			--skip-packages) PACKAGES=no ;;
+			--skip-chsh|--unattended) CHSH=no ;;
+			-h|--help) sed -n '3,16p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; return 0 ;;
+			*) echo "unknown option: $1 (see --help)" >&2; return 1 ;;
+		esac
+		shift
+	done
+
+	[ "$DOTFILES" = "$HOME/.dotfiles" ] || warn "repo is at $DOTFILES, but zshrc expects ~/.dotfiles"
+
+	install_packages
+	install_shell
+	converge_files
+
+	echo
+	if [ "$CHANGES" -eq 0 ]; then
+		echo "Nothing to change."
+	elif [ "$DRY_RUN" = yes ]; then
+		echo "$CHANGES change(s) would be made. Run without --dry-run to apply."
+	else
+		echo "Done: $CHANGES change(s). Open a new terminal to pick them up."
+	fi
+	[ -d "$BACKUP_DIR" ] && echo "Replaced files were backed up to $(pretty "$BACKUP_DIR")."
+	[ -z "$NOTES" ] || printf "To do:\n%b" "$NOTES"
+	return 0
+}
+
+# Run main only when executed, so script/test can source the functions.
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+	main "$@"
+fi
