@@ -9,8 +9,10 @@ Include ~/.ssh/config.local
 # UseKeychain is macOS-only; without this, Linux OpenSSH refuses the whole file.
 IgnoreUnknown UseKeychain
 
+# Agent forwarding is opt-in per host (in config.local, which is read first and
+# wins) or ad hoc with `ssh -A`. A forwarded agent is usable by root on the remote.
 Host *
-  ForwardAgent yes
+  ForwardAgent no
   TCPKeepAlive yes
   ServerAliveCountMax 12
   ServerAliveInterval 5
@@ -42,7 +44,3 @@ Host github.com *.github.net *.githubapp.com
   ForwardAgent no
   User jphenow
   IdentityFile ~/github/ssh/id_rsa
-
-    IdentityFile ~/.ssh/id_ed25519
-
-    IdentityFile ~/.ssh/id_ed25519
