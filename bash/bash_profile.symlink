@@ -37,4 +37,4 @@ _yargs_completions()
 complete -F _yargs_completions cf
 ###-end-cf-completions-###
 
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"

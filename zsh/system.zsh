@@ -14,6 +14,14 @@ fi
 
 if command -v bat &> /dev/null; then
   alias cat='bat'
+elif command -v batcat &> /dev/null; then
+  # Debian/Ubuntu install bat as batcat (and fd as fdfind)
+  alias bat='batcat'
+  alias cat='batcat'
+fi
+
+if ! command -v fd &> /dev/null && command -v fdfind &> /dev/null; then
+  alias fd='fdfind'
 fi
 
 # alias vim="vim -v -o"
