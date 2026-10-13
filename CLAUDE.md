@@ -17,9 +17,10 @@ Personal dotfiles, cloned to `~/.dotfiles`. **The GitHub repo is public.** See R
 - `tmux/tmux.conf.symlink` is upstream oh-my-tmux: **do not edit it**. Customize
   `tmux/tmux.conf.local.symlink`.
 - `bin/` is on `PATH`; `git-*` scripts work as `git <name>` subcommands.
-- On this Mac, `~/.ssh` is a symlink to `ssh/ssh.symlink/`, so private keys sit in the
-  working tree. Only `config` is tracked; `.gitignore` excludes the rest. Never `git add -f`
-  anything there or loosen that ignore rule.
+- Private keys belong in `~/.ssh`, never in `ssh/ssh.symlink/`. Only `config` is tracked
+  there; `.gitignore` excludes the rest, and `script/test` fails if anything else is tracked.
+- Agent forwarding is off by default; per-host opt-ins live in `~/.ssh/config.local`, which
+  is `Include`d before `Host *` so its values win (ssh uses the first value it sees).
 - `bash/` is older bash config and `vim/init.vim` is unused (nvim config lives in
   `~/.config/nvim`, outside this repo).
 
@@ -35,15 +36,10 @@ Personal dotfiles, cloned to `~/.dotfiles`. **The GitHub repo is public.** See R
 
 ## Checking changes
 
-There are no tests. Verify by hand:
-
 ```bash
-zsh -n zsh/zshrc.symlink                       # syntax
-zsh -i -c exit                                 # real startup should print nothing
-# bare-machine startup: fake HOME, minimal PATH
-T=$(mktemp -d); ln -s ~/.dotfiles "$T/.dotfiles"; ln -s ~/.dotfiles/zsh/zshrc.symlink "$T/.zshrc"
-env -i HOME="$T" TERM=xterm PATH=/usr/bin:/bin zsh -i -c 'echo ok'
-shellcheck script/install.sh bin/<script>
-ssh -G -F ssh/ssh.symlink/config <host>        # ssh config parses / resolves
-tmux -L test -f tmux/tmux.conf.symlink new -d && tmux -L test list-keys; tmux -L test kill-server
+script/test        # syntax, shellcheck, privacy, installer, bare-machine zsh/tmux/ssh startup
 ```
+
+CI (`.github/workflows/test.yml`) runs it on ubuntu-latest and macos-latest. Checks whose
+tool is missing are skipped, so install shellcheck/tmux/trufflehog locally for full coverage.
+When adding a missing-tool guard or privacy rule, add a check to `script/test` for it.

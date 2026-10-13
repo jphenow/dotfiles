@@ -89,6 +89,12 @@ there and `.gitignore` excludes everything else, but keep keys out of the repo a
   Cmd-Shift-V to send `M-C-v`.
 - Font: `Menlo-Powerline.otf`.
 
+## Checking changes
+
+`script/test` checks syntax, shellcheck, that nothing private is tracked, the
+installer's symlinking, and that zsh/tmux/ssh start cleanly on a bare machine.
+CI runs it on Linux and macOS.
+
 ## Not managed here
 
 - Neovim config lives in `~/.config/nvim`. `vim/init.vim` is an old vim-plug config
