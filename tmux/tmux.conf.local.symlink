@@ -506,3 +506,10 @@ bind -n C-S-Right swap-window -t +1 \; next-window
 set -sg escape-time 0
 
 set -as terminal-features 'tmux*:hyperlinks'
+
+# sp paste: Ghostty sends M-C-v on Cmd-Shift-V. An image on the clipboard is
+# uploaded to the sprite this pane is attached to and its remote path typed into
+# the prompt; anything else pastes as ordinary text.
+# Only bound where the sprite checkout exists; elsewhere Cmd-Shift-V stays stock.
+if-shell 'test -x "$HOME/workspace/superfly/sprite-repo/sp-bin"' \
+  'bind -n M-C-v run-shell -b "$HOME/workspace/superfly/sprite-repo/sp-bin paste -t #{pane_id}"'
