@@ -1,84 +1,106 @@
 # Jon Phenow's dotfiles
 
-## install
+zsh (oh-my-zsh + starship), tmux (oh-my-tmux), ssh config, a few ruby/git
+files, and scripts in `bin/`. Mostly macOS, but a shell should still start
+cleanly on a Linux box that has none of the extras installed.
 
-TODO
+## Install
 
 ```bash
-brew install tmux
-brew install visual-studio-code
-brew install slack
-brew install tailscale
-brew install 1password-cli
-brew install reattach-to-user-namespace
-brew install nvim
-brew install karabiner-elements
-brew install spotify
-brew install discord
-brew install notion
-brew install iterm2
-brew install signal
-brew install alfred
-brew install nordvpn
-brew install numi
-brew install postman
-brew install jordanbaird-ice
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/jphenow/dotfiles/main/script/install.sh)"
+```
 
-brew install autoconf automake openssl wxwidgets libxslt fop libpq overmind stripe lib-sodium flyctl
-brew install zsh
-brew install direnv
-brew install coreutils # gnu tools
-brew install grc # colorize commands
-brew install asdf
-brew install fd # find replacement
-brew install ripgrep # grep replacement
-brew install bat # cat replacement
-brew install eza # ls replacement
-brew install jq # json parser
-brew install git # git-lfs
-brew install procs # ps replacement
-brew install sd # sed replacement
-brew install dust # disk usage
-brew install tokei # code stats
-brew install hyperfine # benchmarking
-brew install bottom # top replacement (btm)
-brew install bandwhich # network usage
-brew install grex # regex generator
-brew install delta # diff viewer
+or, from a checkout at `~/.dotfiles`:
+
+```bash
+~/.dotfiles/script/install.sh            # add --skip-chsh to keep your login shell
+```
+
+It's safe to re-run. It:
+
+- installs Homebrew (macOS) and zsh/git if missing, plus `reattach-to-user-namespace`,
+  `the_silver_searcher`, `fpp` and `urlview` on macOS; on Linux only curl/zsh/git via apt
+- clones this repo to `~/.dotfiles` (or `git pull`s it), installs oh-my-zsh if missing,
+  and clones zsh-autosuggestions into `zsh/plugins/`
+- symlinks every `<topic>/<name>.symlink` to `~/.<name>`, moving anything in the way to
+  `<name>.bak`. `ssh/ssh.symlink` is a directory: `~/.ssh` stays a real directory and
+  only the tracked `config` is linked into it.
+
+Then by hand:
+
+```bash
+cp ~/.dotfiles/git/gitconfig.symlink.example ~/.gitconfig   # and fill in name/email
+brew install starship && starship preset pure-preset -o ~/.config/starship.toml
+```
+
+## Optional tools
+
+The shell checks for each of these and skips it when missing:
+
+| Tool | Used for |
+| --- | --- |
+| [starship](https://starship.rs/) | prompt (without it you get zsh's default) |
+| direnv | per-directory env |
+| mise | language versions (shims on `PATH`) |
+| carapace | completions for commands it has specs for |
+| eza, bat, ripgrep | `ls`, `cat`, and `grep`/`ack`/`ag` aliases |
+| neovim | `vim` alias |
+| grc | colorized command output |
+| cursor | `code` alias |
+| [Claude Code](https://claude.com/claude-code) | Ctrl-Z command suggestion (`zsh/copilot.zsh`), `git aicm` commit messages |
+| gh | `gpo` (push and open the PR) |
+
+The rest of what I usually install:
+
+```bash
+brew install coreutils fd jq git procs sd dust tokei hyperfine bottom bandwhich grex delta
+brew install autoconf automake openssl wxwidgets libxslt fop libpq overmind stripe libsodium flyctl
 
 git config --global core.pager delta
 git config --global interactive.diffFilter 'delta --color-only'
 git config --global delta.navigate true
 git config --global merge.conflictStyle zdiff3
 
-# https://starship.rs/
-brew install starship
-starship preset pure-preset -o ~/.config/starship.toml
-
-# install docker from docker.com
-
-curl -L https://nixos.org/nix/install | sh
-git clone https://github.com/zsh-users/zsh-autosuggestions ~/.dotfiles/zsh/plugins/zsh-autosuggestions
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-# reload shell
-
-# iterm2 color is tweaked from https://www.iterm2material.design/
-# otherwise check out https://iterm2colorschemes.com/
-
-chsh -s $(which zsh)
+brew install tmux nvim
+brew install --cask visual-studio-code slack tailscale 1password-cli karabiner-elements \
+  spotify discord notion iterm2 signal alfred nordvpn numi postman jordanbaird-ice
 ```
 
-### iTerm
+Docker comes from docker.com.
 
-* Load profile from this folder
-* Load KeyMap from this folder
+## Machine-specific config (not in this repo)
 
-## Other useful day-to-day tools
+The repo is public, so anything tied to work or home hosts lives in untracked
+files that are picked up when present:
 
-* [k9s](https://k9scli.io/)
-* allow key-repeating on vscode https://vimforvscode.com/enable-key-repeat-vim
-* magic shell history: https://atuin.sh/docs/advanced-install
+- `~/.zshrc.local`: sourced at the end of `.zshrc` (work helpers, project aliases)
+- `~/.ssh/config.local`: `Include`d by the ssh config (LAN hosts)
+- `~/.gitconfig`: copied from the example above
+- `tmux.boot.sh`: gitignored work tmux layout
 
-# Inspo
+Private keys stay in `~/.ssh`, never in `ssh/ssh.symlink/`. Only `config` is tracked
+there and `.gitignore` excludes everything else, but keep keys out of the repo anyway.
 
-* https://zaiste.net/posts/shell-commands-rust/
+## Terminal
+
+- iTerm: load `Default iTerm2 Profile.json` and `iTermKeyMap.itermkeymap` from this
+  folder. Colors are tweaked from <https://www.iterm2material.design/>.
+- Ghostty: its config isn't in this repo. The tmux sp-paste binding expects
+  Cmd-Shift-V to send `M-C-v`.
+- Font: `Menlo-Powerline.otf`.
+
+## Not managed here
+
+- Neovim config lives in `~/.config/nvim`. `vim/init.vim` is an old vim-plug config
+  that nothing links.
+- `bash/` holds older bash config; the zsh setup doesn't use it.
+
+## Other useful tools
+
+- [k9s](https://k9scli.io/)
+- key-repeat for VS Code vim: https://vimforvscode.com/enable-key-repeat-vim
+- shell history: https://atuin.sh/docs/advanced-install
+
+## Inspo
+
+- https://zaiste.net/posts/shell-commands-rust/
