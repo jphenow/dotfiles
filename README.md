@@ -22,8 +22,8 @@ It's safe to re-run. It:
   `the_silver_searcher`, `fpp` and `urlview` on macOS; on Linux only curl/zsh/git via apt
 - clones this repo to `~/.dotfiles` (or `git pull`s it), installs oh-my-zsh if missing,
   and clones zsh-autosuggestions into `zsh/plugins/`
-- symlinks every `<topic>/<name>.symlink` to `~/.<name>`, moving anything in the way to
-  `<name>.bak`. `ssh/ssh.symlink` is a directory: `~/.ssh` stays a real directory and
+- symlinks every `<topic>/<name>.symlink` to `~/.<name>` and every `<topic>/<name>.config`
+  directory to `~/.config/<name>`, moving anything in the way to `<name>.bak`. `ssh/ssh.symlink` is a directory: `~/.ssh` stays a real directory and
   only the tracked `config` is linked into it.
 
 Then by hand:
@@ -95,10 +95,39 @@ there and `.gitignore` excludes everything else, but keep keys out of the repo a
 installer's symlinking, and that zsh/tmux/ssh start cleanly on a bare machine.
 CI runs it on Linux and macOS.
 
+## Neovim
+
+`nvim/nvim.config` is a [LazyVim](https://www.lazyvim.org/) config, linked to
+`~/.config/nvim`. The first launch installs plugins; `lazy-lock.json` pins them, so
+commit it after `:Lazy update`.
+
+- Go support (gopls, gofumpt/goimports, Go tests) loads only when `go` is on `PATH`.
+  Mason builds the Go tools with it.
+- Tests via neotest: `<leader>tt` runs the file, `<leader>tr` the nearest test.
+- Kept from the old vim config: `;` for `:`, `jj`/`kk` to escape, `Q` to reflow,
+  `:RenameFile`, and `:PromoteToLet` (`<leader>p`). Leader is Space, LazyVim's default.
+
+## Karabiner
+
+`karabiner/karabiner.config` is linked to `~/.config/karabiner` (Karabiner wants the
+directory linked, not the file). To use it:
+
+```bash
+brew install --cask karabiner-elements
+open -a Karabiner-Elements   # then allow its driver and Input Monitoring when macOS asks
+```
+
+What it does: Caps Lock → Escape on every keyboard; Cmd⇄Option swapped on one
+external keyboard (matched by its USB vendor/product ID); ⌘Q, ⌘H, ⌘M and ⌘Y
+disabled; and Meh (⌃⌥⇧) + a key opens an app (T iTerm, A Chrome, S Slack, C Cursor,
+B Messages, E Calendar, M Mail, Y Spotify). macOS can do the first two by itself
+(System Settings → Keyboard → Keyboard Shortcuts → Modifier Keys), so Karabiner is
+only needed for the rest. Karabiner writes its edits back here; its
+`automatic_backups/` are gitignored.
+
 ## Not managed here
 
-- Neovim config lives in `~/.config/nvim`. `vim/init.vim` is an old vim-plug config
-  that nothing links.
+- `vim/init.vim` is the old vim-plug config, kept for reference; nothing links it.
 - `bash/` holds older bash config; the zsh setup doesn't use it.
 
 ## Other useful tools

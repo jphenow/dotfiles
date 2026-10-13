@@ -21,8 +21,10 @@ Personal dotfiles, cloned to `~/.dotfiles`. **The GitHub repo is public.** See R
   there; `.gitignore` excludes the rest, and `script/test` fails if anything else is tracked.
 - Agent forwarding is off by default; per-host opt-ins live in `~/.ssh/config.local`, which
   is `Include`d before `Host *` so its values win (ssh uses the first value it sees).
-- `bash/` is older bash config and `vim/init.vim` is unused (nvim config lives in
-  `~/.config/nvim`, outside this repo).
+- `<topic>/<name>.config` directories link whole to `~/.config/<name>`: `nvim/nvim.config`
+  (LazyVim; add plugins as specs in `lua/plugins/`, extras in `lua/config/lazy.lua`) and
+  `karabiner/karabiner.config`. Both apps write back into these dirs.
+- `bash/` is older bash config and `vim/init.vim` is unused.
 
 ## Rules
 
