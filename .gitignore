@@ -11,3 +11,13 @@ git/gitconfig.symlink
 
 .DS_Store
 .netrwhist
+
+zsh/plugins
+
+.claude/settings.local.json
+
+# Work-specific session layout; kept local, out of the public repo
+tmux.boot.sh
+
+# Karabiner writes a backup on every change
+karabiner/karabiner.config/automatic_backups/

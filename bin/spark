@@ -52,6 +52,7 @@ spark()
   # find min/max values
   local min=0xffffffff max=0
 
+  # shellcheck disable=SC2068 # splitting on commas/whitespace is the point
   for n in ${@//,/ }
   do
     # on Linux (or with bash4) we could use `printf %.0f $n` here to
@@ -82,4 +83,5 @@ then
 	exit
 fi
 
+# shellcheck disable=SC2068 # splitting on commas/whitespace is the point
 spark ${@:-`cat`}

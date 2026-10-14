@@ -1,0 +1,47 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq zsh tmux shellcheck
+            # The runner image leaves this world-writable, so compinit refuses to load
+            sudo chmod -R go-w /usr/share/zsh
+          else
+            brew install shellcheck tmux
+          fi
+          # Exercises the "oh-my-zsh present, optional tools missing" startup path
+          git clone -q --depth 1 https://github.com/ohmyzsh/ohmyzsh "$HOME/.oh-my-zsh"
+
+      - run: script/test
+
+      # The real thing: packages, upstream releases, links. A second run must be a no-op.
+      - name: Install twice (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          script/install --skip-chsh
+          script/install --skip-chsh | tee second-run.log
+          tail -1 second-run.log | grep -qx 'Nothing to change.'
+          # Plugins sit at their locked commits and the lockfile is untouched
+          git diff --exit-code nvim/nvim.config/lazy-lock.json
+          jq -r 'to_entries[] | "\(.key) \(.value.commit)"' nvim/nvim.config/lazy-lock.json |
+            while read -r name commit; do
+              dir="$HOME/.local/share/nvim/lazy/$name"
+              [ -d "$dir" ] || continue  # e.g. Go extra off without go
+              [ "$(git -C "$dir" rev-parse HEAD)" = "$commit" ] || { echo "$name not at $commit"; exit 1; }
+            done

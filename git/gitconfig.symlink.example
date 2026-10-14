@@ -127,3 +127,5 @@
 	required = true
 [github]
 	user = youruser
+[init]
+	defaultBranch = main

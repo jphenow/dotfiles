@@ -1,0 +1,285 @@
+#!/usr/bin/env bash
+#
+# Usage: script/test
+#
+# Basic validation for these dotfiles: syntax, shellcheck, privacy, the
+# installer's symlinking, and that zsh/tmux/ssh load cleanly on a machine
+# without the optional tools. Checks whose tool isn't installed are skipped.
+# Exits non-zero if anything failed.
+
+set -u
+
+DOTFILES=$(cd "$(dirname "$0")/.." && pwd)
+FAILURES=0
+TMP=$(mktemp -d /tmp/dotfiles-test.XXXXXX) # short: ssh-agent and tmux sockets have path limits
+trap cleanup EXIT
+
+# cleanup: kills any ssh-agent the oh-my-zsh plugin started in a fake home,
+# then removes the temp dir.
+cleanup() {
+	local env_file
+	for env_file in "$TMP"/*/.ssh/environment-*; do
+		# shellcheck source=/dev/null
+		[ -f "$env_file" ] && (. "$env_file" >/dev/null; kill "$SSH_AGENT_PID" 2>/dev/null)
+	done
+	rm -rf "$TMP"
+}
+
+# pass/fail/skip MESSAGE: report one check. fail also counts toward the exit code.
+pass() { printf '  ok    %s\n' "$1"; }
+fail() { printf '  FAIL  %s\n' "$1"; FAILURES=$((FAILURES + 1)); }
+skip() { printf '  skip  %s\n' "$1"; }
+
+# check LABEL COMMAND...: passes when COMMAND succeeds.
+check() {
+	local label=$1; shift
+	if "$@"; then pass "$label"; else fail "$label"; fi
+}
+
+# has NAME: true when NAME is on PATH.
+has() { command -v "$1" >/dev/null 2>&1; }
+
+# check_output LABEL OUTPUT: passes when OUTPUT is empty, otherwise fails and prints it.
+check_output() {
+	if [ -z "$2" ]; then pass "$1"; else fail "$1"; printf '%s\n' "$2" | sed 's/^/        /'; fi
+}
+
+# shell_scripts: prints tracked bin/ and script/ files with a sh or bash shebang.
+shell_scripts() {
+	local f
+	for f in "$DOTFILES"/bin/* "$DOTFILES"/script/*; do
+		head -1 "$f" | grep -qE '^#!.*\b(ba)?sh\b' && echo "$f"
+	done
+}
+
+# new_home NAME: creates a fake $HOME with ~/.dotfiles linked to this checkout
+# and runs the installer's file steps in it. Prints the path.
+new_home() {
+	local home="$TMP/$1"
+	mkdir -p "$home"
+	ln -s "$DOTFILES" "$home/.dotfiles"
+	install_files "$home" >/dev/null
+	echo "$home"
+}
+
+# install_files HOME: sources script/install and runs its file-only steps
+# (links, stale-link pruning, config; no packages or network) against HOME.
+# Prints the step output and a final CHANGES=<n> line.
+install_files() {
+	HOME="$1" bash -c 'source "$0/script/install" && converge_files && echo "CHANGES=$CHANGES"' "$1/.dotfiles"
+}
+
+# snapshot DIR: lists every path under DIR with its type and link target, so
+# two snapshots differ when anything was created, removed or relinked.
+snapshot() {
+	find "$1" -mindepth 1 \( -type l -exec sh -c 'echo "L $1 -> $(readlink "$1")"' _ {} \; \) -o -print | sort
+}
+
+# test_syntax: zsh -n / bash -n / ruby -c on the config files.
+test_syntax() {
+	echo "syntax"
+	local f out=""
+	if has zsh; then
+		for f in "$DOTFILES"/zsh/zshrc.symlink "$DOTFILES"/zsh/*.zsh; do
+			out+=$(zsh -n "$f" 2>&1)
+		done
+		check_output "zsh -n" "$out"
+	else
+		skip "zsh -n (no zsh)"
+	fi
+
+	out=""
+	for f in $(shell_scripts) "$DOTFILES"/bash/*.bash "$DOTFILES"/bash/*.sh; do
+		out+=$(bash -n "$f" 2>&1)
+	done
+	check_output "bash -n" "$out"
+
+	if has ruby; then
+		out=""
+		for f in "$DOTFILES"/ruby/irbrc.symlink "$DOTFILES"/bin/git-rank-contributers "$DOTFILES"/bin/memdump; do
+			out+=$(ruby -c "$f" 2>&1 | grep -v '^Syntax OK$')
+		done
+		check_output "ruby -c" "$out"
+	else
+		skip "ruby -c (no ruby)"
+	fi
+
+	if has nvim; then
+		out=""
+		while IFS= read -r f; do
+			out+=$(nvim --clean --headless -c "lua local ok, err = loadfile('$DOTFILES/$f'); if not ok then io.stderr:write(err .. '\\n') end" -c qa 2>&1)
+		done < <(git -C "$DOTFILES" ls-files 'nvim/*.lua')
+		check_output "nvim lua loads" "$out"
+	else
+		skip "nvim lua (no nvim)"
+	fi
+
+	if has jq; then
+		out=""
+		while IFS= read -r f; do
+			out+=$(jq empty "$DOTFILES/$f" 2>&1)
+		done < <(git -C "$DOTFILES" ls-files '*.json')
+		check_output "json parses" "$out"
+	else
+		skip "json (no jq)"
+	fi
+}
+
+# test_shellcheck: errors-only for bin/ (much of it is vendored), full for script/.
+test_shellcheck() {
+	echo "shellcheck"
+	if ! has shellcheck; then
+		skip "shellcheck (not installed)"
+		return
+	fi
+	local bin_scripts
+	bin_scripts=$(shell_scripts | grep '/bin/')
+	# shellcheck disable=SC2086 # one path per word is intended
+	check_output "bin/ (errors)" "$(shellcheck -S error $bin_scripts 2>&1)"
+	check_output "script/" "$(shellcheck "$DOTFILES"/script/install "$DOTFILES"/script/bootstrap "$DOTFILES"/script/test 2>&1)"
+}
+
+# test_privacy: nothing private tracked in this public repo.
+test_privacy() {
+	echo "privacy"
+	cd "$DOTFILES" || return
+	check_output "only ssh/ssh.symlink/config is tracked under ssh/" \
+		"$(git ls-files ssh | grep -vx 'ssh/ssh.symlink/config')"
+	check_output "no hardcoded /Users/ paths" \
+		"$(git grep -nIE '/Users/|\\/Users\\/' -- . ':!CLAUDE.md' ':!script/test')"
+	if has trufflehog; then
+		check_output "trufflehog (history)" \
+			"$(trufflehog git "file://$DOTFILES" --no-update --results=verified,unknown --json 2>/dev/null)"
+	else
+		skip "trufflehog (not installed)"
+	fi
+	cd - >/dev/null || return
+}
+
+# test_install: script/install links files, keeps ~/.ssh a real dir with only
+# config linked, backs up what's in the way without losing earlier backups,
+# prunes stale links, changes nothing on a second run or with --dry-run.
+test_install() {
+	echo "script/install"
+	local home="$TMP/install" out backups
+	mkdir -p "$home/.ssh"
+	ln -s "$DOTFILES" "$home/.dotfiles"
+	echo key > "$home/.ssh/id_test"
+	echo original > "$home/.zshrc"
+	ln -s "$home/.dotfiles/gone.symlink" "$home/.gone"     # stale: points into the repo
+	ln -s /nonexistent/elsewhere "$home/.not-ours"          # broken, but not ours
+
+	out=$(install_files "$home" 2>&1) || out+=" (exit $?)"
+	check "first run succeeds" grep -q '^CHANGES=[0-9]*$' <<<"$out"
+	check ".zshrc linked" [ "$(readlink "$home/.zshrc")" = "$home/.dotfiles/zsh/zshrc.symlink" ]
+	check ".ssh is a dir" [ -d "$home/.ssh" ]
+	check ".ssh is not a symlink" [ ! -L "$home/.ssh" ]
+	check ".ssh/config linked" [ -L "$home/.ssh/config" ]
+	check ".config/nvim linked" [ "$(readlink "$home/.config/nvim")" = "$home/.dotfiles/nvim/nvim.config" ]
+	check "existing key kept" [ -f "$home/.ssh/id_test" ]
+	check "existing key not replaced by a link" [ ! -L "$home/.ssh/id_test" ]
+	check ".gitconfig created from the example" [ -f "$home/.gitconfig" ]
+	check "stale repo link removed" [ ! -L "$home/.gone" ]
+	check "unrelated broken link kept" [ -L "$home/.not-ours" ]
+
+	out=$(install_files "$home" 2>&1)
+	check "second run changes nothing" grep -qx 'CHANGES=0' <<<"$out"
+
+	# A second conflict must not overwrite the first backup
+	rm "$home/.zshrc" && echo second > "$home/.zshrc"
+	install_files "$home" >/dev/null 2>&1
+	backups=$(cat "$home"/.dotfiles-backup/*/.zshrc 2>/dev/null | sort | tr '\n' ' ')
+	check "both replaced .zshrc versions backed up" [ "$backups" = "original second " ]
+
+	home="$TMP/dry-run"
+	mkdir -p "$home"
+	ln -s "$DOTFILES" "$home/.dotfiles"
+	echo original > "$home/.zshrc"
+	local before after
+	before=$(snapshot "$home")
+	out=$(HOME="$home" "$home/.dotfiles/script/install" --dry-run --skip-packages --skip-chsh 2>&1)
+	after=$(snapshot "$home")
+	check "--dry-run reports changes" grep -q 'would link ~/.zshrc' <<<"$out"
+	check_output "--dry-run changes nothing" "$(diff <(echo "$before") <(echo "$after"))"
+}
+
+# run_zsh HOME: starts an interactive zsh in HOME with a bare PATH; prints its
+# stderr. Fails if the shell doesn't finish starting.
+run_zsh() {
+	local stdout stderr_file="$TMP/zsh.stderr"
+	stdout=$(env -i HOME="$1" TERM=xterm PATH=/usr/bin:/bin ZSH_CACHE_DIR="$1/.omz-cache" \
+		DISABLE_AUTO_UPDATE=true zsh -i -c 'echo started' 2>"$stderr_file" </dev/null)
+	[ "$stdout" = "started" ] || echo "shell did not finish starting (stdout: $stdout)"
+	cat "$stderr_file"
+}
+
+# test_zsh_startup: zsh starts with only the expected hint and nothing else on
+# a bare machine, and with only the ssh-agent plugin's note when oh-my-zsh is
+# present (~/.oh-my-zsh).
+test_zsh_startup() {
+	echo "zsh startup, bare PATH"
+	if ! has zsh; then
+		skip "zsh startup (no zsh)"
+		return
+	fi
+	local home
+	home=$(new_home zsh-bare)
+	check_output "without oh-my-zsh: only the install hint" \
+		"$(run_zsh "$home" | grep -v '^oh-my-zsh not found at ')"
+
+	if [ -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
+		home=$(new_home zsh-omz)
+		ln -s "$HOME/.oh-my-zsh" "$home/.oh-my-zsh"
+		check_output "with oh-my-zsh: only the ssh-agent note" \
+			"$(run_zsh "$home" | grep -vx 'Starting ssh-agent \.\.\.')"
+	else
+		skip "with oh-my-zsh (no ~/.oh-my-zsh)"
+	fi
+}
+
+# test_ssh: the ssh config parses with this machine's OpenSSH and doesn't
+# forward the agent by default.
+test_ssh() {
+	echo "ssh"
+	if ! has ssh; then
+		skip "ssh (no ssh)"
+		return
+	fi
+	local out
+	if out=$(ssh -G -F "$DOTFILES/ssh/ssh.symlink/config" example.invalid 2>&1); then
+		pass "config parses"
+	else
+		fail "config parses"; printf '%s\n' "$out" | sed 's/^/        /'
+		return
+	fi
+	check "no agent forwarding by default" grep -qx 'forwardagent no' <<<"$out"
+}
+
+# test_tmux: both tmux files source into a scratch server without errors.
+test_tmux() {
+	echo "tmux"
+	if ! has tmux; then
+		skip "tmux (not installed)"
+		return
+	fi
+	local home socket f
+	home=$(new_home tmux)
+	socket=$(mktemp -u /tmp/dotfiles-test.XXXX) # sockets need a short path
+	(unset TMUX; HOME="$home" tmux -S "$socket" -f /dev/null new-session -d)
+	for f in .tmux.conf .tmux.conf.local; do
+		check_output "$f" "$(HOME="$home" tmux -S "$socket" source-file "$home/$f" 2>&1)"
+	done
+	tmux -S "$socket" kill-server 2>/dev/null
+	rm -f "$socket"
+}
+
+test_syntax
+test_shellcheck
+test_privacy
+test_install
+test_zsh_startup
+test_ssh
+test_tmux
+
+echo
+if [ "$FAILURES" -eq 0 ]; then echo "all checks passed"; else echo "$FAILURES check(s) failed"; exit 1; fi

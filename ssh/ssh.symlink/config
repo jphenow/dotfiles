@@ -1,8 +1,22 @@
+# Added by OrbStack: 'orb' SSH host for Linux machines
+# This only works if it's at the top of ssh_config (before any Host blocks).
+# This won't be added again if you remove it.
+Include ~/.orbstack/ssh/config
+
+# Machine-specific hosts kept out of this public repo. Missing file is ignored.
+Include ~/.ssh/config.local
+
+# UseKeychain is macOS-only; without this, Linux OpenSSH refuses the whole file.
+IgnoreUnknown UseKeychain
+
+# Agent forwarding is opt-in per host (in config.local, which is read first and
+# wins) or ad hoc with `ssh -A`. A forwarded agent is usable by root on the remote.
 Host *
-  ForwardAgent yes
+  ForwardAgent no
   TCPKeepAlive yes
-  ServerAliveInterval 5
   ServerAliveCountMax 12
+  ServerAliveInterval 5
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 
 Host *.amazonaws.com
   UserKnownHostsFile /dev/null
@@ -10,12 +24,12 @@ Host *.amazonaws.com
 
 Host jpdo
   User jonphenow
-  Hostname do.jphenow.com
+  HostName do.jphenow.com
 
 Host *
   AddKeysToAgent yes
   UseKeychain yes
-  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/id_ed25519
   # IdentityFile ~/.ssh/ms_id_rsa
 
 # GITHUB
@@ -23,16 +37,9 @@ Host *
 Host gh
   User git
   Port 22
-  Hostname github.com
+  HostName github.com
   TCPKeepAlive yes
   IdentitiesOnly yes
-Host bastion*.githubapp.com vault-bastion*.githubapp.com
-  ForwardAgent yes
-  User jphenow
-  IdentityFile ~/github/ssh/id_rsa
-  ControlMaster auto
-  ControlPath ~/.ssh/sockets/%C
-  ControlPersist 600
 Host github.com *.github.net *.githubapp.com
   ForwardAgent no
   User jphenow

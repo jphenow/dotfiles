@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# Usage: gpo
+#
+# Push current branch to origin and open the related PR on GitHub.
+# If no PR exists, opens the new PR creation page.
+
+set -e
+
+# Push current branch to origin
+git push -u origin HEAD
+
+# Try to open existing PR, or create new one if it doesn't exist
+gh pr view --web 2>/dev/null || gh pr create --web
