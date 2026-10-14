@@ -34,10 +34,13 @@ Each step checks first and only acts when something is missing:
   `config` linked in. Broken links into this repo are removed.
 - **config**: `~/.gitconfig` from `git/gitconfig.symlink.example` and the starship preset,
   only when missing. Fill in your name and email in `~/.gitconfig`.
+- **nvim**: when nvim has no plugins yet, installs them at the commits in
+  `lazy-lock.json`.
 
 It doesn't `git pull` this repo; do that yourself before re-running.
 
-On Ubuntu/Debian, apt covers most of the core tools (packages a release lacks, like `eza`
+On Ubuntu/Debian, apt covers most of the core tools and `build-essential` (treesitter
+compiles its parsers with `cc`) (packages a release lacks, like `eza`
 on 22.04, are skipped with a warning). Neovim (apt's is too old for LazyVim), starship,
 mise and carapace come from their upstream releases or install scripts into `~/.local/bin`
 instead, only when missing; delete one there to get the current release on the next run.
@@ -101,8 +104,11 @@ CI runs it on Linux and macOS.
 ## Neovim
 
 `nvim/nvim.config` is a [LazyVim](https://www.lazyvim.org/) config, linked to
-`~/.config/nvim`. The first launch installs plugins; `lazy-lock.json` pins them, so
-commit it after `:Lazy update`.
+`~/.config/nvim`. `lazy-lock.json` pins the plugins, so commit it after `:Lazy update`.
+`script/install` installs them at those commits. If plugins were installed some other
+way (just launching nvim takes most at their latest commit), run `:Lazy restore`.
+nvim-treesitter is held on its `master` branch for the pinned LazyVim; drop
+`lua/plugins/treesitter.lua` when upgrading LazyVim.
 
 - Go support (gopls, gofumpt/goimports, Go tests) loads only when `go` is on `PATH`.
   Mason builds the Go tools with it.

@@ -21,7 +21,8 @@ ZSH_DIR=${ZSH:-$HOME/.oh-my-zsh}
 BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)-$$"
 # Names that a release doesn't have (e.g. eza, git-delta on 22.04) are skipped
 # neovim isn't here: apt's is too old for the LazyVim config, see install_release_tools
-APT_PACKAGES="zsh git curl tmux direnv ripgrep fd-find bat jq shellcheck eza grc gh git-delta"
+# build-essential: nvim-treesitter compiles its parsers with cc
+APT_PACKAGES="build-essential zsh git curl tmux direnv ripgrep fd-find bat jq shellcheck eza grc gh git-delta"
 # <topic>/<name>.config dirs only linked on macOS
 MACOS_ONLY_CONFIGS="karabiner"
 DRY_RUN=no
@@ -319,6 +320,36 @@ setup_config() {
 	fi
 }
 
+# restore_nvim_plugins NVIM LAZY_DIR: launches NVIM once so lazy.nvim installs
+# the plugins, then restores them to lazy-lock.json. The first-launch install
+# takes most plugins at their latest commit and rewrites the lockfile, so the
+# committed lockfile is put back before and after the restore. True when
+# LazyVim ended up in LAZY_DIR.
+restore_nvim_plugins() {
+	local lock="$HOME/.config/nvim/lazy-lock.json" saved
+	saved=$(mktemp)
+	cp "$lock" "$saved"
+	"$1" --headless +qa >/dev/null 2>&1 || true
+	cp "$saved" "$lock"
+	"$1" --headless "+Lazy! restore" +qa >/dev/null 2>&1 || true
+	cp "$saved" "$lock"
+	rm -f "$saved"
+	[ -d "$2/LazyVim" ]
+}
+
+# setup_nvim_plugins: on a machine with nvim but no lazy.nvim plugins yet,
+# installs them at the commits in lazy-lock.json. Later runs leave plugins alone.
+setup_nvim_plugins() {
+	local nvim lazy_dir="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy"
+	nvim=$(command -v nvim || echo "$HOME/.local/bin/nvim")
+	if [ ! -x "$nvim" ] || [ ! -e "$HOME/.config/nvim" ] || [ -d "$lazy_dir" ]; then
+		return 0
+	fi
+	echo "nvim"
+	act "install nvim plugins from lazy-lock.json" restore_nvim_plugins "$nvim" "$lazy_dir" \
+		|| warn "nvim plugin install failed; run :Lazy restore in nvim"
+}
+
 # converge_files: every step that only touches files under ~ (no network).
 converge_files() {
 	setup_links
@@ -347,6 +378,7 @@ main() {
 	install_release_tools
 	install_shell
 	converge_files
+	setup_nvim_plugins
 
 	echo
 	if [ "$CHANGES" -eq 0 ]; then

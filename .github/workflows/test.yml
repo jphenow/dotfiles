@@ -37,3 +37,11 @@ jobs:
           script/install --skip-chsh
           script/install --skip-chsh | tee second-run.log
           tail -1 second-run.log | grep -qx 'Nothing to change.'
+          # Plugins sit at their locked commits and the lockfile is untouched
+          git diff --exit-code nvim/nvim.config/lazy-lock.json
+          jq -r 'to_entries[] | "\(.key) \(.value.commit)"' nvim/nvim.config/lazy-lock.json |
+            while read -r name commit; do
+              dir="$HOME/.local/share/nvim/lazy/$name"
+              [ -d "$dir" ] || continue  # e.g. Go extra off without go
+              [ "$(git -C "$dir" rev-parse HEAD)" = "$commit" ] || { echo "$name not at $commit"; exit 1; }
+            done

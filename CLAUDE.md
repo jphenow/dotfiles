@@ -15,7 +15,9 @@ Personal dotfiles, cloned to `~/.dotfiles`. **The GitHub repo is public.** See R
   git-tracked files linked in. `.config` dirs named in `MACOS_ONLY_CONFIGS` are skipped
   elsewhere. Linux packages are `APT_PACKAGES`; names a release lacks are skipped. Tools
   apt lacks or ships too old (neovim, starship, mise, carapace) come from upstream releases
-  into `~/.local/bin` (`install_release_tools`); CI runs the real install twice on Ubuntu.
+  into `~/.local/bin` (`install_release_tools`). `setup_nvim_plugins` installs nvim
+  plugins at the `lazy-lock.json` commits on first install (lazy.nvim's own first launch
+  doesn't). CI runs the real install twice on Ubuntu and checks plugins match the lock.
 - `zsh/zshrc.symlink` is `~/.zshrc`. It sets `ZSH_CUSTOM=~/.dotfiles/zsh`, so oh-my-zsh
   auto-sources every `zsh/*.zsh` (alphabetically, so `system.zsh` overrides `aliases.zsh`).
   If oh-my-zsh is missing, zshrc sources those files itself. `zsh/plugins/` is gitignored
