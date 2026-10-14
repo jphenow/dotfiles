@@ -13,7 +13,9 @@ Personal dotfiles, cloned to `~/.dotfiles`. **The GitHub repo is public.** See R
   to `~/.dotfiles-backup/<timestamp>/`. Links: `<topic>/<name>.symlink` -> `~/.<name>`;
   directory `.symlink`s (only `ssh/ssh.symlink`) become a real dir with just their
   git-tracked files linked in. `.config` dirs named in `MACOS_ONLY_CONFIGS` are skipped
-  elsewhere. Linux packages are `APT_PACKAGES`; names a release lacks are skipped.
+  elsewhere. Linux packages are `APT_PACKAGES`; names a release lacks are skipped. Tools
+  apt lacks or ships too old (neovim, starship, mise, carapace) come from upstream releases
+  into `~/.local/bin` (`install_release_tools`); CI runs the real install twice on Ubuntu.
 - `zsh/zshrc.symlink` is `~/.zshrc`. It sets `ZSH_CUSTOM=~/.dotfiles/zsh`, so oh-my-zsh
   auto-sources every `zsh/*.zsh` (alphabetically, so `system.zsh` overrides `aliases.zsh`).
   If oh-my-zsh is missing, zshrc sources those files itself. `zsh/plugins/` is gitignored

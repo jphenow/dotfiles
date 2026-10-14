@@ -24,7 +24,8 @@ to bring a machine up to date:
 Each step checks first and only acts when something is missing:
 
 - **packages**: `brew bundle` with `Brewfile` on macOS (installs Homebrew if needed),
-  or a short apt list on Debian/Ubuntu. Never upgrades.
+  or a short apt list plus a few upstream releases on Debian/Ubuntu (see below). Never
+  upgrades.
 - **shell**: zsh as login shell (skip with `--skip-chsh`), oh-my-zsh, and
   zsh-autosuggestions (cloned, then kept up to date).
 - **links**: every `<topic>/<name>.symlink` to `~/.<name>`, every `<topic>/<name>.config`
@@ -37,8 +38,9 @@ Each step checks first and only acts when something is missing:
 It doesn't `git pull` this repo; do that yourself before re-running.
 
 On Ubuntu/Debian, apt covers most of the core tools (packages a release lacks, like `eza`
-on 22.04, are skipped with a warning). Not covered there yet: apt's neovim is too old for
-the LazyVim config (it needs 0.10+), and starship, mise and carapace aren't in apt.
+on 22.04, are skipped with a warning). Neovim (apt's is too old for LazyVim), starship,
+mise and carapace come from their upstream releases or install scripts into `~/.local/bin`
+instead, only when missing; delete one there to get the current release on the next run.
 Karabiner and the iTerm files are macOS-only and aren't linked elsewhere.
 
 ## Optional tools
