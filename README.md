@@ -31,7 +31,9 @@ Each step checks first and only acts when something is missing:
 - **links**: every `<topic>/<name>.symlink` to `~/.<name>`, every `<topic>/<name>.config`
   directory to `~/.config/<name>`. Anything in the way moves to
   `~/.dotfiles-backup/<timestamp>/`. `~/.ssh` stays a real directory with only the tracked
-  `config` linked in. Broken links into this repo are removed.
+  `config` linked in; `~/.claude` likewise gets only `claude/claude.symlink`'s tracked
+  entries (`CLAUDE.md`, `settings.json`, the status line script, and the `commands/` and
+  `skills/` directories, linked whole). Broken links into this repo are removed.
 - **config**: `~/.gitconfig` from `git/gitconfig.symlink.example` and the starship preset,
   only when missing. Fill in your name and email in `~/.gitconfig`.
 - **nvim**: when nvim has no plugins yet, installs them at the commits in
@@ -60,7 +62,7 @@ The shell checks for each of these and skips it when missing:
 | neovim | `vim` alias |
 | grc | colorized command output |
 | cursor | `code` alias |
-| [Claude Code](https://claude.com/claude-code) | Ctrl-Z command suggestion (`zsh/copilot.zsh`), `git aicm` commit messages |
+| [Claude Code](https://claude.com/claude-code) | Ctrl-Z command suggestion (`zsh/copilot.zsh`), `git aicm` commit messages, `claude` wrapper (`zsh/claude.zsh`) |
 | gh | `gpo` (push and open the PR) |
 
 Delta as git's pager (not in the example gitconfig):
@@ -83,6 +85,10 @@ files that are picked up when present:
 - `~/.ssh/config.local`: `Include`d by the ssh config (LAN hosts)
 - `~/.gitconfig`: copied from the example above
 - `tmux.boot.sh`: gitignored work tmux layout
+- Claude Code skills: global ones are tracked in `claude/claude.symlink/skills/`.
+  Workspace ones go in `<workspace>/.claude/skills/` (e.g. a folder of work repos) and
+  private global ones in `~/.claude/local/.claude/skills/`; the `claude` wrapper passes
+  both with `--add-dir`, since Claude Code stops looking for skills at the repo root.
 
 Private keys stay in `~/.ssh`, never in `ssh/ssh.symlink/`. Only `config` is tracked
 there and `.gitignore` excludes everything else, but keep keys out of the repo anyway.
