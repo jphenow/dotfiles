@@ -75,7 +75,7 @@ export ZSH_CUSTOM="$HOME/.dotfiles/zsh"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git macos ssh-agent asdf)
+plugins=(git macos ssh-agent)
 # Cloned by hand into $ZSH_CUSTOM/plugins (gitignored); skip it if missing.
 [[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]] && plugins+=(zsh-autosuggestions)
 
