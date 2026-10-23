@@ -79,6 +79,12 @@ plugins=(git macos ssh-agent)
 # Cloned by hand into $ZSH_CUSTOM/plugins (gitignored); skip it if missing.
 [[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]] && plugins+=(zsh-autosuggestions)
 
+# Homebrew; script/install looks in the same places
+for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+  [[ -x "$_brew" ]] && eval "$("$_brew" shellenv)" && break
+done
+unset _brew
+
 # Must precede oh-my-zsh: $ZSH_CUSTOM/*.zsh files (e.g. copilot.zsh) look for binaries here
 export PATH="$HOME/.local/bin:$PATH"
 if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
@@ -150,7 +156,6 @@ export RUBY_CFLAGS="-Wno-default-const-init-field-unsafe"
 
 #. /opt/homebrew/opt/asdf/libexec/asdf.sh
 # export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-export PATH="$HOME/.local/share/mise/shims:$PATH"
 
 command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
 
@@ -176,7 +181,7 @@ aws() {
 # export KERL_CONFIGURE_OPTIONS="--without-wx --without-javac"
 # export KERL_CONFIGURE_OPTIONS="--without-javac --without-wx --disable-jit --with-ssl=$(brew --prefix openssl@3)"
 export KERL_CONFIGURE_OPTIONS="--disable-jit"
-export PATH="/opt/homebrew/opt/libpq/bin:/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 export FLYCTL_INSTALL="$HOME/.fly"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
@@ -226,6 +231,9 @@ if command -v carapace >/dev/null 2>&1; then
   done
   unset _cmd
 fi
+
+# Last, so mise-pinned versions beat Homebrew and everything else above
+export PATH="$HOME/.local/share/mise/shims:$PATH"
 
 # Machine- or work-specific config that shouldn't live in this public repo.
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
