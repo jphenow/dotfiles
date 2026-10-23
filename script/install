@@ -102,6 +102,11 @@ install_packages() {
 				[ -x "$brew_bin" ] && eval "$("$brew_bin" shellenv)" && break
 			done
 		fi
+		# A second account on a Mac can use another user's Homebrew but not write to it
+		if [ ! -w "$(brew --repository)" ]; then
+			warn "Homebrew belongs to $(stat -f %Su "$(brew --repository)"); run the install as that user to install Brewfile packages"
+			return 0
+		fi
 		for brewfile in "$DOTFILES/Brewfile" $([ "$EXTRAS" = yes ] && echo "$DOTFILES/Brewfile.extras"); do
 			if ! brew bundle check --no-upgrade --file="$brewfile" >/dev/null 2>&1; then
 				act "brew bundle $(basename "$brewfile")" brew bundle install --no-upgrade --file="$brewfile"
@@ -321,18 +326,20 @@ setup_config() {
 	fi
 }
 
-# restore_nvim_plugins NVIM LAZY_DIR: launches NVIM once so lazy.nvim installs
-# the plugins, then restores them to lazy-lock.json. The first-launch install
-# takes most plugins at their latest commit and rewrites the lockfile, so the
-# committed lockfile is put back before and after the restore. True when
-# LazyVim ended up in LAZY_DIR.
+# restore_nvim_plugins NVIM LAZY_DIR LOG: launches NVIM once so lazy.nvim
+# installs the plugins, then restores them to lazy-lock.json, writing nvim's
+# output to LOG. The first-launch install takes most plugins at their latest
+# commit and rewrites the lockfile, so the committed lockfile is put back
+# before and after the restore. True when LazyVim ended up in LAZY_DIR.
 restore_nvim_plugins() {
 	local lock="$HOME/.config/nvim/lazy-lock.json" saved
 	saved=$(mktemp)
 	cp "$lock" "$saved"
-	"$1" --headless +qa >/dev/null 2>&1 || true
+	mkdir -p "$(dirname "$3")"
+	"$1" --version >"$3" 2>&1 || true
+	"$1" --headless +qa >>"$3" 2>&1 || true
 	cp "$saved" "$lock"
-	"$1" --headless "+Lazy! restore" +qa >/dev/null 2>&1 || true
+	"$1" --headless "+Lazy! restore" +qa >>"$3" 2>&1 || true
 	cp "$saved" "$lock"
 	rm -f "$saved"
 	[ -d "$2/LazyVim" ]
@@ -342,13 +349,14 @@ restore_nvim_plugins() {
 # installs them at the commits in lazy-lock.json. Later runs leave plugins alone.
 setup_nvim_plugins() {
 	local nvim lazy_dir="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy"
+	local log="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/nvim-install.log"
 	nvim=$(command -v nvim || echo "$HOME/.local/bin/nvim")
 	if [ ! -x "$nvim" ] || [ ! -e "$HOME/.config/nvim" ] || [ -d "$lazy_dir" ]; then
 		return 0
 	fi
 	echo "nvim"
-	act "install nvim plugins from lazy-lock.json" restore_nvim_plugins "$nvim" "$lazy_dir" \
-		|| warn "nvim plugin install failed; run :Lazy restore in nvim"
+	act "install nvim plugins from lazy-lock.json" restore_nvim_plugins "$nvim" "$lazy_dir" "$log" \
+		|| warn "nvim plugin install failed (output in $(pretty "$log")); run :Lazy restore in nvim"
 }
 
 # converge_files: every step that only touches files under ~ (no network).
