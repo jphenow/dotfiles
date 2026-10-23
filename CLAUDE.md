@@ -11,9 +11,9 @@ Personal dotfiles, cloned to `~/.dotfiles`. **The GitHub repo is public.** See R
   links, one-time config. Every step must check before acting and go through `act` so
   `--dry-run` and the "Nothing to change" idempotency check stay true. Conflicts move
   to `~/.dotfiles-backup/<timestamp>/`. Links: `<topic>/<name>.symlink` -> `~/.<name>`;
-  directory `.symlink`s (only `ssh/ssh.symlink`) become a real dir with just their
-  git-tracked files linked in. `.config` dirs named in `MACOS_ONLY_CONFIGS` are skipped
-  elsewhere. Linux packages are `APT_PACKAGES`; names a release lacks are skipped. Tools
+  directory `.symlink`s (`ssh/ssh.symlink`, `claude/claude.symlink`) become a real dir
+  with just their git-tracked top-level entries linked in (subdirectories link whole).
+  `.config` dirs named in `MACOS_ONLY_CONFIGS` are skipped elsewhere. Linux packages are `APT_PACKAGES`; names a release lacks are skipped. Tools
   apt lacks or ships too old (neovim, starship, mise, carapace) come from upstream releases
   into `~/.local/bin` (`install_release_tools`). `setup_nvim_plugins` installs nvim
   plugins at the `lazy-lock.json` commits on first install (lazy.nvim's own first launch
@@ -33,6 +33,10 @@ Personal dotfiles, cloned to `~/.dotfiles`. **The GitHub repo is public.** See R
 - `<topic>/<name>.config` directories link whole to `~/.config/<name>`: `nvim/nvim.config`
   (LazyVim; add plugins as specs in `lua/plugins/`, extras in `lua/config/lazy.lua`) and
   `karabiner/karabiner.config`. Both apps write back into these dirs.
+- `claude/claude.symlink` is user-global Claude Code config; `~/.claude/skills` links to
+  its `skills/`, so a skill made there shows up as untracked here. Work-specific skills
+  never go here: they live in `<workspace>/.claude/skills` or `~/.claude/local/.claude/skills`,
+  which the `claude` function in `zsh/claude.zsh` passes as `--add-dir=`.
 - `bash/` is older bash config and `vim/init.vim` is unused.
 
 ## Rules

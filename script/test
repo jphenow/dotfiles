@@ -156,15 +156,16 @@ test_privacy() {
 	cd - >/dev/null || return
 }
 
-# test_install: script/install links files, keeps ~/.ssh a real dir with only
-# config linked, backs up what's in the way without losing earlier backups,
+# test_install: script/install links files, keeps ~/.ssh and ~/.claude real
+# dirs with only tracked entries linked, backs up what's in the way without losing earlier backups,
 # prunes stale links, changes nothing on a second run or with --dry-run.
 test_install() {
 	echo "script/install"
 	local home="$TMP/install" out backups
-	mkdir -p "$home/.ssh"
+	mkdir -p "$home/.ssh" "$home/.claude"
 	ln -s "$DOTFILES" "$home/.dotfiles"
 	echo key > "$home/.ssh/id_test"
+	echo '{}' > "$home/.claude/history.jsonl"
 	echo original > "$home/.zshrc"
 	ln -s "$home/.dotfiles/gone.symlink" "$home/.gone"     # stale: points into the repo
 	ln -s /nonexistent/elsewhere "$home/.not-ours"          # broken, but not ours
@@ -178,6 +179,10 @@ test_install() {
 	check ".config/nvim linked" [ "$(readlink "$home/.config/nvim")" = "$home/.dotfiles/nvim/nvim.config" ]
 	check "existing key kept" [ -f "$home/.ssh/id_test" ]
 	check "existing key not replaced by a link" [ ! -L "$home/.ssh/id_test" ]
+	check ".claude is not a symlink" [ ! -L "$home/.claude" ]
+	check ".claude/CLAUDE.md linked" [ -L "$home/.claude/CLAUDE.md" ]
+	check ".claude/skills linked whole" [ "$(readlink "$home/.claude/skills")" = "$home/.dotfiles/claude/claude.symlink/skills" ]
+	check "Claude Code state kept" [ -f "$home/.claude/history.jsonl" ]
 	check ".gitconfig created from the example" [ -f "$home/.gitconfig" ]
 	check "stale repo link removed" [ ! -L "$home/.gone" ]
 	check "unrelated broken link kept" [ -L "$home/.not-ours" ]

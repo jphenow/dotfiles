@@ -16,6 +16,11 @@ zsh/plugins
 
 .claude/settings.local.json
 
+# Claude Code writes these into ~/.claude/skills (linked to claude/claude.symlink/skills)
+claude/claude.symlink/skills/synced/
+claude/claude.symlink/skills/writing-tropes/tropes.md
+claude/claude.symlink/skills/writing-tropes/.no-refresh
+
 # Work-specific session layout; kept local, out of the public repo
 tmux.boot.sh
 

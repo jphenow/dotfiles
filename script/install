@@ -258,12 +258,13 @@ install_shell() {
 }
 
 # setup_links: <topic>/<name>.symlink -> ~/.<name>, <topic>/<name>.config ->
-# ~/.config/<name>. A .symlink directory (ssh.symlink) becomes a real
-# ~/.<name> directory with only its git-tracked files linked in, so private
-# keys stay out of the repo. An older whole-directory link is left alone.
+# ~/.config/<name>. A .symlink directory (ssh.symlink, claude.symlink) becomes
+# a real ~/.<name> directory with only its git-tracked top-level entries linked
+# in (a tracked subdirectory is linked whole), so private keys and app state
+# stay out of the repo. An older whole-directory link is left alone.
 setup_links() {
 	echo "links"
-	local dotfile target tracked
+	local dotfile target entry
 	for dotfile in "$DOTFILES"/*/*.symlink; do
 		target="$HOME/.$(basename "$dotfile" .symlink)"
 		if [ ! -d "$dotfile" ]; then
@@ -275,9 +276,9 @@ setup_links() {
 				act "back up $(pretty "$target") to $(pretty "$BACKUP_DIR")" backup "$target"
 			fi
 			[ -d "$target" ] || act "create $(pretty "$target")" mkdir -m 700 "$target"
-			while IFS= read -r tracked; do
-				link_file "$DOTFILES/$tracked" "$target/$(basename "$tracked")"
-			done < <(git -C "$DOTFILES" ls-files -- "${dotfile#"$DOTFILES"/}")
+			while IFS= read -r entry; do
+				link_file "$dotfile/$entry" "$target/$entry"
+			done < <(git -C "$DOTFILES" ls-files -- "${dotfile#"$DOTFILES"/}" | cut -d/ -f3 | sort -u)
 		fi
 	done
 
@@ -293,11 +294,11 @@ setup_links() {
 	done
 }
 
-# prune_links: removes broken symlinks in ~, ~/.ssh and ~/.config that point
-# into this repo (left behind when a file is removed from the dotfiles).
+# prune_links: removes broken symlinks in ~, ~/.ssh, ~/.claude and ~/.config
+# that point into this repo (left behind when a file is removed from the dotfiles).
 prune_links() {
 	local link
-	for link in "$HOME"/.* "$HOME"/.ssh/* "$HOME"/.config/*; do
+	for link in "$HOME"/.* "$HOME"/.ssh/* "$HOME"/.claude/* "$HOME"/.config/*; do
 		if [ -L "$link" ] && [ ! -e "$link" ]; then
 			case $(readlink "$link") in
 				"$DOTFILES"/*) act "remove stale link $(pretty "$link")" rm "$link" ;;
