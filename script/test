@@ -184,6 +184,8 @@ test_install() {
 	check ".claude/skills linked whole" [ "$(readlink "$home/.claude/skills")" = "$home/.dotfiles/claude/claude.symlink/skills" ]
 	check "Claude Code state kept" [ -f "$home/.claude/history.jsonl" ]
 	check ".gitconfig created from the example" [ -f "$home/.gitconfig" ]
+	# Homebrew's and Apple's git set osxkeychain themselves; elsewhere the helper doesn't exist
+	check ".gitconfig sets no osxkeychain helper" [ -z "$(grep osxkeychain "$home/.gitconfig")" ]
 	check "stale repo link removed" [ ! -L "$home/.gone" ]
 	check "unrelated broken link kept" [ -L "$home/.not-ours" ]
 
