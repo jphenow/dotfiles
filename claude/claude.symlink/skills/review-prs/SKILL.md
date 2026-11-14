@@ -65,9 +65,16 @@ Check out the branch first:
 - Run: git fetch origin {branch}
 Then read files using the Read tool from the fetched ref where needed.
 
-## Step 3: Produce a Review
+## Step 3: Grade and Run the Angles
 
-Return a review with these exact sections:
+Read ~/.claude/skills/code-review/review-angles.md. Grade the PR's tier (§1), then screen
+every angle and run the deep passes the tier calls for yourself, one after another, as
+separate sections (§2). Put their findings in "Issues Found" at their real severity.
+
+## Step 4: Produce a Review
+
+Return a review with these exact sections. Start with the REVIEW_TIER / REVIEW_ANGLES block
+from review-angles.md §3.
 
 ### 1. Summary
 One paragraph: what this PR does, whether it achieves its stated goal.
@@ -104,6 +111,9 @@ For each issue:
 - Is the Testing section adequate?
 - Does it have a Manual deploy steps section exactly when the change needs one (unautomated
   terraform, secrets, migrations the deploy does not run)?
+- Does it have a Security section when the change touches auth, tenant isolation, secrets,
+  or untrusted input, and a Risk section with an honest level when shipping could break
+  something?
 - Suggest a revised PR description if needed.
 
 ### 7. Open Questions

@@ -157,6 +157,15 @@ inline" in the report.
 The **final** pass must be unsteered: no focus areas, no carried-forward items, no hint of
 what the last pass fixed. Add the threat-model bullet to that pass only.
 
+**Depth by tier.** The reviewer grades the branch itself (`code-review` Phase 1d); never pass
+it a tier. Deep angle passes cost a lot on Tier 2–3 branches, so fill `{DEPTH_RULE}` as:
+
+- Pass 1 and every unsteered pass: "Run the deep passes your tier calls for."
+- Other passes: "Screen every angle; run a deep pass only where your screen finds a concern."
+
+Keep the last pass's `REVIEW_TIER` and `REVIEW_ANGLES`. They feed the PR's Security and Risk
+sections in Phase 3.
+
 Review prompt (paste `~/.claude/skills/code-review/SKILL.md` where indicated):
 
 ```
@@ -180,6 +189,8 @@ There is no PR yet. Follow the review instructions below with these overrides:
   only when they make a false claim about the code. Pass 4: no wording findings at all.
 - A previous fix is not a defect because you'd have written it differently; ask whether it
   is wrong, not whether it is optimal. An empty finding list is a valid review.
+- Grade the branch yourself per Phase 1d (`~/.claude/skills/code-review/review-angles.md`).
+  {DEPTH_RULE}
 [UNSTEERED PASS ONLY]
 - You have deliberately been given no focus areas. Of each risky construct ask "what threat
   model makes this dangerous?" (what it can reach, what touches it concurrently, whose
@@ -194,6 +205,8 @@ REVIEW_WORDING_ONLY: yes OR no
 REVIEW_BLOCKING: <count>
 REVIEW_SHOULD_FIX: <count>
 REVIEW_NITS: <count>
+REVIEW_TIER: <0-3> (<triggered angles>)
+REVIEW_ANGLES: <one line per angle, per review-angles.md §3>
 REVIEW_FINDINGS:
 <each finding: severity, file:line, problem, suggested fix; open questions with recommended answers>
 
@@ -284,12 +297,18 @@ git push -u origin <branch>
 ```
 
 **PR description:** read and follow `~/.claude/skills/pr-description/SKILL.md`: four
-sections, prose, under 200 words, plus Manual deploy steps and Context when they apply, run
+sections, prose, under 250 words, plus Manual deploy steps, Security, Risk, and Context when they
+apply, run
 through `writing-tropes`. Put the two or three `DECISIONS` a human would actually weigh in on
 (a close trade-off, a convention this sets, a rejected finding the owner might disagree with)
 into **Calls worth a second opinion**. The rest of `DECISIONS` stays off GitHub: no collapsed
 review log, no pass counts, no "automated review" detail. End the body with `Closes #N` when
 there is an issue, then any attribution line the session requires.
+
+Base Security and Risk on the last review's `REVIEW_TIER` and `REVIEW_ANGLES`. Tier 2–3
+branches almost always need a Risk section, and any deep security pass needs a Security
+section saying what was checked. Tier 0 usually needs neither. Don't print the tier number
+itself; describe the risk in words.
 
 ```bash
 gh pr create --title "<title>" --body "$(cat <<'EOF'
@@ -334,6 +353,7 @@ SHIP_PR: <url> OR none
 SHIP_BRANCH: <branch>
 SHIP_MODE: local OR ci (<why ci>)
 SHIP_REVIEW: converged after N passes OR cap hit OR wording churn OR reviewer disagreement
+SHIP_TIER: <0-3> (<triggered angles>; deep passes run: <angles> OR none)
 SHIP_CI: green OR red (<failing check>) OR none configured
 SHIP_DECISIONS: <one line per DECISIONS entry>
 SHIP_FOLLOWUPS: <one line per deferred item> OR none

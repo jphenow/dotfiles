@@ -61,6 +61,9 @@ Categorize as BLOCKING, SHOULD_FIX, or NIT. For each:
 - If merging does not fully deploy the change (terraform with no apply in CI, new secrets,
   migrations the deploy does not run), is there a Manual deploy steps section with the
   exact commands? Per `~/.claude/skills/pr-description/SKILL.md`.
+- Does it have a Security section when the change touches auth, tenant isolation, secrets,
+  or untrusted input, and a Risk section with an honest level when shipping could break
+  something?
 - Suggest revisions if needed.
 
 ### Open Questions
@@ -115,7 +118,7 @@ Write the body per `~/.claude/skills/pr-description/SKILL.md` — read that file
 it: four sections (What this gets us / Approach / Verify by hand / Calls worth a second
 opinion), plus Manual deploy steps when merging does not fully deploy the change
 (unautomated terraform, secrets, migrations), plus Context links whenever the work came
-from Sentry, logs, traces, dashboards, Slack threads, or other linkable sources. Prose, under 200 words, no file table, run
+from Sentry, logs, traces, dashboards, Slack threads, or other linkable sources, plus Security and Risk when there is something real to say. Prose, under 250 words, no file table, run
 through `writing-tropes` before posting.
 
 ```bash
