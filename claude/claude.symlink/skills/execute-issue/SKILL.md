@@ -94,7 +94,7 @@ Write the body per `~/.claude/skills/pr-description/SKILL.md` — read that file
 it: four sections (What this gets us / Approach / Verify by hand / Calls worth a second
 opinion), plus Manual deploy steps when merging does not fully deploy the change
 (unautomated terraform, secrets, migrations), plus Context links whenever the work came
-from Sentry, logs, traces, dashboards, Slack threads, or other linkable sources. Prose, under 200 words, no file table, run
+from Sentry, logs, traces, dashboards, Slack threads, or other linkable sources, plus Security and Risk when there is something real to say. Prose, under 250 words, no file table, run
 through `writing-tropes` before posting.
 
 ```bash

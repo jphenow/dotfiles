@@ -48,6 +48,13 @@ Launch up to 7 parallel **haiku** agents:
 
 If the PR is missing a description, add one with a concise summary of changes.
 
+### 1d. Grade the Change
+
+Read `~/.claude/skills/code-review/review-angles.md`. Using the change summaries, decide which
+angle triggers fire and the change's tier (0–3). The tier decides which angles get their own
+deep-pass agent in Phase 2 and which are only screened. Record the result for the
+`REVIEW_TIER` / `REVIEW_ANGLES` block in Phase 4.
+
 ---
 
 ## Phase 2: Issue Search
@@ -67,14 +74,23 @@ models you considered for each construct you cleared.
 
 | Agent | When to Launch |
 |-------|---------------|
-| **security-auditor** | Code or config changes (except purely cosmetic) |
 | **bug-hunter** | Code or config changes (except purely cosmetic) |
 | **code-quality** | Any code changes (business logic, infra, formatting) |
 | **contracts** | Types, API, or data modeling changed |
 | **test-coverage** | Test files changed |
-| **historical-context** | High complexity changes or when historical context is needed |
+| **historical-context** | High complexity changes, Tier 3, or when historical context is needed |
+| **angle agents** | One per angle the tier marks for a deep pass (`review-angles.md` §2). The security angle is the **security-auditor**. |
 
-Default: launch **all** applicable agents.
+Default: launch **all** applicable agents. Agent names describe roles, not installed agent
+types. Launch each as a general-purpose agent whose prompt is its role, plus, for angle
+agents, that angle's **Brief** from `review-angles.md` pasted in. Angles that don't get a deep
+pass are screened by the bug-hunter: one line each, per `review-angles.md` §2. A screen that
+finds a real concern gets its own deep-pass agent. The "up to 6 parallel agents" limit doesn't
+count angle agents on Tier 3.
+
+If you cannot launch agents (you are running as a subagent without the Agent tool), do each
+agent's job yourself, one after another, as separate sections. Follow `review-angles.md` §2 for
+how to keep deep passes distinct.
 
 ### Dimensions Every Applicable Agent Must Cover
 
@@ -180,6 +196,8 @@ Categorize each issue:
 - **BLOCKING**: Must fix before merge (bugs, missing error handling, security, data loss)
 - **SHOULD_FIX**: Important quality issues (missing tests, poor naming, missing docs)
 - **NIT**: Style, minor improvements, suggestions
+
+Under the table, give the `REVIEW_TIER` / `REVIEW_ANGLES` block from `review-angles.md` §3.
 
 ### 4b. Linked Issue Compliance
 
@@ -310,7 +328,7 @@ Write the body per `~/.claude/skills/pr-description/SKILL.md` — read that file
 it: four sections (What this gets us / Approach / Verify by hand / Calls worth a second
 opinion), plus Manual deploy steps when merging does not fully deploy the change
 (unautomated terraform, secrets, migrations), plus Context links whenever the work came
-from Sentry, logs, traces, dashboards, Slack threads, or other linkable sources. Prose, under 200 words, no file table, run
+from Sentry, logs, traces, dashboards, Slack threads, or other linkable sources, plus Security and Risk when there is something real to say. Prose, under 250 words, no file table, run
 through `writing-tropes` before posting.
 
 ```bash

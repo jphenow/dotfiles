@@ -1,13 +1,14 @@
 ---
 name: pr-description
-description: The canonical shape and voice for every PR description written by these skills - what the change gets us, the approach, any manual deploy steps (terraform, secrets, migrations the deploy doesn't run), what a human should verify by hand, and the judgment calls worth a second opinion. Use when creating or editing any PR body, whether by hand or from an automated loop.
+description: The canonical shape and voice for every PR description written by these skills - what the change gets us, the approach, any manual deploy steps (terraform, secrets, migrations the deploy doesn't run), security notes and the risk of shipping when there is something to say, what a human should verify by hand, and the judgment calls worth a second opinion. Use when creating or editing any PR body, whether by hand or from an automated loop.
 ---
 
 # PR Description
 
 One shape for every PR body these skills write. Four sections, plus **Manual deploy
-steps** when the change needs one and **Context** when the work started from something
-with a link. Prose, **under 200 words total**, not counting commands in the deploy
+steps** when the change needs one, **Security** and **Risk** when there is something real
+to say, and **Context** when the work started from something with a link. Prose, **under
+250 words total**, not counting commands in the deploy
 section's code block or the links in Context. A reviewer should know within fifteen
 seconds whether this matters to them and what they are on the hook for.
 
@@ -31,6 +32,20 @@ never write "None". The operations someone must run by hand, in order, with the 
 commands in one code block: `terraform apply` in the right directory and workspace, secrets
 to set, a migration or backfill the deploy does not run, DNS, a service or config push. Say
 when each runs (before merge, after deploy) and what breaks if it is skipped.>
+
+## Security
+
+<ONLY when the change touches something security-relevant. Omit the heading entirely
+otherwise — never write "None" or "No security impact". See "Deciding on Security and
+Risk" below. 1-3 sentences: what surface changed, why it is safe (or what is still open),
+and anything a reviewer should look at with an attacker's eye.>
+
+## Risk
+
+<ONLY when shipping could plausibly break something. Omit the heading otherwise. Lead with
+the level in bold — **Low**, **Medium**, or **High** — then 1-3 sentences: what could go
+wrong, who it hits (one user, every user, the deploy itself), how we would notice, and how
+to back it out (revert is enough / needs a down-migration / data cannot be restored).>
 
 ## Verify by hand
 
@@ -69,6 +84,31 @@ Check the diff against what actually deploys it, rather than assuming CI covers 
 
 When you can't tell whether something is automated, put it in the section and say so.
 That's easier to fix than a step nobody knew about.
+
+## Deciding on Security and Risk
+
+**Security** belongs in the body when the diff touches any of: authentication or session
+handling, authorization or tenant isolation (a query that could cross users), secrets or
+credentials, parsing or rendering untrusted input (uploads, webhooks, user HTML/markdown,
+SQL built from strings), new dependencies or version bumps of security-sensitive ones,
+outbound calls that send user data somewhere new, CORS/CSP/cookie settings, permissions or
+IAM, or logging that could capture PII. Say what you checked, not just that you checked:
+"every new query filters on `userId`" beats "security reviewed". If something is
+unresolved, say so plainly; that is the most useful sentence in the section.
+
+**Risk** is the cost of being wrong after merge, not how big the diff is. Rough levels:
+
+- **Low**: a bad outcome is cosmetic or narrow, and a revert fixes it fully.
+- **Medium**: a core flow could break for many users, or the change touches money, data
+  writes, or the deploy path, but a revert still restores the prior state.
+- **High**: a revert alone does not undo it (destructive or irreversible migrations, data
+  rewrites, sent emails or charges, external state changes), or it changes auth or billing
+  for everyone at once.
+
+Omit Risk for docs, tests, comments, and dev-only tooling. Don't inflate it; a padded
+"Medium" trains reviewers to skim past the section. When a change is High, say what would
+lower it (a feature flag, a staged rollout, a backup before migrating) even if you didn't
+do it.
 
 ## Linking context
 

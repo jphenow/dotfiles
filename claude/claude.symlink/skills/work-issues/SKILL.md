@@ -222,7 +222,7 @@ For each issue in QUEUE where status == "pending":
    a second opinion), plus Manual deploy steps when merging does not fully deploy the
    change (unautomated terraform, secrets, migrations), plus Context links whenever the
    work came from Sentry, logs, traces, dashboards, Slack threads, or other linkable
-   sources. Prose, under 200 words, no file
+   sources, plus Security and Risk when there is something real to say. Prose, under 250 words, no file
    table, run through writing-tropes before posting.
 
    gh pr create --title "{title}" --body "$(cat <<'PREOF'
